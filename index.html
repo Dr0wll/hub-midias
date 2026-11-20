@@ -1,0 +1,1291 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hub de Mídias · Backlog</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Onest:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#0b0c0f; --ink:#e6e8ee; --ink-2:#9ca1ad; --ink-3:#666c78;
+  --glass:rgba(21,23,28,.92); --glass-2:rgba(24,26,32,.97);
+  --edge:rgba(255,255,255,.07); --edge-2:rgba(255,255,255,.14);
+  --chamfer:inset 0 1px 0 rgba(255,255,255,.13);
+  --drop:0 14px 30px -18px rgba(0,0,0,.7);
+  --jogo:#7fb3a6; --av:#c9a66b; --livro:#8f95b8;
+  --r:10px; --r-img:3px;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{
+  margin:0;min-height:100%;background:var(--bg);color:var(--ink);
+  font-family:"Onest",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:15px;line-height:1.5;position:relative;overflow-x:hidden;
+}
+.aura{position:fixed;inset:-20%;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(38% 34% at 16% 10%,rgba(127,179,166,.13),transparent 70%),
+    radial-gradient(34% 30% at 88% 16%,rgba(143,149,184,.16),transparent 70%),
+    radial-gradient(40% 36% at 62% 94%,rgba(201,166,107,.10),transparent 70%);}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 20px 72px}
+.glass{
+  position:relative;background:var(--glass);border:1px solid var(--edge);border-radius:var(--r);
+  backdrop-filter:blur(18px) saturate(140%);-webkit-backdrop-filter:blur(18px) saturate(140%);
+  box-shadow:var(--chamfer),var(--drop);
+}
+.facet::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background:linear-gradient(180deg,rgba(255,255,255,.025),transparent 40%);}
+
+/* hero */
+.hero{display:grid;grid-template-columns:1fr auto;gap:28px;align-items:center;padding:30px 32px;overflow:hidden}
+h1{font-family:"Unbounded",system-ui,sans-serif;font-weight:700;font-size:clamp(1.9rem,5vw,3rem);letter-spacing:-.03em;line-height:1.02;margin:0 0 10px}
+.lede{color:var(--ink-2);margin:0;max-width:46ch}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:24px}
+.tile{padding:14px 16px;border-radius:var(--r);background:rgba(255,255,255,.04);border:1px solid var(--edge);box-shadow:var(--chamfer)}
+.tile b{display:block;font-family:"Unbounded",sans-serif;font-size:1.35rem;font-weight:500}
+.tile span{color:var(--ink-3);font-size:.8rem}
+.ring{position:relative;width:176px;height:176px;flex-shrink:0}
+.ring svg{width:100%;height:100%;overflow:visible}
+.ring .trk{fill:none;stroke:rgba(255,255,255,.08);stroke-width:10}
+.ring .prog{fill:none;stroke-width:10;stroke-linecap:round}
+.ring-val{position:absolute;inset:0;display:grid;place-content:center;text-align:center}
+.ring-val b{font-family:"Unbounded",sans-serif;font-size:1.9rem;font-weight:700;line-height:1}
+.ring-val span{color:var(--ink-3);font-size:.8rem;margin-top:4px}
+
+/* bars */
+.bars{margin-top:16px;padding:20px 24px;display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.bar-row .top{display:flex;justify-content:space-between;gap:8px;font-size:.88rem;color:var(--ink-2);margin-bottom:8px}
+.bar-row .top b{color:var(--ink);font-weight:600}
+.track{height:8px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden}
+.track i{display:block;height:100%;border-radius:inherit;background:var(--tint);width:0;transition:width .6s ease}
+
+/* toolbar */
+.toolbar{margin-top:16px;padding:14px;display:flex;flex-direction:column;gap:12px}
+.toolbar .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.seg{display:flex;gap:4px;padding:4px;border-radius:var(--r);background:rgba(255,255,255,.05);border:1px solid var(--edge);flex-wrap:wrap}
+.pill{font:inherit;font-size:.88rem;color:var(--ink-2);background:transparent;border:1px solid transparent;border-radius:var(--r);padding:7px 13px;cursor:pointer;white-space:nowrap}
+.pill:hover{color:var(--ink)}
+.pill[aria-pressed="true"]{background:rgba(255,255,255,.14);color:var(--ink);border-color:var(--edge-2);box-shadow:var(--chamfer)}
+.pill .n{color:var(--ink-3);margin-left:6px;font-size:.8rem}
+.tools{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.field{font:inherit;color:var(--ink);background:rgba(255,255,255,.05);border:1px solid var(--edge);border-radius:var(--r);padding:9px 14px;min-width:0}
+.field::placeholder{color:var(--ink-3)}
+.field option{background:#161829;color:var(--ink)}
+#q{min-width:240px}
+.btn{font:inherit;font-weight:600;color:var(--ink);background:rgba(255,255,255,.09);border:1px solid var(--edge-2);border-radius:var(--r);padding:9px 16px;cursor:pointer;box-shadow:var(--chamfer)}
+.btn:hover{background:rgba(255,255,255,.15)}
+.link{font:inherit;background:none;border:0;color:var(--ink-2);text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:0}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font:inherit;font-size:.82rem;color:var(--ink-2);background:rgba(255,255,255,.04);border:1px solid var(--edge);border-radius:var(--r);padding:5px 12px;cursor:pointer}
+.chip[aria-pressed="true"]{color:var(--ink);border-color:var(--edge-2);background:rgba(255,255,255,.12)}
+.chip .n{color:var(--ink-3);margin-left:5px}
+
+/* grid + cards */
+.count{color:var(--ink-3);font-size:.88rem;margin:18px 4px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(212px,1fr));gap:16px;margin-top:12px}
+.card{position:relative;background:var(--glass);border:1px solid var(--edge);border-radius:var(--r);overflow:hidden;
+  backdrop-filter:blur(16px) saturate(130%);-webkit-backdrop-filter:blur(16px) saturate(130%);
+  box-shadow:var(--drop);transition:border-color .2s ease}
+.card:hover,.card:focus-within{border-color:var(--edge-2)}
+.open{all:unset;display:block;width:100%;cursor:pointer;border-radius:var(--r)}
+.cover{margin:10px;aspect-ratio:3/4;border-radius:var(--r-img);position:relative;display:grid;place-items:center;overflow:hidden;
+  background:linear-gradient(160deg,color-mix(in srgb,var(--tint) 30%,transparent),rgba(8,9,16,.7));
+  border:0}
+
+.cover .ini{font-family:"Unbounded",sans-serif;font-size:3.2rem;font-weight:700;color:var(--tint);opacity:.9;text-shadow:none}
+.body{padding:4px 16px 16px}
+.body h3{font-size:.98rem;font-weight:600;line-height:1.3;margin:0 0 8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.6em}
+.meta{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.badge{font-size:.74rem;color:var(--ink-2);padding:3px 9px;border-radius:var(--r);background:rgba(255,255,255,.06);border:1px solid var(--edge)}
+.badge.ghost{color:var(--ink-3)}
+.foot{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.status{font-size:.8rem;font-weight:600;display:inline-flex;align-items:center;gap:6px}
+.status::before{content:"";width:7px;height:7px;border-radius:var(--r);background:currentColor;box-shadow:0 0 10px currentColor}
+.nota{font-size:.82rem;color:var(--av);font-weight:600}
+.quick{position:absolute;top:18px;right:18px;width:34px;height:34px;border-radius:50%;cursor:pointer;
+  font:inherit;font-size:.95rem;color:var(--jogo);background:rgba(8,9,16,.6);border:1px solid var(--edge-2);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:var(--chamfer)}
+.quick:hover{background:rgba(127,179,166,.16)}
+.empty{grid-column:1/-1;text-align:center;color:var(--ink-2);padding:56px 20px;border-radius:var(--r)}
+.empty b{display:block;color:var(--ink);font-size:1.05rem;margin-bottom:6px}
+
+.s-fila{color:#a9aec4}.s-andamento{color:var(--av)}.s-concluido{color:var(--jogo)}.s-aguardo{color:#7d9cc0}.s-abandonado{color:#c58a8a}
+
+.keys{margin-top:16px;padding:20px 24px;display:grid;gap:14px}
+.keys h2{font-family:"Unbounded",sans-serif;font-size:1rem;font-weight:500;margin:0}
+.keys-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.keys label{display:grid;gap:6px;font-size:.84rem;color:var(--ink-2)}
+.keys .field{width:100%}
+.keys-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.keys-actions .group{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.keys .status-line{color:var(--ink-3);font-size:.86rem;margin:0;flex-basis:100%}
+.btn:disabled{opacity:.5;cursor:default}
+.cover img{position:absolute;max-width:none}
+.cover .bg{inset:-8%;width:116%;height:116%;object-fit:cover;filter:blur(16px) saturate(1.15);opacity:.55}
+.cover .fg{inset:0;width:100%;height:100%;object-fit:contain;z-index:1}
+.data-lanc{margin-top:10px;font-size:.84rem;color:var(--av);font-weight:600}
+.lock{font-size:.8rem;margin-left:4px}
+.switch{display:flex;align-items:center;gap:10px;cursor:pointer;color:var(--ink-2);font-size:.9rem}
+.switch input{appearance:none;width:42px;height:24px;border-radius:var(--r);background:rgba(255,255,255,.12);border:1px solid var(--edge-2);position:relative;cursor:pointer;flex-shrink:0;margin:0}
+.switch input::after{content:"";position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:var(--r);background:var(--ink);transition:transform .2s}
+.switch input:checked{background:var(--jogo)}
+.switch input:checked::after{transform:translateX(18px);background:#07080e}
+.cover.has-img .ini{display:none}
+
+.novo-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 14px;margin-top:18px}
+.novo-grid label{display:grid;gap:6px;font-size:.84rem;color:var(--ink-2)}
+.novo-grid .field{width:100%}
+.novo-grid .full{grid-column:1/-1}
+.erro{color:#c58a8a;font-size:.88rem;min-height:1.4em;margin:12px 0 0}
+@media (max-width:520px){.novo-grid{grid-template-columns:1fr}}
+
+.fontes-box{margin-top:18px}
+.fontes-box h3{font-family:"Unbounded",sans-serif;font-size:1rem;font-weight:500;margin:0}
+.fontes{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:8px}
+.fonte{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 12px;border-radius:var(--r);background:rgba(255,255,255,.04);border:1px solid var(--edge)}
+.fonte.drag{border-color:var(--jogo);box-shadow:var(--drop);background:rgba(255,255,255,.08)}
+.fonte .grip{touch-action:none;cursor:grab;background:none;border:0;color:var(--ink-3);font:inherit;padding:4px 6px;font-size:1rem;letter-spacing:-.1em}
+.fonte .on{display:flex;align-items:center;gap:8px;color:var(--ink);font-weight:500;flex:1;min-width:140px}
+.fonte small{font-size:.76rem;color:var(--ink-3)}
+.fonte small.ok{color:var(--jogo)}
+.fonte small.warn{color:var(--av)}
+.fonte .tipos{display:flex;gap:4px;flex-wrap:wrap}
+.fonte .setas{display:flex;gap:4px}
+.fonte .setas .pill{padding:4px 9px}
+
+.det{display:flex;gap:22px;align-items:flex-start}
+.det-info{flex:1;min-width:0}
+.det-cover{margin:0;width:160px;flex-shrink:0;border-radius:var(--r-img)}
+.sino-n{display:inline-block;min-width:18px;height:18px;padding:0 5px;margin-left:4px;border-radius:var(--r);background:var(--av);color:#07080e;font-size:.72rem;font-weight:700;line-height:18px;text-align:center}
+.sino-n[hidden]{display:none}
+.notif-lista{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:8px;max-height:60vh;overflow:auto}
+.notif-corpo{all:unset;display:grid;gap:4px;width:100%;box-sizing:border-box;cursor:pointer;padding:10px 12px;border-radius:var(--r);background:rgba(255,255,255,.04);border:1px solid var(--edge)}
+.notif-corpo[disabled]{cursor:default}
+.notif.nova .notif-corpo{background:rgba(127,179,166,.08);border-color:rgba(127,179,166,.3)}
+.notif-corpo small{color:var(--ink-3);font-size:.76rem}
+.vazio{color:var(--ink-3);padding:14px 4px}
+@media (max-width:560px){.det{flex-direction:column}.det-cover{width:min(200px,60%);margin:0 auto}}
+
+.topbar{display:flex;justify-content:flex-end;margin:0 0 14px}
+.topbar .acoes{display:flex;gap:8px;align-items:center}
+#sino{position:relative}
+.topbar .btn{display:inline-flex;align-items:center;gap:8px}
+.sino-n{position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;padding:0 5px;border-radius:99px;background:var(--ink-2);color:#0b0c0f;font-size:.72rem;font-weight:700;line-height:18px;text-align:center}
+.sino-n[hidden]{display:none}
+.escopo{margin:4px 0 0;color:var(--ink-3);font-size:.9rem}
+.busca{flex:1;min-width:220px}
+.larg{width:170px}
+.link:disabled{opacity:.4;cursor:default;text-decoration:none}
+#atualizarDatas{min-width:160px}
+.card .meta{height:26px;overflow:hidden;flex-wrap:nowrap}
+.card .meta .badge{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.card .foot{min-height:24px}
+
+/* modal */
+dialog{border:0;padding:0;background:transparent;color:var(--ink);width:min(600px,calc(100vw - 32px));max-width:none;margin:auto}
+dialog::backdrop{background:rgba(3,4,8,.62);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.sheet{background:var(--glass-2);padding:26px;border-radius:var(--r);border:1px solid var(--edge-2);box-shadow:var(--chamfer),var(--drop)}
+.sheet .head{display:flex;gap:14px;align-items:flex-start;justify-content:space-between}
+.sheet h2{font-family:"Unbounded",sans-serif;font-size:1.25rem;font-weight:500;line-height:1.2;margin:6px 0 0}
+.sheet .x{flex-shrink:0;width:36px;height:36px;border-radius:var(--r);cursor:pointer;font:inherit;font-size:1rem;color:var(--ink);background:rgba(255,255,255,.07);border:1px solid var(--edge)}
+.sheet dl{display:grid;grid-template-columns:auto 1fr;gap:12px 18px;margin:22px 0 0}
+.sheet dt{color:var(--ink-3);font-size:.86rem;align-self:center}
+.sheet dd{margin:0;font-weight:500}
+.sheet dd select{width:100%}
+.sheet .hint{color:var(--ink-3);font-size:.8rem;margin:20px 0 0}
+
+#toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);opacity:0;
+  transition:opacity .25s ease,transform .25s ease;pointer-events:none;background:var(--glass-2);border:1px solid var(--edge-2);
+  border-radius:var(--r);padding:11px 18px;font-size:.9rem;box-shadow:var(--chamfer),var(--drop);z-index:10;max-width:calc(100vw - 32px)}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+
+.foot-note{margin-top:36px;color:var(--ink-3);font-size:.85rem;text-align:center}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+:focus-visible{outline:2px solid var(--jogo);outline-offset:3px}
+
+/* one orchestrated moment: ring fill on load */
+.ring .prog{transition:stroke-dashoffset 1.2s cubic-bezier(.2,.7,.2,1)}
+
+@media (max-width:820px){
+  .hero{grid-template-columns:1fr;padding:24px}
+  .ring{margin:0 auto}
+  .bars{grid-template-columns:1fr;padding:18px}
+  .tiles{grid-template-columns:repeat(3,1fr)}
+}
+@media (max-width:520px){
+  .wrap{padding:20px 14px 64px}
+  .tiles{grid-template-columns:1fr 1fr}
+  .tiles .tile:last-child{grid-column:1/-1}
+  #q{min-width:0;width:100%}
+  .tools{width:100%}
+  .tools .field:not(#q){flex:1}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{transition:none!important;animation:none!important}
+}
+</style>
+</head>
+<body>
+<div class="aura" aria-hidden="true"></div>
+
+<main class="wrap">
+  <header class="topbar">
+    <div class="acoes">
+      <button id="sino" class="btn" type="button" aria-label="Notificações"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="sino-n" id="sinoN" hidden></span></button>
+      <button id="abrirConfig" class="btn" type="button"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span>Configurações</span></button>
+    </div>
+  </header>
+  <section class="hero glass facet">
+    <div>
+      <h1>Backlog</h1>
+          <p class="escopo" id="escopo"></p>
+      <div class="tiles" id="tiles"></div>
+    </div>
+    <div class="ring" aria-hidden="false">
+      <svg viewBox="0 0 120 120" role="img" aria-label="Porcentagem concluída do catálogo">
+        <defs>
+          <linearGradient id="gr" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#7fb3a6"/>
+            <stop offset="1" stop-color="#8f95b8"/>
+          </linearGradient>
+        </defs>
+        <circle class="trk" cx="60" cy="60" r="52"/>
+        <circle class="prog" id="prog" cx="60" cy="60" r="52" stroke="url(#gr)" transform="rotate(-90 60 60)"/>
+      </svg>
+      <div class="ring-val"><b id="pct">0%</b><span id="ringLabel">concluído</span></div>
+    </div>
+  </section>
+
+  <section class="bars glass facet" id="bars" aria-label="Progresso por categoria"></section>
+
+  <section class="toolbar glass facet" aria-label="Filtros">
+    <div class="row">
+      <div class="seg" id="cats" role="group" aria-label="Categoria"></div>
+      <div class="tools">
+        <label class="sr" for="q">Buscar por título</label>
+        <input id="q" class="field busca" type="search" placeholder="Buscar título, tag ou status…" autocomplete="off">
+        <label class="sr" for="ord">Ordenar por</label>
+        <select id="ord" class="field larg">
+          <option value="titulo">Ordenar: título</option>
+          <option value="nota">Ordenar: nota</option>
+          <option value="lancamento">Ordenar: lançamento</option>
+          <option value="conclusao">Ordenar: conclusão</option>
+        </select>
+        <button id="ordemDir" class="btn larg" type="button">↑ Crescente</button>
+        <select id="tag" class="field larg" aria-label="Filtrar por tag"></select>
+        <button id="limparFiltros" class="link" type="button">Limpar filtros</button>
+        <button id="atualizarDatas" class="btn" type="button">Atualizar datas</button>
+        <button id="novoBtn" class="btn" type="button">+ Adicionar mídia</button>
+      </div>
+    </div>
+    <div class="chips" id="chips" role="group" aria-label="Status"></div>
+  </section>
+
+  <p class="count" id="count" aria-live="polite"></p>
+  <section class="grid" id="grid"></section>
+
+  <footer class="foot-note">
+    Edições ficam salvas neste navegador.
+    <button id="limpar" class="link" type="button">Desfazer edições locais</button>
+  </footer>
+</main>
+
+<dialog id="modal" aria-labelledby="m-title">
+  <div class="sheet" id="sheet"></div>
+</dialog>
+<dialog id="novo" aria-labelledby="n-title"></dialog>
+<dialog id="config" aria-labelledby="cfg-title">
+  <div class="sheet">
+    <div class="head">
+      <h2 id="cfg-title">Configurações</h2>
+      <button class="x" type="button" data-fechar-config aria-label="Fechar">✕</button>
+    </div>
+    <div class="keys">
+      <div class="keys-actions">
+        <span>Chaves de API e capas</span>
+        <button class="btn" id="buscarCapas" type="button">Buscar capas pendentes</button>
+      </div>
+      <div class="keys-grid">
+        <label>TMDB · chave v3 (filmes e séries)<input id="k-tmdb" class="field" type="password" autocomplete="off" placeholder="cole a chave"></label>
+        <label>IGDB · Client ID (jogos)<input id="k-igdb-id" class="field" type="password" autocomplete="off" placeholder="cole o Client ID"></label>
+        <label>IGDB · Access token (jogos)<input id="k-igdb-tok" class="field" type="password" autocomplete="off" placeholder="cole o token"></label>
+        <label>RAWG · chave gratuita (jogos, opcional)<input id="k-rawg" class="field" type="password" autocomplete="off" placeholder="cole a chave"></label>
+        <label>OMDb · chave gratuita (filmes e séries, opcional)<input id="k-omdb" class="field" type="password" autocomplete="off" placeholder="cole a chave"></label>
+      </div>
+      <div class="keys-actions">
+        <div class="group">
+          <button class="btn" id="salvarChaves" type="button">Salvar chaves</button>
+          <button class="link" id="apagarChaves" type="button">Apagar chaves</button>
+          <button class="link" id="buscarNaoAchadas" type="button">Buscar de novo as sem capa</button>
+        </div>
+        <p class="status-line" id="kstatus" aria-live="polite">Livros usam Open Library e animes/mangás usam Jikan, gratuitos e sem chave.</p>
+      </div>
+    </div>
+    <div class="fontes-box">
+      <h3>Fontes de capa</h3>
+      <p class="hint">Arraste pelo ⋮⋮ para ordenar, da favorita para a menos. Cada mídia tenta a primeira fonte ativa da sua categoria. Se passar de 10 segundos ou não achar capa, tenta a próxima. Se nenhuma achar, fica sem capa.</p>
+      <ol id="fontes" class="fontes"></ol>
+    </div>
+    <div class="fontes-box">
+      <h3>Sincronização entre dispositivos</h3>
+      <p class="hint" id="fb-status">Carregando…</p>
+      <label class="full">Configuração do Firebase (cole o bloco firebaseConfig)<textarea id="fb-cfg" class="field" rows="5" style="width:100%;margin-top:6px" placeholder="const firebaseConfig = { apiKey: &quot;…&quot;, projectId: &quot;…&quot; … }"></textarea></label>
+      <div class="keys-actions" style="margin-top:12px"><div class="group">
+        <button class="btn" id="fb-salvar" type="button">Salvar configuração</button>
+        <button class="btn" id="fb-entrar" type="button">Entrar com Google</button>
+        <button class="link" id="fb-sair" type="button">Sair</button>
+      </div></div>
+      <p class="hint">As chaves de API (TMDB, IGDB, RAWG, OMDb) não sincronizam: ficam em cada aparelho.</p>
+    </div>
+  </div>
+</dialog>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<dialog id="notif" aria-labelledby="notif-title">
+  <div class="sheet">
+    <div class="head">
+      <h2 id="notif-title">Notificações</h2>
+      <button class="x" type="button" data-fechar-notif aria-label="Fechar">✕</button>
+    </div>
+    <ul id="notif-lista" class="notif-lista"></ul>
+    <div class="keys-actions" style="margin-top:14px"><div class="group">
+      <button class="btn" id="notif-lidas" type="button">Marcar todas como lidas</button>
+      <button class="link" id="notif-limpar" type="button">Limpar</button>
+    </div></div>
+  </div>
+</dialog>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+var SYNC_KEYS_LIST = [];
+const RAW = [{"t":"007 First Light","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2026-05-27","k":null,"g":141114},{"t":"5 Minutes Until Self-Destruction","c":"jogo","tipo":null,"s":"Zerado","n":2.5,"l":"2025-07-23","k":"2025-07-23","g":353763},{"t":"A Game About Digging A Hole","c":"jogo","tipo":null,"s":"Zerado","n":3.0,"l":"2025-02-07","k":"2025-02-07","g":325554},{"t":"A Mall Near You","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2022-12-31","k":"2023-02-10","g":229968},{"t":"A Short Hike","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2019-07-30","k":"2025-05-01","g":116753},{"t":"A.I.L.A","c":"jogo","tipo":null,"s":"Zerado","n":3.5,"l":"2025-11-25","k":"2025-11-25","g":252873},{"t":"Abiotic Factor","c":"jogo","tipo":null,"s":"Jogado","n":3.5,"l":"2025-07-22","k":null,"g":219126},{"t":"Ace Combat 8: Wings of Theve","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2026-10-02","k":null,"g":381247},{"t":"Alan Wake II: Night Springs","c":"jogo","tipo":null,"s":"Zerado","n":3.5,"l":"2024-06-08","k":null,"g":273996},{"t":"Alan Wake II: The Lake House","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2024-10-22","k":null,"g":273997},{"t":"Alan Wake II","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2023-10-27","k":null,"g":185246},{"t":"Alice: Madness Returns","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2011-06-14","k":null,"g":1040},{"t":"Alien: Isolation 2","c":"jogo","tipo":null,"s":"No aguardo","n":null,"l":null,"k":null,"g":319082},{"t":"Alien: Isolation","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2014-10-06","k":null,"g":4754},{"t":"Among Us","c":"jogo","tipo":null,"s":"Jogado","n":4.0,"l":"2018-06-15","k":null,"g":111469},{"t":"Animal Crossing: New Horizons","c":"jogo","tipo":null,"s":"Jogado","n":4.0,"l":"2020-03-20","k":null,"g":109462},{"t":"Animal Well","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2024-05-09","k":null,"g":191435},{"t":"Apex Legends","c":"jogo","tipo":null,"s":"Jogado","n":3.5,"l":"2019-02-04","k":"2019-02-04","g":114795},{"t":"Assassin's Creed Black Flag Resynced","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2026-07-09","k":null,"g":337738},{"t":"Assassin's Creed IV Black Flag","c":"jogo","tipo":null,"s":"Zerado","n":4.5,"l":"2013-10-29","k":"2015-01-01","g":1970},{"t":"Assassin's Creed Odyssey","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2018-10-05","k":"2018-10-05","g":103054},{"t":"Assassin's Creed Shadows","c":"jogo","tipo":null,"s":"Zerado","n":3.5,"l":"2025-03-20","k":null,"g":300976},{"t":"Assassin's Creed Unity","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2014-11-11","k":null,"g":5606},{"t":"Assassin's Creed Valhalla","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2020-11-10","k":null,"g":133004},{"t":"Astro Bot","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2024-09-06","k":"2024-09-06","g":303811},{"t":"At Eternity's Hatch","c":"jogo","tipo":null,"s":"No aguardo","n":null,"l":null,"k":null,"g":398548},{"t":"At Fate's End","c":"jogo","tipo":null,"s":"No aguardo","n":null,"l":"2027-12-31","k":null,"g":348205},{"t":"Atomfall","c":"jogo","tipo":null,"s":"Zerado","n":3.5,"l":"2025-03-27","k":"2025-03-27","g":305159},{"t":"Balatro","c":"jogo","tipo":null,"s":"Jogado","n":4.0,"l":"2024-02-20","k":null,"g":251833},{"t":"Baldur's Gate III","c":"jogo","tipo":null,"s":"Zerado","n":5.0,"l":"2023-08-03","k":"2023-09-30","g":119171},{"t":"Beast of Reincarnation","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2026-08-04","k":null,"g":348180},{"t":"Berry Bury Berry","c":"jogo","tipo":null,"s":"Zerado","n":3.5,"l":"2026-01-29","k":"2026-01-29","g":381578},{"t":"Beton Brutal","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2023-03-31","k":"2023-03-31","g":240683},{"t":"Big Dig","c":"jogo","tipo":null,"s":"Zerado","n":null,"l":"2026-10-19","k":"2026-11-01","g":399372},{"t":"Big Walk","c":"jogo","tipo":null,"s":"Platinado","n":5.0,"l":"2026-08-04","k":"2026-08-25","g":279624},{"t":"BioShock 2 Remastered","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2016-09-14","k":null,"g":34294},{"t":"BioShock Infinite","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2013-03-25","k":null,"g":538},{"t":"BioShock Remastered","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2016-09-14","k":null,"g":34293},{"t":"Blades of Fire","c":"jogo","tipo":null,"s":"Zerado","n":null,"l":"2025-05-22","k":null,"g":333600},{"t":"Blasfemia","c":"jogo","tipo":null,"s":"Zerado","n":3.5,"l":"2025-06-12","k":"2025-06-12","g":343698},{"t":"Bloodborne","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2015-03-24","k":null,"g":7334},{"t":"Bloody Hell Hotel","c":"jogo","tipo":null,"s":"No aguardo","n":null,"l":"2027-12-31","k":null,"g":213557},{"t":"Blue Prince","c":"jogo","tipo":null,"s":"Jogando","n":null,"l":"2025-04-10","k":null,"g":149657},{"t":"Borderlands 2","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2012-09-18","k":null,"g":1011},{"t":"Borderlands 3","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2019-09-13","k":null,"g":19164},{"t":"Botany Manor","c":"jogo","tipo":null,"s":"Zerado","n":3.5,"l":"2024-04-09","k":"2026-01-01","g":225426},{"t":"Boxes: Lost Fragments","c":"jogo","tipo":null,"s":"Zerado","n":3.0,"l":"2024-02-01","k":"2024-02-01","g":219729},{"t":"Cairn","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2026-01-29","k":null,"g":305017},{"t":"Call of the Sea","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2020-12-08","k":null,"g":133306},{"t":"Carimara: Beneath the Forlorn Limbs","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2025-10-06","k":null,"g":339618},{"t":"Carry The Glass","c":"jogo","tipo":null,"s":"Zerado","n":3.0,"l":"2024-10-24","k":"2024-10-24","g":319399},{"t":"Cast n Chill","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2025-06-16","k":null,"g":330638},{"t":"Castlevania: Belmont's Curse","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2026-10-15","k":null,"g":389434},{"t":"Castlevania: Symphony of the Night","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"1997-03-20","k":null,"g":1128},{"t":"Celeste","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2018-01-25","k":null,"g":26226},{"t":"Chained Wheels","c":"jogo","tipo":null,"s":"Zerado","n":3.5,"l":"2026-03-27","k":null,"g":386507},{"t":"Chalk Warfare","c":"jogo","tipo":null,"s":"No aguardo","n":null,"l":null,"k":null,"g":null},{"t":"Chants of Sennaar","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2023-09-05","k":null,"g":198499},{"t":"Chrome Dino","c":"jogo","tipo":null,"s":"Zerado","n":3.0,"l":"2014-09-01","k":"2014-09-01","g":133890},{"t":"Chrono Trigger","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"1995-03-11","k":null,"g":1802},{"t":"Clair Obscur: Expedition 33","c":"jogo","tipo":null,"s":"Zerado","n":5.0,"l":"2025-04-24","k":"2025-06-01","g":305152},{"t":"Click Mage","c":"jogo","tipo":null,"s":"Zerado","n":2.5,"l":"2025-01-06","k":"2026-01-10","g":320391},{"t":"Click to Continue","c":"jogo","tipo":null,"s":"Zerado","n":3.5,"l":"2025-05-15","k":"2025-09-28","g":343847},{"t":"Clutch","c":"jogo","tipo":null,"s":"No aguardo","n":null,"l":"2027-03-31","k":null,"g":403990},{"t":"Cocoon","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2023-09-29","k":null,"g":204627},{"t":"Cognition Method","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2026-09-01","k":null,"g":211219},{"t":"Contraband Police","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2023-03-08","k":null,"g":76263},{"t":"Control Resonant","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2026-09-24","k":null,"g":225582},{"t":"Counter-Strike 2","c":"jogo","tipo":null,"s":"Jogado","n":4.0,"l":"2023-09-27","k":null,"g":242408},{"t":"Coven of the Chicken Foot","c":"jogo","tipo":null,"s":"No aguardo","n":null,"l":null,"k":null,"g":381218},{"t":"Crash Bandicoot N. Sane Trilogy","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2017-06-30","k":null,"g":26196},{"t":"Crime Scene Cleaner","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2024-08-14","k":"2024-08-14","g":115830},{"t":"Crossfire","c":"jogo","tipo":null,"s":"No aguardo","n":null,"l":null,"k":null,"g":404692},{"t":"Cryptmaster","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2024-05-09","k":null,"g":213029},{"t":"Cuphead","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2017-09-29","k":null,"g":9061},{"t":"Cursed Digicam","c":"jogo","tipo":null,"s":"Zerado","n":3.0,"l":"2025-01-09","k":"2025-01-09","g":327543},{"t":"Cyberpunk 2077: Phantom Liberty","c":"jogo","tipo":null,"s":"Zerado","n":4.5,"l":"2023-09-26","k":"2026-01-01","g":215769},{"t":"Cyberpunk 2077","c":"jogo","tipo":null,"s":"Zerado","n":4.5,"l":"2020-12-10","k":"2020-12-10","g":1877},{"t":"Daemon Masquerade","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2024-10-23","k":null,"g":242546},{"t":"Dave the Diver","c":"jogo","tipo":null,"s":"Zerado","n":4.5,"l":"2023-06-28","k":"2023-06-28","g":203722},{"t":"Dawson Oaks Trailer Park","c":"jogo","tipo":null,"s":"Jogado","n":2.5,"l":"2026-09-17","k":"2026-09-25","g":408337},{"t":"Days Gone","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2019-04-26","k":null,"g":19561},{"t":"Dead Cells","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2018-08-06","k":null,"g":26855},{"t":"Deadlock","c":"jogo","tipo":null,"s":"Jogado","n":4.0,"l":null,"k":null,"g":301298},{"t":"Death Stranding 2: On the Beach","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2025-06-26","k":null,"g":228530},{"t":"Death Stranding: Director's Cut","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2021-09-24","k":null,"g":152063},{"t":"Deathloop","c":"jogo","tipo":null,"s":"Zerado","n":3.5,"l":"2021-09-14","k":"2021-09-20","g":113598},{"t":"Deaths of Peck","c":"jogo","tipo":null,"s":"No aguardo","n":null,"l":null,"k":null,"g":398425},{"t":"Deep Dish Dungeon","c":"jogo","tipo":null,"s":"Jogado","n":3.0,"l":"2026-10-13","k":"2026-10-13","g":298680},{"t":"Destiny 2","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2017-09-06","k":null,"g":25657},{"t":"Detroit: Become Human","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2018-05-25","k":null,"g":14362},{"t":"Diablo III","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2012-05-15","k":null,"g":120},{"t":"Diablo IV","c":"jogo","tipo":null,"s":"Zerado","n":3.5,"l":"2023-06-06","k":null,"g":125165},{"t":"Dice Hoarder","c":"jogo","tipo":null,"s":"No aguardo","n":null,"l":"2026-12-31","k":null,"g":414657},{"t":"Disco Elysium: The Final Cut","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2021-03-30","k":null,"g":141540},{"t":"Dishonored 2","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2016-11-11","k":null,"g":11118},{"t":"Dishonored","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2012-10-09","k":null,"g":533},{"t":"Dishwashing Simulator","c":"jogo","tipo":null,"s":"Zerado","n":2.5,"l":"2024-04-03","k":"2024-04-03","g":291513},{"t":"Dispatch","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2025-10-22","k":null,"g":325609},{"t":"Divinity","c":"jogo","tipo":null,"s":"No aguardo","n":null,"l":null,"k":null,"g":381216},{"t":"Doom","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2016-05-12","k":null,"g":7351},{"t":"Dragon Ball: Sparking! Zero","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2024-10-11","k":null,"g":279634},{"t":"Dredge","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2023-03-30","k":null,"g":164867},{"t":"Duskdog","c":"jogo","tipo":null,"s":"No aguardo","n":null,"l":null,"k":null,"g":410185},{"t":"Easy Delivery Co.","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2025-09-18","k":null,"g":330673},{"t":"Echoes of Mystralia","c":"jogo","tipo":null,"s":"No aguardo","n":null,"l":null,"k":null,"g":314426},{"t":"Eclipsium","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2025-09-19","k":null,"g":250722},{"t":"Elden Ring Nightreign","c":"jogo","tipo":null,"s":"Abandonado","n":3.5,"l":"2025-05-30","k":null,"g":325591},{"t":"Elden Ring: Shadow of the Erdtree","c":"jogo","tipo":null,"s":"Zerado","n":5.0,"l":"2024-06-21","k":"2024-07-01","g":240009},{"t":"Elden Ring","c":"jogo","tipo":null,"s":"Zerado","n":4.5,"l":"2022-02-25","k":"2022-02-25","g":119133},{"t":"Elevated Dread","c":"jogo","tipo":null,"s":"Zerado","n":2.0,"l":"2023-01-07","k":"2026-01-07","g":232820},{"t":"Emuurom","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2026-05-25","k":null,"g":135002},{"t":"Enigma of Fear","c":"jogo","tipo":null,"s":"Platinado","n":4.5,"l":"2024-11-28","k":"2024-11-28","g":140133},{"t":"Enshrouded","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2024-01-24","k":null,"g":248643},{"t":"Enter the Gungeon","c":"jogo","tipo":null,"s":"Jogado","n":4.0,"l":"2016-04-05","k":null,"g":11182},{"t":"Escape from Tarkov","c":"jogo","tipo":null,"s":"Jogado","n":3.5,"l":"2025-11-15","k":null,"g":15536},{"t":"Escape Simulator 2","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2025-10-27","k":null,"g":325646},{"t":"Eternal Afternoon","c":"jogo","tipo":null,"s":"Zerado","n":3.0,"l":"2026-03-03","k":"2026-03-03","g":388497},{"t":"Everdeep Aurora","c":"jogo","tipo":null,"s":"Zerado","n":3.0,"l":"2025-07-10","k":null,"g":252778},{"t":"Exiled","c":"jogo","tipo":null,"s":"Zerado","n":3.5,"l":"2024-01-18","k":"2025-01-01","g":283090},{"t":"Fable","c":"jogo","tipo":null,"s":"No aguardo","n":null,"l":"2027-02-23","k":null,"g":92550},{"t":"Fall Guys","c":"jogo","tipo":null,"s":"Jogado","n":3.5,"l":"2020-08-04","k":null,"g":119313},{"t":"Fallout 4","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2015-11-09","k":null,"g":9630},{"t":"Far Cry 3","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2012-11-28","k":null,"g":529},{"t":"Far Fishing","c":"jogo","tipo":null,"s":"Zerado","n":3.0,"l":"2025-06-26","k":"2025-06-26","g":351753},{"t":"Fez","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2012-04-13","k":null,"g":1991},{"t":"Fields of Mistria","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2026-08-05","k":null,"g":226035},{"t":"Filament","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2020-04-23","k":null,"g":121885},{"t":"Final Fantasy VII Rebirth","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2024-02-29","k":null,"g":133236},{"t":"Final Fantasy VII Remake","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2020-04-10","k":"2025-01-01","g":11169},{"t":"Final Fantasy VII Revelation","c":"jogo","tipo":null,"s":"No aguardo","n":null,"l":"2027-04-08","k":null,"g":404721},{"t":"Final Fantasy XVI","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2023-06-22","k":null,"g":31551},{"t":"Firewatch","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2016-02-09","k":null,"g":9730},{"t":"Fortnite","c":"jogo","tipo":null,"s":"Jogado","n":4.0,"l":"2020-06-29","k":"2020-06-29","g":1905},{"t":"Frog Jump","c":"jogo","tipo":null,"s":"Zerado","n":3.5,"l":"2025-06-26","k":"2025-06-26","g":351745},{"t":"Fruit Mountain","c":"jogo","tipo":null,"s":"Zerado","n":3.5,"l":"2024-03-18","k":"2024-03-18","g":290677},{"t":"Fugaz","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2026-07-07","k":null,"g":405056},{"t":"Gamblers Table","c":"jogo","tipo":null,"s":"Zerado","n":3.5,"l":"2026-01-11","k":"2026-01-11","g":342853},{"t":"Gears of War 3","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2011-09-20","k":null,"g":492},{"t":"Gears of War 4","c":"jogo","tipo":null,"s":"Zerado","n":3.5,"l":"2016-10-11","k":null,"g":11186},{"t":"Gears of War: E-Day","c":"jogo","tipo":null,"s":"Jogando","n":null,"l":"2026-10-06","k":null,"g":305160},{"t":"Gen Atlas","c":"jogo","tipo":null,"s":"No aguardo","n":null,"l":null,"k":null,"g":325593},{"t":"Genshin Impact","c":"jogo","tipo":null,"s":"Abandonado","n":0.5,"l":"2020-09-28","k":null,"g":119277},{"t":"Ghost of Tsushima","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2020-07-17","k":null,"g":75235},{"t":"Ghost Trick: Phantom Detective","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2023-06-30","k":null,"g":236660},{"t":"God of War Laufey","c":"jogo","tipo":null,"s":"No aguardo","n":null,"l":"2027-02-16","k":null,"g":404063},{"t":"God of War Ragnarök: Valhalla","c":"jogo","tipo":null,"s":"Platinado","n":4.5,"l":"2023-12-12","k":null,"g":279623},{"t":"God of War Ragnarök","c":"jogo","tipo":null,"s":"Platinado","n":4.5,"l":"2022-11-09","k":null,"g":112875},{"t":"God of War Trilogy Remake","c":"jogo","tipo":null,"s":"No aguardo","n":null,"l":null,"k":null,"g":389441},{"t":"God of War","c":"jogo","tipo":null,"s":"Platinado","n":4.5,"l":"2018-04-20","k":null,"g":19560},{"t":"Gone Fishing","c":"jogo","tipo":null,"s":"Jogado","n":2.0,"l":"2025-06-16","k":"2026-10-25","g":348447},{"t":"Gorogoa","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2017-12-13","k":null,"g":9136},{"t":"Granblue Fantasy: Relink","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2024-02-01","k":null,"g":22788},{"t":"Grand Theft Auto IV","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2008-04-29","k":null,"g":731},{"t":"Grand Theft Auto: San Andreas","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2004-10-26","k":null,"g":732},{"t":"Grand Theft Auto V","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2013-09-17","k":null,"g":1020},{"t":"Grand Theft Auto VI","c":"jogo","tipo":null,"s":"No aguardo","n":null,"l":"2026-11-19","k":null,"g":52189},{"t":"Gravity Rush 2","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2017-01-18","k":null,"g":12528},{"t":"Gravity Rush","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2012-02-09","k":null,"g":11701},{"t":"Gris","c":"jogo","tipo":null,"s":"Zerado","n":4.5,"l":"2018-12-13","k":"2021-01-01","g":22917},{"t":"Grounded","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2022-09-27","k":null,"g":125624},{"t":"Guitar Hero III: Legends of Rock","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2007-10-28","k":null,"g":2671},{"t":"Gylt","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2019-11-19","k":null,"g":119247},{"t":"Hades","c":"jogo","tipo":null,"s":"Zerado","n":3.5,"l":"2020-09-17","k":null,"g":113112},{"t":"Haex","c":"jogo","tipo":null,"s":"No aguardo","n":null,"l":null,"k":null,"g":404685},{"t":"Half-Life","c":"jogo","tipo":null,"s":"Zerado","n":3.5,"l":"1998-11-19","k":null,"g":231},{"t":"He Who Watches","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2026-09-02","k":null,"g":239828},{"t":"Heaven's Vault","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2019-04-16","k":null,"g":27509},{"t":"Helltaker","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2020-05-11","k":null,"g":133152},{"t":"Hogwarts Legacy","c":"jogo","tipo":null,"s":"Zerado","n":4.5,"l":"2023-02-10","k":null,"g":136625},{"t":"Hollow Knight: Silksong","c":"jogo","tipo":null,"s":"Zerado","n":5.0,"l":"2025-09-04","k":"2025-09-14","g":115289},{"t":"Hollow Knight","c":"jogo","tipo":null,"s":"Zerado","n":5.0,"l":"2017-02-24","k":null,"g":14593},{"t":"Horizon Zero Dawn Remastered","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2024-10-31","k":null,"g":317103},{"t":"How to Fish","c":"jogo","tipo":null,"s":"Zerado","n":3.5,"l":"2026-08-20","k":"2026-08-28","g":378170},{"t":"Hyper Light Drifter","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2016-03-31","k":null,"g":9806},{"t":"Hytale","c":"jogo","tipo":null,"s":"Jogado","n":4.0,"l":"2026-01-13","k":null,"g":113360},{"t":"Idle Boss Rush","c":"jogo","tipo":null,"s":"Zerado","n":3.5,"l":"2025-09-29","k":"2025-10-05","g":341977},{"t":"Idle Racing","c":"jogo","tipo":null,"s":"Zerado","n":3.0,"l":"2025-08-01","k":"2025-08-01","g":360951},{"t":"Ignite the Depths","c":"jogo","tipo":null,"s":"No aguardo","n":null,"l":"2026-12-31","k":null,"g":null},{"t":"Indiana Jones and the Great Circle: The Order of Giants","c":"jogo","tipo":null,"s":"Zerado","n":3.5,"l":"2025-09-04","k":"2025-09-10","g":321852},{"t":"Indiana Jones and the Great Circle","c":"jogo","tipo":null,"s":"Zerado","n":5.0,"l":"2024-12-09","k":"2024-12-20","g":142415},{"t":"Inscryption","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2021-10-19","k":null,"g":139090},{"t":"Inside","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2016-06-29","k":null,"g":7342},{"t":"Intergalactic: The Heretic Prophet","c":"jogo","tipo":null,"s":"No aguardo","n":null,"l":"2027-12-31","k":null,"g":325611},{"t":"Into the Wind","c":"jogo","tipo":null,"s":"No aguardo","n":null,"l":null,"k":null,"g":405164},{"t":"Invokyr","c":"jogo","tipo":null,"s":"Zerado","n":3.5,"l":"2026-10-08","k":"2026","g":359277},{"t":"Is This Game Trying to Kill Me?","c":"jogo","tipo":null,"s":"Zerado","n":3.5,"l":"2024-11-13","k":"2024-11-13","g":275128},{"t":"It Takes Two","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2021-03-25","k":null,"g":135243},{"t":"Jigrift","c":"jogo","tipo":null,"s":"No aguardo","n":null,"l":"2026-12-31","k":null,"g":383401},{"t":"John Carpenter's Toxic Commando","c":"jogo","tipo":null,"s":"Zerado","n":3.5,"l":"2026-03-12","k":"2026-03-12","g":252485},{"t":"Journey to the Savage Planet","c":"jogo","tipo":null,"s":"Zerado","n":3.5,"l":"2020-01-28","k":null,"g":113108},{"t":"Journey","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2012-03-13","k":null,"g":1352},{"t":"Jump King","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2019-05-03","k":null,"g":117023},{"t":"Jusant","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2023-10-31","k":null,"g":252836},{"t":"Katamari Damacy Reroll","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2018-12-06","k":null,"g":109458},{"t":"Katana Zero","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2019-04-18","k":"2022-04-18","g":20150},{"t":"Keep on Mining!","c":"jogo","tipo":null,"s":"Zerado","n":3.5,"l":"2025-07-30","k":"2025-07-30","g":349928},{"t":"Keeper","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2025-10-17","k":null,"g":348217},{"t":"Kingdom: Classic","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2015-10-21","k":null,"g":13686},{"t":"Kingdom Come: Deliverance II","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2025-02-04","k":null,"g":298526},{"t":"Kingdom Come: Deliverance","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2018-02-13","k":null,"g":4843},{"t":"Kirby and the Forgotten Land","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2022-03-25","k":null,"g":172427},{"t":"Knock on the Window","c":"jogo","tipo":null,"s":"Zerado","n":3.5,"l":"2025-09-11","k":"2025-09-11","g":333306},{"t":"Lethal Company","c":"jogo","tipo":null,"s":"Jogado","n":4.0,"l":"2023-10-23","k":null,"g":212089},{"t":"Life Is Strange 2","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2018-09-26","k":null,"g":62151},{"t":"Life Is Strange","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2015-01-29","k":null,"g":7599},{"t":"Lingo","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2021-12-12","k":null,"g":189169},{"t":"Little Nightmares","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2017-04-28","k":null,"g":9174},{"t":"Lofsöng","c":"jogo","tipo":null,"s":"No aguardo","n":null,"l":null,"k":null,"g":399232},{"t":"Log Riders","c":"jogo","tipo":null,"s":"Zerado","n":3.5,"l":"2026-02-12","k":"2026-02-12","g":387547},{"t":"Lorelei and the Laser Eyes","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2024-05-16","k":null,"g":206806},{"t":"Lorn's Lure","c":"jogo","tipo":null,"s":"Zerado","n":3.5,"l":"2024-09-20","k":"2024-10-25","g":145858},{"t":"Lost Wiki: Kozlovka","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2026-03-20","k":null,"g":374721},{"t":"Luigi's Mansion 3","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2019-10-31","k":null,"g":109455},{"t":"Lunacid","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2023-10-30","k":null,"g":192291},{"t":"Mad Max","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2015-09-01","k":null,"g":2552},{"t":"Mage Arena","c":"jogo","tipo":null,"s":"Zerado","n":3.5,"l":"2025-07-24","k":"2025-07-24","g":356787},{"t":"Make Good Choices","c":"jogo","tipo":null,"s":"Zerado","n":3.5,"l":"2025-01-02","k":"2025-01-02","g":327474},{"t":"Make Way","c":"jogo","tipo":null,"s":"Jogado","n":3.5,"l":"2023-12-04","k":"2023-12-04","g":258230},{"t":"Mario Kart 8 Deluxe","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2017-04-28","k":"2020-04-28","g":26764},{"t":"Mario Kart Wii","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2008-04-10","k":"2010-04-10","g":2183},{"t":"Marvel Rivals","c":"jogo","tipo":null,"s":"Jogado","n":4.0,"l":"2024-12-06","k":"2024-12-06","g":294041},{"t":"Marvel's Guardians of the Galaxy","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2021-10-26","k":null,"g":152249},{"t":"Marvel's Spider-Man 2","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2023-10-20","k":null,"g":127044},{"t":"Marvel's Spider-Man: Miles Morales","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2020-11-12","k":null,"g":134581},{"t":"Marvel's Spider-Man","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2018-09-07","k":null,"g":19565},{"t":"Marvel's Wolverine","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2026-09-15","k":null,"g":168667},{"t":"Max Manos","c":"jogo","tipo":null,"s":"Zerado","n":3.0,"l":"2025-03-06","k":"2025-03-06","g":329599},{"t":"Megabonk","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2025-09-18","k":"2025-09-18","g":327405},{"t":"Metaphor: ReFantazio","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2024-10-11","k":null,"g":26602},{"t":"Mewgenics","c":"jogo","tipo":null,"s":"Abandonado","n":3.5,"l":"2026-02-10","k":null,"g":8042},{"t":"Mimesis","c":"jogo","tipo":null,"s":"Zerado","n":3.5,"l":"2025-10-27","k":"2025-10-27","g":343183},{"t":"Mimic Party","c":"jogo","tipo":null,"s":"Jogado","n":3.5,"l":"2026-08-27","k":"2026-09-29","g":413646},{"t":"Mina the Hollower","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2026-05-29","k":null,"g":189781},{"t":"Minecraft Dungeons","c":"jogo","tipo":null,"s":"Zerado","n":3.5,"l":"2020-05-26","k":null,"g":110474},{"t":"Minecraft: Java Edition","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2011-11-18","k":null,"g":121},{"t":"Mio: Memories in Orbit","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2026-01-20","k":null,"g":306141},{"t":"Mirror Layers","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2021-10-30","k":"2026-01-01","g":98557},{"t":"Mirror's Edge","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2008-11-11","k":null,"g":1051},{"t":"MOLE","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2026-06-15","k":null,"g":378189},{"t":"Monomoon","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2026-11-11","k":null,"g":360260},{"t":"Monster Hunter Stories 3: Twisted Reflection","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2026-03-13","k":null,"g":358525},{"t":"Monster Hunter Wilds","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2025-02-28","k":null,"g":279661},{"t":"Mortal Shell II","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2026-08-20","k":null,"g":347633},{"t":"Mortal Shell","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2020-08-18","k":null,"g":132050},{"t":"Mouthwashing","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2024-09-26","k":null,"g":264410},{"t":"My Beautiful Faraway, Please Don't Be Cruel to Me","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2026-10-13","k":null,"g":399059},{"t":"My Money Grows On Trees","c":"jogo","tipo":null,"s":"Zerado","n":1.5,"l":"2025-08-21","k":"2025-08-21","g":347598},{"t":"Myst","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2020-12-10","k":null,"g":141568},{"t":"Naruto Shippuden: Ultimate Ninja Storm 4","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2016-02-04","k":null,"g":11059},{"t":"Neva: Prologue","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2026-02-19","k":null,"g":389430},{"t":"Neva","c":"jogo","tipo":null,"s":"Zerado","n":4.5,"l":"2024-10-15","k":"2024-10-15","g":250621},{"t":"Nier: Automata - Game of the Yorha Edition","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2019-02-21","k":null,"g":113345},{"t":"NieR Replicant ver.1.22474487139...","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2021-04-23","k":null,"g":131999},{"t":"Nine Sols","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2024-05-29","k":null,"g":194821},{"t":"Nivalis Nights","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2026-09-29","k":null,"g":203301},{"t":"No Man's Sky","c":"jogo","tipo":null,"s":"Jogado","n":4.0,"l":"2016-08-09","k":null,"g":3225},{"t":"No Rest for the Wicked","c":"jogo","tipo":null,"s":"No aguardo","n":null,"l":"2027-03-31","k":null,"g":279627},{"t":"No Sun To Worship","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2023-09-15","k":null,"g":236015},{"t":"Nodebuster","c":"jogo","tipo":null,"s":"Zerado","n":3.0,"l":"2024-08-13","k":"2024-08-13","g":314649},{"t":"Obduction","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2016-08-24","k":null,"g":8983},{"t":"Object Impermanence","c":"jogo","tipo":null,"s":"No aguardo","n":null,"l":"2026-12-31","k":null,"g":375637},{"t":"Omori","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2020-12-25","k":null,"g":26673},{"t":"One Million Coins","c":"jogo","tipo":null,"s":"Zerado","n":null,"l":"2026-10-13","k":"2026-11-10","g":424284},{"t":"OneShot: World Machine Edition","c":"jogo","tipo":null,"s":"Zerado","n":4.5,"l":"2022-09-22","k":"2025-01-01","g":200905},{"t":"Onimusha: Way of the Sword","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2026-09-04","k":null,"g":325602},{"t":"Only Up!","c":"jogo","tipo":null,"s":"Zerado","n":3.0,"l":"2023-05-24","k":"2023-05-24","g":247935},{"t":"Order of the Sinking Star","c":"jogo","tipo":null,"s":"Jogando","n":null,"l":"2026-10-08","k":null,"g":381222},{"t":"Ori and the Blind Forest: Definitive Edition","c":"jogo","tipo":null,"s":"Zerado","n":4.5,"l":"2016-03-11","k":null,"g":19456},{"t":"Ori and the Will of the Wisps","c":"jogo","tipo":null,"s":"Zerado","n":4.5,"l":"2020-03-10","k":null,"g":37001},{"t":"Outer Wilds: Echoes of the Eye","c":"jogo","tipo":null,"s":"Zerado","n":5.0,"l":"2021-09-28","k":"2023-01-01","g":146761},{"t":"Outer Wilds","c":"jogo","tipo":null,"s":"Zerado","n":5.0,"l":"2019-05-28","k":"2023-01-01","g":11737},{"t":"Overwatch","c":"jogo","tipo":null,"s":"Jogado","n":4.5,"l":"2016-05-24","k":null,"g":8173},{"t":"Pacific Drive","c":"jogo","tipo":null,"s":"Zerado","n":2.5,"l":"2024-02-22","k":"2024-02-22","g":217592},{"t":"Palworld","c":"jogo","tipo":null,"s":"Na fila","n":3.5,"l":"2026-07-10","k":null,"g":151665},{"t":"Papers, Please","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2013-08-08","k":null,"g":2935},{"t":"Pathologic 2","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2019-05-23","k":null,"g":55322},{"t":"Peak","c":"jogo","tipo":null,"s":"Jogado","n":4.0,"l":"2025-06-16","k":"2026-01-01","g":349524},{"t":"Persona 3 Reload","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2024-02-02","k":null,"g":252647},{"t":"Persona 4 Revival","c":"jogo","tipo":null,"s":"No aguardo","n":null,"l":"2027-02-18","k":null,"g":348210},{"t":"Persona 5 Royal","c":"jogo","tipo":null,"s":"Zerado","n":4.5,"l":"2019-10-31","k":null,"g":114283},{"t":"Phantom Blade Zero","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2026-10-29","k":null,"g":250618},{"t":"Phoenix Wright: Ace Attorney Trilogy","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2014-04-17","k":null,"g":21610},{"t":"Phonopolis","c":"jogo","tipo":null,"s":"Zerado","n":null,"l":"2026-05-20","k":"2026-11-09","g":204549},{"t":"Please, Don't Touch Anything","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2015-03-26","k":null,"g":9327},{"t":"Pokémon Go","c":"jogo","tipo":null,"s":"Jogado","n":3.5,"l":"2016-07-06","k":"2016-07-06","g":12515},{"t":"Pokémon Legends: Arceus","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2022-01-28","k":null,"g":144054},{"t":"Pokémon Legends: Z-A","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2025-10-16","k":null,"g":288327},{"t":"Pokémon Omega Ruby","c":"jogo","tipo":null,"s":"Zerado","n":3.5,"l":"2014-11-21","k":null,"g":6897},{"t":"Pokémon X","c":"jogo","tipo":null,"s":"Zerado","n":3.5,"l":"2013-10-12","k":null,"g":2286},{"t":"Portal 2","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2011-04-18","k":null,"g":72},{"t":"Portal","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2007-10-10","k":null,"g":71},{"t":"Potato Please","c":"jogo","tipo":null,"s":"Zerado","n":null,"l":"2026-11-03","k":"2026-11-16","g":420360},{"t":"Pragmata","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2026-04-17","k":null,"g":134612},{"t":"Prison Escape Simulator: Dig Out","c":"jogo","tipo":null,"s":"Zerado","n":3.0,"l":"2025-07-25","k":"2025-07-25","g":345882},{"t":"Project Bloomwalker","c":"jogo","tipo":null,"s":"No aguardo","n":null,"l":null,"k":null,"g":362042},{"t":"Project Shadowglass","c":"jogo","tipo":null,"s":"No aguardo","n":null,"l":null,"k":null,"g":370008},{"t":"Pseudoregalia","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2023-07-28","k":null,"g":242148},{"t":"PW7A","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2026-08-24","k":"2026-09-01","g":417781},{"t":"Quarantine Zone: The Last Check","c":"jogo","tipo":null,"s":"Zerado","n":2.5,"l":"2026-01-12","k":"2026-01-15","g":342760},{"t":"Queen's Domain","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2026-10-30","k":null,"g":258775},{"t":"R.E.P.O.","c":"jogo","tipo":null,"s":"Jogado","n":3.5,"l":"2025-02-26","k":null,"g":332780},{"t":"Rain World","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2017-03-28","k":null,"g":14761},{"t":"Rainbow Six Siege","c":"jogo","tipo":null,"s":"Jogado","n":4.0,"l":"2015-12-01","k":null,"g":7360},{"t":"Ratchet & Clank: Rift Apart","c":"jogo","tipo":null,"s":"Zerado","n":3.5,"l":"2021-06-11","k":null,"g":134582},{"t":"Reanimal","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2026-02-13","k":null,"g":314265},{"t":"Red Dead Redemption 2","c":"jogo","tipo":null,"s":"Zerado","n":5.0,"l":"2018-10-26","k":"2025-01-01","g":25076},{"t":"Red Dead Redemption","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2010-05-18","k":null,"g":434},{"t":"Replaced","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2026-04-14","k":null,"g":152244},{"t":"Reshine","c":"jogo","tipo":null,"s":"No aguardo","n":null,"l":"2026-12-31","k":null,"g":399078},{"t":"Resident Evil 2","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2019-01-25","k":null,"g":19686},{"t":"Resident Evil 3","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2020-04-03","k":null,"g":115115},{"t":"Resident Evil 4","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2023-03-24","k":null,"g":132181},{"t":"Resident Evil Requiem","c":"jogo","tipo":null,"s":"Zerado","n":4.5,"l":"2026-02-27","k":null,"g":347668},{"t":"Resident Evil Veronica","c":"jogo","tipo":null,"s":"No aguardo","n":null,"l":"2027-12-31","k":null,"g":404673},{"t":"ReStory: Chill Electronics Repairs","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2026-08-06","k":null,"g":380960},{"t":"Retro Rewind Video Store Simulator","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2026-03-17","k":null,"g":346334},{"t":"Return of the Obra Dinn","c":"jogo","tipo":null,"s":"Zerado","n":4.5,"l":"2018-10-18","k":null,"g":9643},{"t":"RiME","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2017-05-26","k":null,"g":7621},{"t":"Rise of the Tomb Raider","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2015-11-10","k":null,"g":7323},{"t":"Rivage","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2026-09-22","k":null,"g":380416},{"t":"Riven","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2024-06-25","k":null,"g":223112},{"t":"Roadside Research","c":"jogo","tipo":null,"s":"Zerado","n":2.5,"l":"2026-02-12","k":"2026-03-10","g":346940},{"t":"Rocket League","c":"jogo","tipo":null,"s":"Jogado","n":4.0,"l":"2015-07-06","k":null,"g":11198},{"t":"Routine","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2025-12-04","k":"2025-12-04","g":8948},{"t":"Row Divers","c":"jogo","tipo":null,"s":"Zerado","n":2.5,"l":"2025-05-16","k":"2026-06-20","g":337345},{"t":"RuneScape: Dragonwilds","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2026-09-15","k":null,"g":337712},{"t":"RV There Yet?","c":"jogo","tipo":null,"s":"Zerado","n":3.5,"l":"2025-10-21","k":"2025-10-21","g":373580},{"t":"S.T.A.L.K.E.R. 2: Heart of Chornobyl","c":"jogo","tipo":null,"s":"Zerado","n":3.5,"l":"2024-11-20","k":null,"g":101440},{"t":"Sable","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2021-09-23","k":null,"g":79995},{"t":"Satelital","c":"jogo","tipo":null,"s":"No aguardo","n":null,"l":null,"k":null,"g":410782},{"t":"Schoolboy Runaway","c":"jogo","tipo":null,"s":"Zerado","n":2.5,"l":"2024-12-07","k":"2024-12-10","g":307783},{"t":"Scratchers","c":"jogo","tipo":null,"s":"Zerado","n":2.5,"l":"2025-06-16","k":"2025-06-16","g":352885},{"t":"Sea of Thieves","c":"jogo","tipo":null,"s":"Jogado","n":4.0,"l":"2018-03-20","k":null,"g":11137},{"t":"Sekiro: Shadows Die Twice","c":"jogo","tipo":null,"s":"Zerado","n":5.0,"l":"2019-03-22","k":"2024-01-01","g":76882},{"t":"Sensorium","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2020-08-28","k":null,"g":138740},{"t":"Shadow of the Colossus","c":"jogo","tipo":null,"s":"Zerado","n":4.5,"l":"2018-02-06","k":null,"g":37094},{"t":"Shadow of the Tomb Raider","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2018-09-14","k":null,"g":37777},{"t":"Shape of Dreams","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2025-09-10","k":null,"g":293572},{"t":"Sifu","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2022-02-08","k":null,"g":144022},{"t":"Signalis","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2022-10-27","k":null,"g":103244},{"t":"Silent Hill: Townfall","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2026-09-24","k":null,"g":222342},{"t":"Silver Pines","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2026-10-08","k":null,"g":313597},{"t":"Sip Fisher","c":"jogo","tipo":null,"s":"Zerado","n":3.5,"l":"2025-08-27","k":"2025-08-27","g":346401},{"t":"Slay the Princess","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2023-10-23","k":null,"g":210395},{"t":"Slime Rancher 2","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2025-09-23","k":"2026-01-01","g":152243},{"t":"Slime Rancher","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2017-08-01","k":null,"g":16287},{"t":"Slots & Daggers","c":"jogo","tipo":null,"s":"Zerado","n":3.5,"l":"2025-10-24","k":"2025-10-24","g":356904},{"t":"Sonic Unleashed","c":"jogo","tipo":null,"s":"Zerado","n":3.5,"l":"2008-11-20","k":null,"g":5169},{"t":"Sons of the Forest","c":"jogo","tipo":null,"s":"Zerado","n":3.5,"l":"2024-02-22","k":"2026-01-01","g":127346},{"t":"Soulframe","c":"jogo","tipo":null,"s":"No aguardo","n":null,"l":null,"k":null,"g":209643},{"t":"Sovereign Tower","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2026-08-06","k":null,"g":384977},{"t":"Spiritfarer","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2020-08-18","k":null,"g":119304},{"t":"Split Fiction","c":"jogo","tipo":null,"s":"Zerado","n":5.0,"l":"2025-03-06","k":"2025-11-01","g":325594},{"t":"Spyro Reignited Trilogy","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2018-11-13","k":null,"g":87683},{"t":"Star Wars: Galactic Racer","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2026-10-06","k":null,"g":381248},{"t":"Star Wars Jedi: Fallen Order","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2019-11-15","k":null,"g":74701},{"t":"Star Wars Jedi: Survivor","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2023-04-28","k":null,"g":201156},{"t":"Stardew Valley","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2016-02-26","k":null,"g":17000},{"t":"Stellar Blade","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2024-04-26","k":null,"g":117170},{"t":"Stonemachia","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2026-05-26","k":null,"g":300028},{"t":"Strange Horticulture","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2022-01-21","k":null,"g":186597},{"t":"Stray","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2022-07-19","k":null,"g":110248},{"t":"Subnautica","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2018-01-23","k":"2026-01-01","g":9254},{"t":"Sucker for Love: Crush Landing","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2026-08-31","k":null,"g":352990},{"t":"Super Mario 3D Land","c":"jogo","tipo":null,"s":"Zerado","n":3.5,"l":"2011-11-03","k":"2025-01-01","g":1079},{"t":"Super Mario 3D World","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2013-11-21","k":null,"g":2180},{"t":"Super Mario Bros. Wonder","c":"jogo","tipo":null,"s":"Zerado","n":3.5,"l":"2023-10-20","k":null,"g":254339},{"t":"Super Mario Galaxy","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2020-09-18","k":null,"g":229246},{"t":"Super Mario Odyssey","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2017-10-27","k":null,"g":26758},{"t":"Super Mario RPG","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2023-11-17","k":null,"g":254327},{"t":"Super Smash Bros. Ultimate","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2018-12-07","k":null,"g":90101},{"t":"SuperHot","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2016-02-25","k":null,"g":7205},{"t":"Superliminal","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2019-11-12","k":null,"g":68447},{"t":"Tangle Tower","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2019-09-19","k":null,"g":123775},{"t":"Teenage Mutant Ninja Turtles: The Last Ronin","c":"jogo","tipo":null,"s":"No aguardo","n":null,"l":null,"k":null,"g":261148},{"t":"Terminal Lucidity","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2026-01-23","k":"2026-10-09","g":387447},{"t":"Tetradome","c":"jogo","tipo":null,"s":"Zerado","n":3.5,"l":"2025-03-07","k":"2026-03-07","g":333872},{"t":"The Adventures of Elliot: The Millennium Tales","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2026-06-18","k":null,"g":358534},{"t":"The Alters","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2025-06-13","k":null,"g":204634},{"t":"The Awesome Adventures of Captain Spirit","c":"jogo","tipo":null,"s":"Zerado","n":3.5,"l":"2018-06-25","k":null,"g":103283},{"t":"The Blood of Dawnwalker","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2026-09-03","k":null,"g":282831},{"t":"The Boba Teashop","c":"jogo","tipo":null,"s":"Zerado","n":3.0,"l":"2025-04-21","k":"2026-01-01","g":340928},{"t":"The Bookwalker: Thief of Tales","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2023-06-22","k":null,"g":172454},{"t":"The Button Effect","c":"jogo","tipo":null,"s":"No aguardo","n":null,"l":null,"k":null,"g":342839},{"t":"The Case of the Golden Idol","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2022-10-13","k":null,"g":166722},{"t":"The Crimson Diamond","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2024-08-15","k":null,"g":119214},{"t":"The Drifter","c":"jogo","tipo":null,"s":"Zerado","n":null,"l":"2025-07-17","k":"2026-11-05","g":126870},{"t":"The Elder Scrolls IV: Oblivion Remastered","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2025-04-22","k":null,"g":267306},{"t":"The Elder Scrolls V: Skyrim - Special Edition","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2016-10-27","k":null,"g":19457},{"t":"The Entropy Centre","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2022-11-03","k":null,"g":204543},{"t":"The First Berserker: Khazan","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2025-03-27","k":null,"g":279643},{"t":"The Free Shepherd","c":"jogo","tipo":null,"s":"No aguardo","n":null,"l":"2027-12-31","k":null,"g":381202},{"t":"The Lantern of the Laughless Saint","c":"jogo","tipo":null,"s":"No aguardo","n":null,"l":null,"k":null,"g":387817},{"t":"The Last Guardian","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2016-12-06","k":null,"g":117},{"t":"The Last of Us: Left Behind","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2014-02-14","k":null,"g":11790},{"t":"The Last of Us Part II","c":"jogo","tipo":null,"s":"Zerado","n":4.5,"l":"2020-06-19","k":null,"g":26192},{"t":"The Last of Us Remastered","c":"jogo","tipo":null,"s":"Zerado","n":4.5,"l":"2014-07-26","k":null,"g":6036},{"t":"The Legend of Zelda: A Link Between Worlds","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2013-11-22","k":null,"g":2909},{"t":"The Legend of Zelda: Breath of the Wild","c":"jogo","tipo":null,"s":"Zerado","n":4.5,"l":"2017-03-03","k":null,"g":7346},{"t":"The Legend of Zelda: Echoes of Wisdom","c":"jogo","tipo":null,"s":"Zerado","n":4.5,"l":"2024-09-26","k":null,"g":306149},{"t":"The Legend of Zelda: Link's Awakening","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2019-09-20","k":null,"g":115284},{"t":"The Legend of Zelda: Majora's Mask 3D","c":"jogo","tipo":null,"s":"Zerado","n":5.0,"l":"2015-02-12","k":"2025-01-01","g":8593},{"t":"The Legend of Zelda: Ocarina of Time 3D","c":"jogo","tipo":null,"s":"Zerado","n":5.0,"l":"2011-06-16","k":"2025-01-01","g":1039},{"t":"The Legend of Zelda: Ocarina of Time","c":"jogo","tipo":null,"s":"Jogando","n":null,"l":"2026-11-05","k":null,"g":405460},{"t":"The Legend of Zelda: Skyward Sword HD","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2021-07-16","k":null,"g":143614},{"t":"The Legend of Zelda: Tears of the Kingdom","c":"jogo","tipo":null,"s":"Zerado","n":4.5,"l":"2023-05-12","k":null,"g":119388},{"t":"The Legend of Zelda: Twilight Princess HD","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2016-03-04","k":null,"g":18017},{"t":"The Lift","c":"jogo","tipo":null,"s":"No aguardo","n":null,"l":"2027-12-31","k":null,"g":367776},{"t":"The Looker","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2022-06-17","k":null,"g":204849},{"t":"The Mermaid Mask","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2026-07-16","k":null,"g":279369},{"t":"The Message From Deep Space","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2026-06-29","k":null,"g":406341},{"t":"The Mound: Omen of Cthulhu","c":"jogo","tipo":null,"s":"Zerado","n":3.0,"l":"2026-07-15","k":"2026-07-15","g":334673},{"t":"The Outer Worlds","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2019-10-25","k":null,"g":113114},{"t":"The Painscreek Killings","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2017-09-27","k":null,"g":68682},{"t":"The Pedestrian","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2020-01-29","k":null,"g":25837},{"t":"The Plant Shop","c":"jogo","tipo":null,"s":"Zerado","n":null,"l":"2026-09-16","k":"2026-11-03","g":381089},{"t":"The Séance of Blake Manor","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2025-10-27","k":null,"g":335833},{"t":"The Sexy Brutale","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2017-04-11","k":null,"g":22783},{"t":"The Shadow Over Route 80","c":"jogo","tipo":null,"s":"Zerado","n":3.5,"l":"2022-11-23","k":"2026-01-01","g":226034},{"t":"The Stanley Parable: Ultra Deluxe","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2022-04-27","k":null,"g":113119},{"t":"The Talos Principle","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2014-12-11","k":null,"g":7386},{"t":"The Witcher 3: Wild Hunt - Blood and Wine","c":"jogo","tipo":null,"s":"Zerado","n":5.0,"l":"2016-05-30","k":"2018-01-01","g":13166},{"t":"The Witcher 3: Wild Hunt - Hearts of Stone","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2015-10-12","k":"2018-01-01","g":12503},{"t":"The Witcher 3: Wild Hunt - Songs of the Past","c":"jogo","tipo":null,"s":"No aguardo","n":null,"l":"2027-12-31","k":null,"g":403150},{"t":"The Witcher 3 Wild Hunt Remastered","c":"jogo","tipo":null,"s":"Zerado","n":5.0,"l":"2026-09-29","k":"2019-01-01","g":415005},{"t":"The Witcher IV","c":"jogo","tipo":null,"s":"No aguardo","n":null,"l":"2028-12-31","k":null,"g":194662},{"t":"The Witcher Remake","c":"jogo","tipo":null,"s":"No aguardo","n":null,"l":null,"k":null,"g":220277},{"t":"The Witness","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2016-01-26","k":null,"g":5601},{"t":"The Wolf Among Us 2","c":"jogo","tipo":null,"s":"No aguardo","n":null,"l":"2027-12-31","k":null,"g":51523},{"t":"The Wolf Among Us Remastered","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2026-10-29","k":null,"g":404716},{"t":"Time Flies","c":"jogo","tipo":null,"s":"Zerado","n":3.5,"l":"2025-07-31","k":"2025-07-31","g":204367},{"t":"Titanfall 2","c":"jogo","tipo":null,"s":"Zerado","n":4.5,"l":"2016-10-28","k":"2025-01-01","g":17447},{"t":"Toem 2","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2026-09-29","k":null,"g":325182},{"t":"Tomb Raider: Catalyst","c":"jogo","tipo":null,"s":"No aguardo","n":null,"l":"2028-12-31","k":null,"g":381234},{"t":"Tomb Raider: Legacy of Atlantis","c":"jogo","tipo":null,"s":"No aguardo","n":null,"l":"2027-02-12","k":null,"g":381235},{"t":"Tomb Raider","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2013-03-05","k":null,"g":1164},{"t":"Tormented Souls","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2021-08-27","k":null,"g":138569},{"t":"TR-49","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2026-01-21","k":null,"g":378335},{"t":"Tunic","c":"jogo","tipo":null,"s":"Zerado","n":4.5,"l":"2022-03-16","k":null,"g":23733},{"t":"Unbeatable","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2025-12-09","k":null,"g":144859},{"t":"Uncharted 2: Among Thieves","c":"jogo","tipo":null,"s":"Zerado","n":4.5,"l":"2009-10-13","k":null,"g":565},{"t":"Uncharted 3: Drake's Deception","c":"jogo","tipo":null,"s":"Zerado","n":4.5,"l":"2011-11-01","k":null,"g":512},{"t":"Uncharted 4: A Thief's End","c":"jogo","tipo":null,"s":"Zerado","n":5.0,"l":"2016-05-10","k":null,"g":7331},{"t":"Uncharted: Drake's Fortune","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2007-11-16","k":null,"g":431},{"t":"Uncharted: The Lost Legacy","c":"jogo","tipo":null,"s":"Zerado","n":4.5,"l":"2017-08-22","k":null,"g":26193},{"t":"Undertale","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2015-09-15","k":null,"g":12517},{"t":"Unpacking","c":"jogo","tipo":null,"s":"Na fila","n":4.0,"l":"2021-11-02","k":null,"g":115843},{"t":"Valheim","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2026-09-09","k":null,"g":104967},{"t":"Valorant","c":"jogo","tipo":null,"s":"Jogado","n":4.0,"l":"2020-06-02","k":null,"g":126459},{"t":"Vampire Survivors","c":"jogo","tipo":null,"s":"Jogado","n":4.0,"l":"2022-02-01","k":null,"g":186725},{"t":"Verdant","c":"jogo","tipo":null,"s":"No aguardo","n":null,"l":null,"k":null,"g":380956},{"t":"Vholume","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2026-08-21","k":null,"g":378143},{"t":"Viewfinder","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2023-07-18","k":null,"g":142549},{"t":"Voin","c":"jogo","tipo":null,"s":"No aguardo","n":null,"l":null,"k":null,"g":266585},{"t":"Voodoo Fishin'","c":"jogo","tipo":null,"s":"Jogado","n":2.0,"l":"2026","k":null,"g":350020},{"t":"Walkabout Mini Golf","c":"jogo","tipo":null,"s":"Jogado","n":4.5,"l":"2020-09-24","k":null,"g":142095},{"t":"Wall World 2","c":"jogo","tipo":null,"s":"Abandonado","n":3.0,"l":"2025-11-11","k":null,"g":335291},{"t":"Wall World","c":"jogo","tipo":null,"s":"Zerado","n":3.5,"l":"2023-04-05","k":"2026-01-01","g":224705},{"t":"Wanderstop","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2025-03-11","k":null,"g":305019},{"t":"Watch Dogs 2","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2016-11-15","k":null,"g":19441},{"t":"Watch Dogs","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2014-05-26","k":null,"g":1121},{"t":"We Were Here Forever","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2022-05-10","k":null,"g":144455},{"t":"We Were Here Together","c":"jogo","tipo":null,"s":"Zerado","n":3.5,"l":"2019-10-10","k":null,"g":109535},{"t":"We Were Here Tomorrow","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2026-10-20","k":null,"g":393015},{"t":"What Remains of Edith Finch","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2017-04-24","k":null,"g":11233},{"t":"White Knuckle","c":"jogo","tipo":null,"s":"Na fila","n":null,"l":"2025-04-17","k":null,"g":320734},{"t":"Wii Sports","c":"jogo","tipo":null,"s":"Zerado","n":4.0,"l":"2006-11-19","k":"2008-06-19","g":2181},{"t":"Witchbrook","c":"jogo","tipo":null,"s":"No aguardo","n":null,"l":"2027-01-28","k":null,"g":67195},{"t":"Witchspire","c":"jogo","tipo":null,"s":"No aguardo","n":null,"l":null,"k":null,"g":362094},{"t":"WYzards","c":"jogo","tipo":null,"s":"No aguardo","n":null,"l":null,"k":null,"g":275017},{"t":"Yapyap","c":"jogo","tipo":null,"s":"Zerado","n":3.0,"l":"2026-02-03","k":"2026-02-03","g":363307},{"t":"Brooklyn Nine-Nine","c":"audiovisual","tipo":"Série","s":"Assistido","n":4.5,"l":"2013","k":null,"g":null},{"t":"Chickenhare and the Hamster of Darkness","c":"audiovisual","tipo":"Filme","s":"Na fila","n":null,"l":"2022-02-16","k":null,"g":null},{"t":"Cowboy Bebop","c":"audiovisual","tipo":"Anime","s":"Na fila","n":null,"l":"1998","k":null,"g":null},{"t":"Cyberpunk Edgerunners 2","c":"audiovisual","tipo":"Anime","s":"Na fila","n":null,"l":"2026","k":null,"g":null},{"t":"Cyberpunk Edgerunners","c":"audiovisual","tipo":"Anime","s":"Na fila","n":null,"l":"2022","k":null,"g":null},{"t":"Dan Da Dan","c":"audiovisual","tipo":"Anime","s":"Assistindo","n":null,"l":"2024","k":null,"g":null},{"t":"Friends","c":"audiovisual","tipo":"Série","s":"Assistido","n":4.5,"l":"1994","k":null,"g":null},{"t":"Frieren Beyond Journey's End","c":"audiovisual","tipo":"Anime","s":"Assistindo","n":5.0,"l":"2023","k":null,"g":null},{"t":"How I Met Your Mother","c":"audiovisual","tipo":"Série","s":"Assistido","n":4.5,"l":"2005","k":null,"g":null},{"t":"Modern Family","c":"audiovisual","tipo":"Série","s":"Assistido","n":5.0,"l":"2009","k":null,"g":null},{"t":"Mushoku Tensei Jobless Reincarnation","c":"audiovisual","tipo":"Anime","s":"Na fila","n":null,"l":"2021","k":null,"g":null},{"t":"Obsession","c":"audiovisual","tipo":"Filme","s":"Na fila","n":null,"l":"2026-05-13","k":null,"g":null},{"t":"One Piece","c":"audiovisual","tipo":"Anime","s":"Assistindo","n":4.5,"l":"1999","k":null,"g":null},{"t":"Project Hail Mary","c":"audiovisual","tipo":"Filme","s":"Assistido","n":5.0,"l":"2026-03-15","k":"2026-06-15","g":null},{"t":"Supernatural","c":"audiovisual","tipo":"Série","s":"Assistindo","n":null,"l":"2005","k":null,"g":null},{"t":"The Apothecary Diaries","c":"audiovisual","tipo":"Anime","s":"Na fila","n":null,"l":"2023","k":null,"g":null},{"t":"The Boys","c":"audiovisual","tipo":"Série","s":"Assistido","n":null,"l":"2019","k":null,"g":null},{"t":"The Office","c":"audiovisual","tipo":"Série","s":"Assistido","n":4.5,"l":"2005","k":null,"g":null},{"t":"Wildwood","c":"audiovisual","tipo":"Filme","s":"Na fila","n":null,"l":"2026-10-19","k":null,"g":null},{"t":"Boku no Hero Academia","c":"livro","tipo":"Mangá","s":"Lido","n":4.5,"l":"2014","k":null,"g":null},{"t":"Impossible Creatures","c":"livro","tipo":"Livro","s":"Na fila","n":null,"l":"2023","k":null,"g":null},{"t":"Mistborn: O Império Final","c":"livro","tipo":"Livro","s":"Na fila","n":null,"l":"2001","k":null,"g":null},{"t":"One Piece","c":"livro","tipo":"Mangá","s":"Lendo","n":5.0,"l":"1997","k":null,"g":null}];
+const KEY = 'hub-midias-status-v1';
+
+const CATS = {
+  todos:       {label:'Todos'},
+  jogo:        {label:'Jogos',            tint:'var(--jogo)', concl:'Zerado',   opts:['Na fila','Jogando','Jogado','Zerado','Platinado','No aguardo','Abandonado']},
+  audiovisual: {label:'Filmes & Séries',  tint:'var(--av)',   concl:'Assistido',opts:['Na fila','Assistindo','Assistido','Abandonado']},
+  livro:       {label:'Livros & Mangás',  tint:'var(--livro)',concl:'Lido',     opts:['Na fila','Lendo','Lido','Abandonado']}
+};
+const GRUPOS = {
+  fila:{label:'Na fila'}, andamento:{label:'Em andamento'}, concluido:{label:'Concluído'},
+  aguardo:{label:'No aguardo'}, abandonado:{label:'Abandonado'}
+};
+const GRUPO_DE = {
+  'Na fila':'fila','Jogando':'andamento','Jogado':'concluido','Assistindo':'andamento','Lendo':'andamento',
+  'Zerado':'concluido','Platinado':'concluido','Assistido':'concluido','Lido':'concluido',
+  'No aguardo':'aguardo','Abandonado':'abandonado'
+};
+
+const NOVOS_KEY = 'hub-midias-novos-v1', EDICOES_KEY = 'hub-midias-edicoes-v1', STATUS_ANTIGO_KEY = 'hub-midias-status-v1';
+function lerJSON(k, d){ try { return JSON.parse(localStorage.getItem(k) || JSON.stringify(d)); } catch(e){ return d; } }
+function gravarJSON(k, v){
+  try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){}
+  if ((SYNC_KEYS_LIST || []).includes(k) && typeof agendarEnvio === 'function') agendarEnvio();
+}
+let novos = lerJSON(NOVOS_KEY, []).map(n => ({...n, key: n.key || (n.c + '|' + n.t)}));
+let edicoes = lerJSON(EDICOES_KEY, {});
+const statusAntigo = lerJSON(STATUS_ANTIGO_KEY, {});
+if (Object.keys(statusAntigo).length) {
+  Object.keys(statusAntigo).forEach(k => { edicoes[k] = {...(edicoes[k] || {}), s: statusAntigo[k]}; });
+  gravarJSON(EDICOES_KEY, edicoes);
+  try { localStorage.removeItem(STATUS_ANTIGO_KEY); } catch(e){}
+}
+let ITEMS = [];
+function recarregarItens(){
+  const base = [
+    ...RAW.map(r => ({...r, key: r.c + '|' + r.t, novo: false})),
+    ...novos.map(n => ({...n, novo: true}))
+  ];
+  ITEMS = base.map(b => ({...b, ...(edicoes[b.key] || {}), key: b.key, novo: b.novo}));
+}
+function gravarEdicoes(){ gravarJSON(EDICOES_KEY, edicoes); }
+recarregarItens();
+const st = {cat:'todos', grp:'todos', q:'', ord:'titulo', dir:'asc', tag:''};
+const VISTAS_KEY = 'hub-midias-vistas-v1';
+let vistas = lerJSON(VISTAS_KEY, {});
+function salvarVista(){
+  vistas[st.grp] = {ord: st.ord, dir: st.dir, tag: st.tag, q: st.q};
+  gravarJSON(VISTAS_KEY, vistas);
+}
+function aplicarVista(grp){
+  const v = vistas[grp] || {ord:'titulo', dir:'asc', tag:'', q:''};
+  Object.assign(st, {ord: v.ord, dir: v.dir, tag: v.tag, q: v.q});
+  document.getElementById('q').value = st.q;
+  document.getElementById('ord').value = st.ord;
+}
+
+const atual = i => i.s;
+const tagsDe = i => [...new Set([...(i.tags || []), atual(i), GRUPOS[grupo(i)].label])];
+function capaHTML(capa){
+  if (!capa) return '';
+  const erro = "this.parentNode.classList.remove('has-img');this.parentNode.querySelectorAll('img').forEach(x=>x.remove())";
+  return `<img class="bg" src="${esc(capa)}" alt="" aria-hidden="true" loading="lazy" referrerpolicy="no-referrer" onerror="${erro}"><img class="fg" src="${esc(capa)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="${erro}">`;
+}
+const capaDe = i => i.capa || (capas[i.key] && typeof capas[i.key] === 'object' ? capas[i.key].u : (typeof capas[i.key] === 'string' ? capas[i.key] : ''));
+const grupo = i => GRUPO_DE[atual(i)] || 'fila';
+const tipoOf = i => i.c === 'jogo' ? 'Jogo' : i.tipo;
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmtNota = n => n.toString().replace('.', ',');
+const fmtData = s => {
+  if (!s) return '—';
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s);
+  return m ? `${m[3]}/${m[2]}/${m[1]}` : s;
+};
+const doCat = i => st.cat === 'todos' || i.c === st.cat;
+
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('on');
+  clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('on'), 2600);
+}
+
+function definirStatus(key, valor){
+  edicoes[key] = {...(edicoes[key] || {}), s: valor};
+  gravarEdicoes();
+  recarregarItens();
+}
+
+/* ---------- construção dos controles ---------- */
+function montarCategorias(){
+  const el = document.getElementById('cats');
+  el.innerHTML = Object.entries(CATS).map(([k, c]) =>
+    `<button class="pill" type="button" data-cat="${k}" aria-pressed="false">${esc(c.label)}<span class="n"></span></button>`
+  ).join('');
+  el.addEventListener('click', e => {
+    const b = e.target.closest('[data-cat]'); if (!b) return;
+    st.cat = b.dataset.cat; st.grp = 'todos'; aplicarVista('todos'); render();
+  });
+}
+function montarChips(){
+  const el = document.getElementById('chips');
+  el.innerHTML = [['todos','Todos'], ...Object.entries(GRUPOS).map(([k,g]) => [k, g.label])]
+    .map(([k,l]) => `<button class="chip" type="button" data-grp="${k}" aria-pressed="false">${esc(l)}<span class="n"></span></button>`).join('');
+  el.addEventListener('click', e => {
+    const b = e.target.closest('[data-grp]'); if (!b) return;
+    st.grp = b.dataset.grp; aplicarVista(st.grp); render();
+  });
+}
+function montarBusca(){
+  document.getElementById('q').addEventListener('input', e => { st.q = e.target.value; render(); });
+  document.getElementById('ord').addEventListener('change', e => { st.ord = e.target.value; render(); });
+  document.getElementById('ordemDir').addEventListener('click', () => { st.dir = st.dir === 'asc' ? 'desc' : 'asc'; render(); });
+  document.getElementById('limparFiltros').addEventListener('click', () => {
+    Object.assign(st, {cat:'todos', grp:'todos', q:'', ord:'titulo', dir:'asc', tag:''});
+    salvarVista();
+    document.getElementById('q').value = '';
+    document.getElementById('ord').value = 'titulo';
+    render();
+  });
+  document.getElementById('novoBtn').addEventListener('click', abrirNovo);
+  document.getElementById('atualizarDatas').addEventListener('click', atualizarDatas);
+  document.getElementById('tag').addEventListener('change', e => { st.tag = e.target.value; render(); });
+  document.getElementById('abrirConfig').addEventListener('click', () => document.getElementById('config').showModal());
+  document.getElementById('limpar').addEventListener('click', () => {
+    edicoes = {}; gravarEdicoes(); recarregarItens(); render(); toast('Edições locais desfeitas. As mídias que você adicionou continuam.');
+  });
+}
+
+/* ---------- lista ---------- */
+function lista(){
+  let L = ITEMS.filter(doCat);
+  if (st.grp !== 'todos') L = L.filter(i => grupo(i) === st.grp);
+  if (st.tag) L = L.filter(i => tagsDe(i).includes(st.tag));
+  const q = st.q.trim().toLowerCase();
+  if (q) L = L.filter(i => i.t.toLowerCase().includes(q) || tagsDe(i).some(t => t.toLowerCase().includes(q)));
+  const chave = {titulo:i => i.t, nota:i => i.n, lancamento:i => i.l, conclusao:i => i.k}[st.ord];
+  return L.sort((a, b) => {
+    const x = chave(a), y = chave(b);
+    const xv = x == null || x === '', yv = y == null || y === '';
+    if (xv && yv) return a.t.localeCompare(b.t, 'pt-BR');
+    if (xv) return 1;
+    if (yv) return -1;
+    const c = typeof x === 'number' ? x - y : String(x).localeCompare(String(y), 'pt-BR');
+    return st.dir === 'desc' ? -c : c;
+  });
+}
+
+function card(i){
+  const g = grupo(i), c = CATS[i.c], s2 = atual(i);
+  const pode = (g === 'fila' || g === 'andamento') && c.concl;
+  const capa = capaDe(i);
+  const tags = (i.tags || []).slice(0, 3).map(t => `<span class="badge">#${esc(t)}</span>`).join('');
+  const cadeado = i.travado ? '<span class="lock" title="Bloqueado contra atualizações automáticas">🔒</span>' : '';
+  const dataLanc = g === 'aguardo' ? `<div class="data-lanc">${i.l ? '📅 Sai em ' + esc(fmtData(i.l)) : '📅 Data a confirmar'}</div>` : '';
+  const erroCapa = "this.parentNode.classList.remove('has-img');this.parentNode.querySelectorAll('img').forEach(x=>x.remove())";
+  const imgs = capaHTML(capa);
+  return `<article class="card" style="--tint:${c.tint}">
+    <button class="open" type="button" data-key="${esc(i.key)}" aria-label="Abrir ${esc(i.t)}">
+      <div class="cover${capa ? ' has-img' : ''}">${imgs}<span class="ini" aria-hidden="true">${esc(i.t.charAt(0).toUpperCase())}</span></div>
+      <div class="body">
+        <h3>${esc(i.t)}</h3>
+        <div class="meta"><span class="badge">${esc(tipoOf(i))}</span>${i.l && g !== 'aguardo' ? `<span class="badge ghost">${esc(i.l.slice(0,4))}</span>` : ''}${tags}${cadeado}</div>
+        <div class="foot">
+          <span class="status s-${g}">${esc(s2)}</span>
+          ${i.n != null ? `<span class="nota">★ ${fmtNota(i.n)}</span>` : ''}
+        </div>
+        ${dataLanc}
+      </div>
+    </button>
+    ${pode ? `<button class="quick" type="button" data-quick="${esc(i.key)}" aria-label="Marcar ${esc(i.t)} como ${esc(c.concl)}" title="Marcar como ${esc(c.concl)}">✓</button>` : ''}
+  </article>`;
+}
+
+function renderGrid(){
+  const L = lista();
+  const el = document.getElementById('grid');
+  document.getElementById('count').textContent =
+    `${L.length} ${L.length === 1 ? 'item' : 'itens'}${st.cat !== 'todos' ? ' em ' + CATS[st.cat].label : ''}`;
+  el.innerHTML = L.length
+    ? L.map(card).join('')
+    : `<div class="empty glass"><b>Nada por aqui</b>Ajuste a busca ou troque os filtros.</div>`;
+}
+
+/* ---------- painéis ---------- */
+function renderStats(){
+  const q = st.q.trim().toLowerCase();
+  const base = ITEMS.filter(i => doCat(i)
+    && (!st.tag || tagsDe(i).includes(st.tag))
+    && (!q || i.t.toLowerCase().includes(q) || tagsDe(i).some(t => t.toLowerCase().includes(q))));
+  const total = base.length;
+  const cont = {fila:0, andamento:0, concluido:0, aguardo:0, abandonado:0};
+  base.forEach(i => cont[grupo(i)]++);
+  const notas = base.map(i => i.n).filter(n => n != null);
+  const media = notas.length ? (notas.reduce((a,b) => a+b, 0) / notas.length).toFixed(1).replace('.', ',') : '—';
+  const pct = total ? Math.round(cont.concluido / total * 100) : 0;
+  const rotulo = st.cat === 'todos' ? 'tudo' : CATS[st.cat].label;
+
+  document.getElementById('tiles').innerHTML = `
+    <div class="tile"><b>${cont.fila}</b><span>Na fila</span></div>
+    <div class="tile"><b>${cont.andamento}</b><span>Em andamento</span></div>
+    <div class="tile"><b>${media}</b><span>Nota média</span></div>`;
+  document.getElementById('pct').textContent = pct + '%';
+  document.getElementById('ringLabel').textContent = 'concluído';
+  document.getElementById('escopo').textContent = `${rotulo} · ${total} ${total === 1 ? 'mídia' : 'mídias'}`;
+
+  const C = 2 * Math.PI * 52, prog = document.getElementById('prog');
+  prog.style.strokeDasharray = C;
+  prog.style.strokeDashoffset = window.__anelPronto ? C * (1 - pct / 100) : C;
+
+  const cats = st.cat === 'todos' ? Object.entries(CATS).filter(([k]) => k !== 'todos') : [[st.cat, CATS[st.cat]]];
+  document.getElementById('bars').innerHTML = cats.map(([k, c]) => {
+    const itens = ITEMS.filter(i => i.c === k && (!st.tag || tagsDe(i).includes(st.tag)) && (!q || i.t.toLowerCase().includes(q) || tagsDe(i).some(t => t.toLowerCase().includes(q))));
+    const n = itens.length;
+    const done = itens.filter(i => grupo(i) === 'concluido').length;
+    const p = n ? Math.round(done / n * 100) : 0;
+    return `<div class="bar-row" style="--tint:${c.tint}">
+      <div class="top"><span>${esc(c.label)}</span><b>${done} / ${n}</b></div>
+      <div class="track" role="progressbar" aria-label="${esc(c.label)}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${p}"><i style="width:${p}%"></i></div>
+    </div>`;
+  }).join('');
+}
+
+function renderControles(){
+  document.querySelectorAll('[data-cat]').forEach(b => {
+    const k = b.dataset.cat;
+    b.setAttribute('aria-pressed', String(k === st.cat));
+    b.querySelector('.n').textContent = k === 'todos' ? ITEMS.length : ITEMS.filter(i => i.c === k).length;
+  });
+  const base = ITEMS.filter(doCat);
+  document.querySelectorAll('[data-grp]').forEach(b => {
+    const k = b.dataset.grp;
+    b.setAttribute('aria-pressed', String(k === st.grp));
+    b.querySelector('.n').textContent = k === 'todos' ? base.length : base.filter(i => grupo(i) === k).length;
+  });
+  document.getElementById('ordemDir').textContent = st.dir === 'asc' ? '↑ Crescente' : '↓ Decrescente';
+  const ad = document.getElementById('atualizarDatas');
+  const noAguardo = st.grp === 'aguardo';
+  ad.style.visibility = noAguardo ? 'visible' : 'hidden';
+  ad.disabled = !noAguardo;
+  document.getElementById('limparFiltros').disabled = !(st.cat !== 'todos' || st.grp !== 'todos' || st.q || st.tag || st.ord !== 'titulo' || st.dir !== 'asc');
+  const tags = [...new Set(ITEMS.flatMap(i => tagsDe(i)))].sort((a, b) => a.localeCompare(b, 'pt-BR'));
+  if (st.tag && !tags.includes(st.tag)) st.tag = '';
+  document.getElementById('tag').innerHTML = '<option value="">Todas as tags</option>' +
+    tags.map(t => `<option value="${esc(t)}"${t === st.tag ? ' selected' : ''}>#${esc(t)}</option>`).join('');
+}
+
+function render(){
+  salvarVista();
+  renderControles();
+  renderStats();
+  renderGrid();
+}
+
+/* ---------- ações ---------- */
+async function atualizarDatas(){
+  if (ocupado) return toast('Aguarde a busca terminar.');
+  const btn = document.getElementById('atualizarDatas');
+  const alvos = ITEMS.filter(i => grupo(i) === 'aguardo' && !i.travado);
+  if (!alvos.length) return toast('Nenhuma mídia "No aguardo" para atualizar (bloqueadas ficam de fora).');
+  ocupado = true; btn.disabled = true;
+  const mudancas = []; let semFonte = 0, n = 0;
+  for (const i of alvos){
+    n++; document.getElementById('count').textContent = `Atualizando datas: ${n} de ${alvos.length}…`;
+    const ids = fontesAplicaveis(i).filter(id => FONTES[id].data);
+    if (!ids.length) { semFonte++; continue; }
+    const nova = (await buscarEmFontes(i, ids, 'data'))?.url || '';
+    const atualData = i.l || '';
+    const menosPrecisa = nova.length < atualData.length && atualData.startsWith(nova);
+    if (nova && nova !== atualData && !menosPrecisa){
+      mudancas.push({t: i.t, de: i.l, para: nova, key: i.key});
+      edicoes[i.key] = {...(edicoes[i.key] || {}), l: nova};
+    }
+    await new Promise(r => setTimeout(r, 150));
+  }
+  gravarEdicoes(); recarregarItens();
+  ocupado = false; btn.disabled = false; btn.textContent = 'Atualizar datas';
+  render();
+  const quando = new Date().toLocaleString('pt-BR', {dateStyle:'short', timeStyle:'short'});
+  const resumo = mudancas.length
+    ? `${mudancas.length} data(s) mudaram: ` + mudancas.slice(0, 3).map(m => `${m.t} → ${fmtData(m.para)}`).join('; ') + (mudancas.length > 3 ? '…' : '')
+    : 'Nenhuma data mudou';
+  notificar(`Datas verificadas em ${quando}: ${mudancas.length} mudança(s) de ${alvos.length} item(ns).`);
+  mudancas.forEach(m => notificar(`${m.t}: ${m.de || 'sem data'} → ${fmtData(m.para)}`, m.key));
+  toast(`${resumo}. Verificado em ${quando}.` + (semFonte ? ` ${semFonte} sem fonte de data configurada.` : ''));
+}
+
+function removerCapa(key){
+  edicoes[key] = {...(edicoes[key] || {}), capa: null};
+  gravarEdicoes();
+  recarregarItens();
+  delete capas[key];
+  gravarJSON(CAPAS_KEY, capas);
+  render();
+  preencherSheet(key);
+  toast('Capa removida. Use "Buscar capa" para tentar de novo.');
+}
+
+async function buscarCapaAgora(key){
+  if (ocupado) return toast('Aguarde a busca de capas terminar.');
+  const i = ITEMS.find(x => x.key === key);
+  const ids = fontesAplicaveis(i);
+  if (!ids.length) return toast('Nenhuma fonte ativa para esta categoria. Veja em Configurações.');
+  toast('Buscando capa…');
+  ultimoErroFonte = '';
+  const achou = await buscarEmFontes(i, ids);
+  capas[key] = achou ? {u: achou.url, f: achou.fonte} : null;
+  gravarJSON(CAPAS_KEY, capas);
+  render();
+  preencherSheet(key);
+  notificar(achou ? `Capa de “${i.t}” encontrada em ${achou.fonte}.` : `Nenhuma fonte achou capa para “${i.t}”.`, key);
+  toast(achou ? `Capa encontrada em ${achou.fonte}.` : 'Nenhuma fonte achou capa para esta mídia.');
+}
+
+function concluir(key){
+  const item = ITEMS.find(i => i.key === key);
+  const alvo = CATS[item.c].concl;
+  definirStatus(key, alvo);
+  render();
+  toast(`“${item.t}” marcado como ${alvo.toLowerCase()}.`);
+}
+
+
+function preencherSheet(key){
+  const i = ITEMS.find(x => x.key === key);
+  const c = CATS[i.c];
+  const opts = [...new Set([...c.opts, atual(i)])];
+  const capa = capaDe(i);
+  document.getElementById('sheet').innerHTML = `
+    <div class="det">
+      <div class="cover det-cover${capa ? ' has-img' : ''}">${capaHTML(capa)}<span class="ini" aria-hidden="true">${esc(i.t.charAt(0).toUpperCase())}</span></div>
+      <div class="det-info">
+        <div class="head">
+          <div>
+            <span class="badge">${esc(tipoOf(i))}</span>
+            <h2 id="m-title">${esc(i.t)}</h2>
+          </div>
+          <button class="x" type="button" data-fechar aria-label="Fechar">✕</button>
+        </div>
+        <dl>
+          <dt for="st-sel">Status</dt>
+          <dd><select id="st-sel" class="field">${opts.map(o => `<option${o === atual(i) ? ' selected' : ''}>${esc(o)}</option>`).join('')}</select></dd>
+          <dt>Nota</dt><dd>${i.n != null ? '★ ' + fmtNota(i.n) : '—'}</dd>
+          <dt>Lançamento</dt><dd>${esc(fmtData(i.l))}</dd>
+          <dt>Conclusão</dt><dd>${esc(fmtData(i.k))}</dd>
+          <dt>Tags</dt><dd>${(i.tags || []).length ? i.tags.map(t => `<span class="badge">#${esc(t)}</span>`).join(' ') : '—'}</dd>
+        </dl>
+        ${i.c === 'jogo' ? `<label class="switch" style="margin-top:18px"><input type="checkbox" role="switch" data-travar${i.travado ? ' checked' : ''}> Bloquear atualizações automáticas deste jogo</label>` : ''}
+        <div class="keys-actions" style="margin-top:22px"><div class="group">
+          <button class="btn" type="button" data-editar>Editar mídia</button>
+          <button class="btn" type="button" data-buscar-capa>Buscar capa</button>
+          ${capa ? '<button class="link" type="button" data-remover-capa>Remover capa</button>' : ''}
+          ${i.novo ? '<button class="link" type="button" data-remover>Remover esta mídia</button>' : ''}
+        </div></div>
+        <p class="hint">As alterações ficam salvas neste navegador.</p>
+      </div>
+    </div>`;
+  document.querySelector('[data-fechar]').addEventListener('click', () => document.getElementById('modal').close());
+  document.querySelector('[data-editar]').addEventListener('click', () => abrirForm(key));
+  const tr = document.querySelector('[data-travar]');
+  if (tr) tr.addEventListener('change', e => {
+    edicoes[key] = {...(edicoes[key] || {}), travado: e.target.checked};
+    gravarEdicoes(); recarregarItens(); render();
+    toast(e.target.checked ? 'Este jogo ficou fora das atualizações automáticas.' : 'Atualizações liberadas para este jogo.');
+  });
+  document.querySelector('[data-buscar-capa]').addEventListener('click', () => buscarCapaAgora(key));
+  const rc = document.querySelector('[data-remover-capa]');
+  if (rc) rc.addEventListener('click', () => removerCapa(key));
+  const rm = document.querySelector('[data-remover]');
+  if (rm) rm.addEventListener('click', () => removerItem(key));
+  document.getElementById('st-sel').addEventListener('change', e => {
+    definirStatus(key, e.target.value);
+    render();
+    toast(`Status atualizado para ${e.target.value.toLowerCase()}.`);
+  });
+}
+
+function abrir(key){
+  preencherSheet(key);
+  const m = document.getElementById('modal');
+  if (!m.open) m.showModal();
+}
+
+document.getElementById('grid').addEventListener('click', e => {
+  const q = e.target.closest('[data-quick]');
+  if (q) return concluir(q.dataset.quick);
+  const o = e.target.closest('[data-key]');
+  if (o) abrir(o.dataset.key);
+});
+
+/* ---------- chaves e capas ---------- */
+const KEYS_KEY = 'hub-midias-chaves-v1', CAPAS_KEY = 'hub-midias-capas-v1';
+let chaves = lerJSON(KEYS_KEY, {});
+let capas = lerJSON(CAPAS_KEY, {});
+Object.keys(capas).forEach(k => { if (capas[k] === '') delete capas[k]; });
+let ocupado = false;
+
+const PROXY_IGDB = 'http://localhost:8787/igdb';
+const TIMEOUT_FONTE = 10000;
+const FONTES_KEY = 'hub-midias-fontes-v1';
+
+async function getJSON(url, headers, signal){
+  const r = await fetch(url, {headers: headers || {}, signal});
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  return r.json();
+}
+
+/* cada fonte recebe a mídia e um sinal de cancelamento; devolve a URL da capa ou '' */
+const FONTES = {
+  tmdb: {nome:'TMDB', tipos:['Filme','Série','Anime'], precisa:'chave TMDB', ok:() => !!chaves.tmdb,
+    busca: async (i, s) => {
+      const tipo = tipoOf(i) === 'Filme' ? 'movie' : 'tv';
+      const r = await getJSON(`https://api.themoviedb.org/3/search/${tipo}?api_key=${encodeURIComponent(chaves.tmdb)}&language=pt-BR&query=${encodeURIComponent(i.t)}`, null, s);
+      const p = r.results?.[0]?.poster_path;
+      return p ? `https://image.tmdb.org/t/p/w342${p}` : '';
+    }},
+  igdb: {nome:'IGDB (via proxy)', tipos:['Jogo'], precisa:'Client ID e token da IGDB', ok:() => !!(chaves.igdbId && chaves.igdbTok),
+    busca: async (i, s) => {
+      if (i.g == null) return '';
+      const r = await fetch(PROXY_IGDB, {method:'POST', signal: s,
+        headers:{'Client-ID': chaves.igdbId, 'Authorization': 'Bearer ' + chaves.igdbTok},
+        body: `fields cover.image_id; where id = ${i.g};`});
+      if (!r.ok) throw new Error(`IGDB HTTP ${r.status}`);
+      const img = (await r.json())?.[0]?.cover?.image_id;
+      return img ? `https://images.igdb.com/igdb/image/upload/t_cover_big/${img}.jpg` : '';
+    }},
+  omdb: {nome:'OMDb', tipos:['Filme','Série','Anime'], precisa:'chave OMDb (gratuita)', ok:() => !!chaves.omdb,
+    busca: async (i, s) => {
+      const tipo = tipoOf(i) === 'Filme' ? 'movie' : 'series';
+      const r = await getJSON(`https://www.omdbapi.com/?apikey=${encodeURIComponent(chaves.omdb)}&t=${encodeURIComponent(i.t)}&type=${tipo}`, null, s);
+      return r.Poster && r.Poster !== 'N/A' ? r.Poster : '';
+    }},
+  rawg: {nome:'RAWG', tipos:['Jogo'], precisa:'chave RAWG (gratuita)', ok:() => !!chaves.rawg,
+    busca: async (i, s) => {
+      const r = await getJSON(`https://api.rawg.io/api/games?key=${encodeURIComponent(chaves.rawg)}&search=${encodeURIComponent(i.t)}&page_size=1`, null, s);
+      return r.results?.[0]?.background_image || '';
+    }},
+  jikan: {nome:'Jikan (MyAnimeList)', tipos:['Anime','Mangá'], precisa:null, ok:() => true,
+    busca: async (i, s) => {
+      const tipo = tipoOf(i) === 'Mangá' ? 'manga' : 'anime';
+      const r = await getJSON(`https://api.jikan.moe/v4/${tipo}?q=${encodeURIComponent(i.t)}&limit=1`, null, s);
+      return r.data?.[0]?.images?.jpg?.large_image_url || '';
+    }},
+  anilist: {nome:'AniList', tipos:['Anime','Mangá'], precisa:null, ok:() => true,
+    busca: async (i, s) => {
+      const r = await fetch('https://graphql.anilist.co', {method:'POST', signal: s,
+        headers:{'Content-Type':'application/json','Accept':'application/json'},
+        body: JSON.stringify({query:'query($s:String,$t:MediaType){Media(search:$s,type:$t){coverImage{large}}}',
+          variables:{s:i.t, t: tipoOf(i) === 'Mangá' ? 'MANGA' : 'ANIME'}})});
+      if (!r.ok) throw new Error(`AniList HTTP ${r.status}`);
+      return (await r.json()).data?.Media?.coverImage?.large || '';
+    }},
+  openlibrary: {nome:'Open Library', tipos:['Livro','Mangá'], precisa:null, ok:() => true,
+    busca: async (i, s) => {
+      const t = encodeURIComponent(i.t);
+      for (const q of [`title=${t}`, `q=${t}`]){
+        const r = await getJSON(`https://openlibrary.org/search.json?${q}&limit=5&fields=title,cover_i`, null, s);
+        const id = r.docs?.find(d => d.cover_i)?.cover_i;
+        if (id) return `https://covers.openlibrary.org/b/id/${id}-L.jpg`;
+      }
+      return '';
+    }},
+  googlebooks: {nome:'Google Books', tipos:['Livro','Mangá'], precisa:null, ok:() => true,
+    busca: async (i, s) => {
+      const r = await getJSON(`https://www.googleapis.com/books/v1/volumes?q=intitle:${encodeURIComponent(i.t)}&maxResults=1`, null, s);
+      const l = r.items?.[0]?.volumeInfo?.imageLinks;
+      const u = l?.thumbnail || l?.smallThumbnail;
+      return u ? u.replace('http://', 'https://') : '';
+    }}
+};
+const isoLocal = d => { const p = n => String(n).padStart(2,'0'); return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`; };
+FONTES.tmdb.data = async (i, s) => {
+  const tipo = tipoOf(i) === 'Filme' ? 'movie' : 'tv';
+  const r = await getJSON(`https://api.themoviedb.org/3/search/${tipo}?api_key=${encodeURIComponent(chaves.tmdb)}&language=pt-BR&query=${encodeURIComponent(i.t)}`, null, s);
+  const x = r.results?.[0];
+  return x?.release_date || x?.first_air_date || '';
+};
+FONTES.omdb.data = async (i, s) => {
+  const tipo = tipoOf(i) === 'Filme' ? 'movie' : 'series';
+  const r = await getJSON(`https://www.omdbapi.com/?apikey=${encodeURIComponent(chaves.omdb)}&t=${encodeURIComponent(i.t)}&type=${tipo}`, null, s);
+  if (!r.Released || r.Released === 'N/A') return '';
+  const d = new Date(r.Released);
+  return isNaN(d) ? '' : isoLocal(d);
+};
+FONTES.igdb.data = async (i, s) => {
+  if (i.g == null) return '';
+  const r = await fetch(PROXY_IGDB, {method:'POST', signal: s,
+    headers:{'Client-ID': chaves.igdbId, 'Authorization': 'Bearer ' + chaves.igdbTok},
+    body: `fields first_release_date; where id = ${i.g};`});
+  if (!r.ok) throw new Error(`IGDB HTTP ${r.status}`);
+  const ts = (await r.json())?.[0]?.first_release_date;
+  return ts ? isoLocal(new Date(ts * 1000)) : '';
+};
+FONTES.rawg.data = async (i, s) => {
+  const r = await getJSON(`https://api.rawg.io/api/games?key=${encodeURIComponent(chaves.rawg)}&search=${encodeURIComponent(i.t)}&page_size=1`, null, s);
+  return r.results?.[0]?.released || '';
+};
+FONTES.jikan.data = async (i, s) => {
+  const tipo = tipoOf(i) === 'Mangá' ? 'manga' : 'anime';
+  const r = await getJSON(`https://api.jikan.moe/v4/${tipo}?q=${encodeURIComponent(i.t)}&limit=1`, null, s);
+  const x = r.data?.[0];
+  return (x?.aired?.from || x?.published?.from || '').slice(0, 10);
+};
+FONTES.anilist.data = async (i, s) => {
+  const r = await fetch('https://graphql.anilist.co', {method:'POST', signal: s,
+    headers:{'Content-Type':'application/json','Accept':'application/json'},
+    body: JSON.stringify({query:'query($s:String,$t:MediaType){Media(search:$s,type:$t){startDate{year month day}}}',
+      variables:{s:i.t, t: tipoOf(i) === 'Mangá' ? 'MANGA' : 'ANIME'}})});
+  if (!r.ok) throw new Error(`AniList HTTP ${r.status}`);
+  const sd = (await r.json()).data?.Media?.startDate;
+  if (!sd?.year) return '';
+  const p = n => String(n).padStart(2,'0');
+  if (!sd.month) return String(sd.year);
+  if (!sd.day) return `${sd.year}-${p(sd.month)}`;
+  return `${sd.year}-${p(sd.month)}-${p(sd.day)}`;
+};
+FONTES.googlebooks.data = async (i, s) => {
+  const r = await getJSON(`https://www.googleapis.com/books/v1/volumes?q=intitle:${encodeURIComponent(i.t)}&maxResults=1`, null, s);
+  return r.items?.[0]?.volumeInfo?.publishedDate || '';
+};
+const FONTES_PADRAO = ['tmdb','omdb','igdb','rawg','jikan','anilist','openlibrary','googlebooks'];
+
+const precisaChave = f => false; /* compatibilidade: a checagem agora é feita por fonte */
+
+let configFontes = lerJSON(FONTES_KEY, {});
+configFontes.on = configFontes.on || {};
+configFontes.ordem = [
+  ...(configFontes.ordem || []).filter(id => FONTES[id]),
+  ...FONTES_PADRAO.filter(id => !(configFontes.ordem || []).includes(id))
+];
+const gravarFontes = () => gravarJSON(FONTES_KEY, configFontes);
+const fontesAplicaveis = i => configFontes.ordem.filter(id =>
+  FONTES[id].tipos.includes(tipoOf(i)) && configFontes.on[id] !== false && FONTES[id].ok());
+
+let ultimoErroFonte = '';
+async function buscarEmFontes(i, ids, metodo = 'busca'){
+  for (const id of ids){
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), TIMEOUT_FONTE);
+    try {
+      const url = await FONTES[id][metodo](i, ctrl.signal);
+      clearTimeout(timer);
+      if (url) return {url, fonte: FONTES[id].nome};
+    } catch (err) {
+      clearTimeout(timer);
+      ultimoErroFonte = `${FONTES[id].nome}: ${err.name === 'AbortError' ? 'mais de 10 s' : err.message}`;
+    }
+  }
+  return null;
+}
+
+async function buscarCapasPendentes(){
+  if (ocupado) return;
+  const btn = document.getElementById('buscarCapas'), ks = document.getElementById('kstatus');
+  const pend = ITEMS.filter(i => capas[i.key] === undefined && !i.capa && !i.travado);
+  if (!pend.length) { ks.textContent = 'Nenhuma capa pendente.'; return; }
+  ocupado = true; btn.disabled = true; ultimoErroFonte = '';
+  const cont = {ok:0, nao:0, semFonte:0};
+  let feitos = 0;
+  for (const i of pend){
+    ks.textContent = `Buscando ${feitos + 1} de ${pend.length}: ${i.t}`;
+    const ids = fontesAplicaveis(i);
+    if (!ids.length) { cont.semFonte++; continue; }
+    const achou = await buscarEmFontes(i, ids);
+    if (achou) { capas[i.key] = {u: achou.url, f: achou.fonte}; cont.ok++; }
+    else { capas[i.key] = null; cont.nao++; }
+    feitos++;
+    if (feitos % 10 === 0) { gravarJSON(CAPAS_KEY, capas); render(); }
+    await new Promise(r => setTimeout(r, 150));
+  }
+  gravarJSON(CAPAS_KEY, capas);
+  ocupado = false; btn.disabled = false; render();
+  notificar(`Busca de capas: ${cont.ok} encontrada(s), ${cont.nao} não achada(s), ${cont.semFonte} sem fonte ativa.`);
+  ks.textContent = `Encontradas: ${cont.ok}. Não achadas em nenhuma fonte: ${cont.nao}. Sem fonte ativa para a categoria: ${cont.semFonte}.` +
+    (ultimoErroFonte ? ` Último erro de fonte: ${ultimoErroFonte}.` : '');
+}
+
+/* ----- lista de fontes arrastável ----- */
+function linhaFonte(id){
+  const f = FONTES[id], on = configFontes.on[id] !== false;
+  const status = f.ok() ? 'pronta' : (f.precisa ? 'falta ' + f.precisa : 'sem chave');
+  return `<li class="fonte" data-id="${id}">
+    <button class="grip" type="button" aria-label="Arrastar ${esc(f.nome)}" title="Arrastar para reordenar">⋮⋮</button>
+    <label class="on"><input type="checkbox" data-on="${id}"${on ? ' checked' : ''}> <span>${esc(f.nome)}</span></label>
+    <small class="${f.ok() ? 'ok' : 'warn'}">${esc(status)}</small>
+    <span class="tipos">${f.tipos.map(t => `<span class="badge">${esc(t)}</span>`).join('')}</span>
+    <span class="setas">
+      <button type="button" class="pill" data-up="${id}" aria-label="Subir ${esc(f.nome)}">▲</button>
+      <button type="button" class="pill" data-down="${id}" aria-label="Descer ${esc(f.nome)}">▼</button>
+    </span>
+  </li>`;
+}
+function montarFontes(){
+  document.getElementById('fontes').innerHTML = configFontes.ordem.map(linhaFonte).join('');
+}
+function salvarOrdemDoDOM(){
+  configFontes.ordem = [...document.querySelectorAll('#fontes li.fonte')].map(li => li.dataset.id);
+  gravarFontes();
+}
+function iniciarFontes(){
+  const ol = document.getElementById('fontes');
+  let arrastando = null;
+  ol.addEventListener('pointerdown', e => {
+    const g = e.target.closest('.grip'); if (!g) return;
+    e.preventDefault();
+    arrastando = g.closest('li');
+    arrastando.classList.add('drag');
+    try { g.setPointerCapture(e.pointerId); } catch(err){}
+  });
+  ol.addEventListener('pointermove', e => {
+    if (!arrastando) return;
+    const outros = [...ol.querySelectorAll('li.fonte')].filter(li => li !== arrastando);
+    const antes = outros.find(li => { const r = li.getBoundingClientRect(); return e.clientY < r.top + r.height / 2; });
+    if (antes) ol.insertBefore(arrastando, antes); else ol.appendChild(arrastando);
+  });
+  const fimArrasto = () => {
+    if (!arrastando) return;
+    arrastando.classList.remove('drag'); arrastando = null;
+    salvarOrdemDoDOM();
+  };
+  ol.addEventListener('pointerup', fimArrasto);
+  ol.addEventListener('pointercancel', fimArrasto);
+  ol.addEventListener('click', e => {
+    const b = e.target.closest('[data-up],[data-down]'); if (!b) return;
+    const li = b.closest('li');
+    if (b.hasAttribute('data-up')){ const p = li.previousElementSibling; if (p) ol.insertBefore(li, p); }
+    else { const n = li.nextElementSibling; if (n) ol.insertBefore(n, li); }
+    salvarOrdemDoDOM();
+  });
+  ol.addEventListener('change', e => {
+    const c = e.target.closest('[data-on]'); if (!c) return;
+    configFontes.on[c.dataset.on] = c.checked;
+    gravarFontes();
+  });
+}
+
+function iniciarChaves(){
+  document.getElementById('k-tmdb').value = chaves.tmdb || '';
+  document.getElementById('k-igdb-id').value = chaves.igdbId || '';
+  document.getElementById('k-igdb-tok').value = chaves.igdbTok || '';
+  document.getElementById('k-rawg').value = chaves.rawg || '';
+  document.getElementById('k-omdb').value = chaves.omdb || '';
+  montarFontes();
+  iniciarFontes();
+  document.getElementById('salvarChaves').addEventListener('click', () => {
+    chaves = {
+      tmdb: document.getElementById('k-tmdb').value.trim(),
+      igdbId: document.getElementById('k-igdb-id').value.trim(),
+      igdbTok: document.getElementById('k-igdb-tok').value.trim(),
+      rawg: document.getElementById('k-rawg').value.trim(),
+      omdb: document.getElementById('k-omdb').value.trim()
+    };
+    gravarJSON(KEYS_KEY, chaves);
+    montarFontes();
+    document.getElementById('kstatus').textContent = 'Chaves salvas neste navegador.';
+  });
+  document.getElementById('apagarChaves').addEventListener('click', () => {
+    chaves = {}; gravarJSON(KEYS_KEY, chaves);
+    ['k-tmdb','k-igdb-id','k-igdb-tok','k-rawg','k-omdb'].forEach(id => document.getElementById(id).value = '');
+    montarFontes();
+    document.getElementById('kstatus').textContent = 'Chaves apagadas deste navegador.';
+  });
+  document.getElementById('buscarCapas').addEventListener('click', buscarCapasPendentes);
+  document.getElementById('buscarNaoAchadas').addEventListener('click', () => {
+    ITEMS.forEach(i => { if (capas[i.key] === null) delete capas[i.key]; });
+    gravarJSON(CAPAS_KEY, capas);
+    buscarCapasPendentes();
+  });
+  document.querySelector('[data-fechar-config]').addEventListener('click', () => document.getElementById('config').close());
+}
+
+/* ---------- adicionar e editar mídia ---------- */
+const OPCOES_TIPO = {audiovisual:['Filme','Série','Anime'], livro:['Livro','Mangá']};
+
+function abrirNovo(){ abrirForm(null); }
+
+function abrirForm(key){
+  const i = key ? ITEMS.find(x => x.key === key) : null;
+  const modal = document.getElementById('modal');
+  if (modal.open) modal.close();
+  const d = document.getElementById('novo');
+  d.innerHTML = `
+    <div class="sheet">
+      <div class="head">
+        <h2 id="n-title">${i ? 'Editar mídia' : 'Adicionar mídia'}</h2>
+        <button class="x" type="button" data-fechar-novo aria-label="Fechar">✕</button>
+      </div>
+      <div class="novo-grid">
+        <label class="full">Título<input id="n-t" class="field" type="text" autocomplete="off" value="${esc(i ? i.t : '')}"></label>
+        <label>Categoria<select id="n-c" class="field">
+          ${Object.entries(CATS).filter(([k]) => k !== 'todos').map(([k, c]) => `<option value="${k}"${(i ? i.c : 'jogo') === k ? ' selected' : ''}>${esc(c.label)}</option>`).join('')}
+        </select></label>
+        <label>Tipo<select id="n-tipo" class="field"></select></label>
+        <label>Status<select id="n-s" class="field"></select></label>
+        <label>Nota (0 a 5)<input id="n-n" class="field" type="number" min="0" max="5" step="0.5" value="${i && i.n != null ? i.n : ''}"></label>
+        <label>Lançamento<input id="n-l" class="field" type="date" value="${esc(i && i.l ? i.l : '')}"></label>
+        <label>Conclusão<input id="n-k" class="field" type="date" value="${esc(i && i.k ? i.k : '')}"></label>
+        <label id="lbl-g" class="full">ID da IGDB (jogos, para buscar a capa)<input id="n-g" class="field" type="number" min="1" value="${i && i.g != null ? i.g : ''}"></label>
+        <label class="full">Link da capa (opcional, sobrescreve a busca automática)<input id="n-capa" class="field" type="url" placeholder="https://…" value="${esc(i && i.capa ? i.capa : '')}"></label>
+        <label class="full">Tags (separadas por vírgula)<input id="n-tags" class="field" type="text" placeholder="ex.: favorito, co-op" value="${esc(i && i.tags ? i.tags.join(', ') : '')}"></label>
+      </div>
+      <p class="erro" id="n-erro" role="alert"></p>
+      <div class="keys-actions"><div class="group"><button class="btn" id="n-salvar" type="button">${i ? 'Salvar alterações' : 'Adicionar'}</button></div></div>
+    </div>`;
+  d.querySelector('[data-fechar-novo]').addEventListener('click', () => d.close());
+  document.getElementById('n-c').addEventListener('change', () => atualizarCamposForm(i));
+  document.getElementById('n-salvar').addEventListener('click', () => salvarItem(key));
+  atualizarCamposForm(i);
+  if (!d.open) d.showModal();
+  document.getElementById('n-t').focus();
+}
+
+function atualizarCamposForm(i){
+  const c = document.getElementById('n-c').value;
+  const opts = OPCOES_TIPO[c];
+  const selTipo = document.getElementById('n-tipo');
+  const tipoAtual = (i && i.c === c && i.tipo) || (opts ? opts[0] : 'Jogo');
+  selTipo.disabled = !opts;
+  selTipo.innerHTML = (opts || ['Jogo']).map(o => `<option${o === tipoAtual ? ' selected' : ''}>${esc(o)}</option>`).join('');
+  const sAtual = (i && i.c === c && i.s) || 'Na fila';
+  const sOpts = [...CATS[c].opts];
+  if (!sOpts.includes(sAtual)) sOpts.unshift(sAtual);
+  document.getElementById('n-s').innerHTML = sOpts.map(o => `<option${o === sAtual ? ' selected' : ''}>${esc(o)}</option>`).join('');
+  document.getElementById('lbl-g').style.display = c === 'jogo' ? '' : 'none';
+}
+
+function salvarItem(key){
+  const erro = msg => { document.getElementById('n-erro').textContent = msg; };
+  const t = document.getElementById('n-t').value.trim();
+  const c = document.getElementById('n-c').value;
+  if (!t) return erro('Informe o título.');
+  if (ITEMS.some(o => o.key !== key && o.c === c && o.t.toLowerCase() === t.toLowerCase())) return erro('Já existe uma mídia com esse título nesta categoria.');
+  const nv = document.getElementById('n-n').value;
+  const n = nv === '' ? null : parseFloat(nv);
+  if (n !== null && (isNaN(n) || n < 0 || n > 5)) return erro('A nota precisa estar entre 0 e 5.');
+  const l = document.getElementById('n-l').value || null;
+  const k = document.getElementById('n-k').value || null;
+  if (k && l && k < l) return erro('A conclusão não pode ser antes do lançamento.');
+  const capa = document.getElementById('n-capa').value.trim();
+  if (capa && !/^https?:\/\//i.test(capa)) return erro('O link da capa precisa começar com http:// ou https://.');
+  const tags = [...new Set(document.getElementById('n-tags').value.split(',').map(x => x.trim()).filter(Boolean))];
+  const gv = document.getElementById('n-g').value;
+  const dados = {
+    t, c,
+    tipo: OPCOES_TIPO[c] ? document.getElementById('n-tipo').value : null,
+    s: document.getElementById('n-s').value,
+    n, l, k,
+    g: c === 'jogo' && gv ? parseInt(gv, 10) : null,
+    capa: capa || null,
+    tags,
+    travado: key && edicoes[key] ? !!edicoes[key].travado : false
+  };
+  if (key) {
+    edicoes[key] = dados;
+  } else {
+    const nk = 'n' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+    novos.push({key: nk, ...dados});
+    gravarJSON(NOVOS_KEY, novos);
+  }
+  gravarEdicoes();
+  recarregarItens();
+  document.getElementById('novo').close();
+  render();
+  toast(key ? 'Mídia atualizada.' : `“${t}” adicionado. Busque a capa em Configurações.`);
+}
+
+function removerItem(key){
+  const i = ITEMS.find(x => x.key === key);
+  if (!i || !i.novo) return;
+  novos = novos.filter(n => n.key !== key);
+  gravarJSON(NOVOS_KEY, novos);
+  delete edicoes[key];
+  gravarEdicoes();
+  recarregarItens();
+  document.getElementById('modal').close();
+  render();
+  toast(`“${i.t}” removido.`);
+}
+
+/* ---------- notificações ---------- */
+const NOTIF_KEY = 'hub-midias-notif-v1';
+let notifs = lerJSON(NOTIF_KEY, []);
+function notificar(texto, key){
+  notifs.unshift({id: Date.now() + Math.random().toString(36).slice(2, 6), t: Date.now(), texto, key: key || null, lida: false});
+  notifs = notifs.slice(0, 200);
+  gravarJSON(NOTIF_KEY, notifs);
+  atualizarSino();
+}
+function atualizarSino(){
+  const n = notifs.filter(x => !x.lida).length;
+  const el = document.getElementById('sinoN');
+  el.textContent = n; el.hidden = !n;
+}
+function renderNotifs(){
+  const ul = document.getElementById('notif-lista');
+  ul.innerHTML = notifs.length ? notifs.map(n => `<li class="notif${n.lida ? '' : ' nova'}">
+      <button type="button" class="notif-corpo" data-abrir="${esc(n.key || '')}"${n.key ? '' : ' disabled'}>
+        <span>${esc(n.texto)}</span>
+        <small>${new Date(n.t).toLocaleString('pt-BR', {dateStyle:'short', timeStyle:'short'})}</small>
+      </button></li>`).join('') : '<li class="vazio">Nenhuma notificação ainda.</li>';
+}
+function iniciarNotif(){
+  const dlg = document.getElementById('notif');
+  document.getElementById('sino').addEventListener('click', () => { renderNotifs(); dlg.showModal(); });
+  dlg.querySelector('[data-fechar-notif]').addEventListener('click', () => dlg.close());
+  document.getElementById('notif-lidas').addEventListener('click', () => {
+    notifs.forEach(n => n.lida = true); gravarJSON(NOTIF_KEY, notifs); atualizarSino(); renderNotifs();
+  });
+  document.getElementById('notif-limpar').addEventListener('click', () => {
+    notifs = []; gravarJSON(NOTIF_KEY, notifs); atualizarSino(); renderNotifs();
+  });
+  document.getElementById('notif-lista').addEventListener('click', e => {
+    const b = e.target.closest('[data-abrir]'); if (!b || !b.dataset.abrir) return;
+    const key = b.dataset.abrir;
+    if (!ITEMS.some(i => i.key === key)) return toast('Esse item não existe mais.');
+    dlg.close(); abrir(key);
+  });
+  atualizarSino();
+}
+
+/* ---------- sincronização com Firebase ---------- */
+SYNC_KEYS_LIST = [EDICOES_KEY, NOVOS_KEY, CAPAS_KEY, FONTES_KEY];
+const FB_CFG_KEY = 'hub-midias-firebase-v1';
+let fbCfg = lerJSON(FB_CFG_KEY, null);
+let fbAuth = null, fbDb = null, fbDocRef = null, fbUnsub = null, fbTimer = null;
+let fbAplicandoRemoto = false;
+
+function setStatusFb(msg){ const el = document.getElementById('fb-status'); if (el) el.textContent = msg; }
+function agendarEnvio(){
+  if (!fbDocRef || fbAplicandoRemoto) return;
+  clearTimeout(fbTimer);
+  fbTimer = setTimeout(enviarAgora, 800);
+}
+function enviarAgora(){
+  if (!fbDocRef) return;
+  const dados = JSON.parse(JSON.stringify({edicoes, novos, capas, fontes: configFontes}));
+  dados.atualizado = firebase.firestore.FieldValue.serverTimestamp();
+  fbDocRef.set(dados)
+    .then(() => setStatusFb('Sincronizado às ' + new Date().toLocaleTimeString('pt-BR', {timeStyle:'short'})))
+    .catch(err => setStatusFb('Erro ao sincronizar: ' + err.message));
+}
+function aplicarRemoto(d){
+  fbAplicandoRemoto = true;
+  try {
+    edicoes = d.edicoes || {};
+    novos = d.novos || [];
+    capas = d.capas || {};
+    if (d.fontes) { configFontes = {...configFontes, ...d.fontes}; configFontes.on = configFontes.on || {}; }
+    gravarJSON(EDICOES_KEY, edicoes);
+    gravarJSON(NOVOS_KEY, novos);
+    gravarJSON(CAPAS_KEY, capas);
+    gravarFontes();
+  } finally { fbAplicandoRemoto = false; }
+  recarregarItens();
+  montarFontes();
+  render();
+}
+function ligarSync(uid){
+  desligarSync();
+  fbDocRef = fbDb.collection('usuarios').doc(uid);
+  fbUnsub = fbDocRef.onSnapshot(snap => {
+    if (snap.metadata.hasPendingWrites) return;
+    if (!snap.exists) { if (!snap.metadata.fromCache) enviarAgora(); return; }
+    aplicarRemoto(snap.data());
+    setStatusFb('Sincronizado · conectado');
+  }, err => setStatusFb('Erro na sincronização: ' + err.message));
+}
+function desligarSync(){
+  if (fbUnsub) fbUnsub();
+  fbUnsub = null; fbDocRef = null;
+}
+function iniciarFirebase(){
+  if (!fbCfg) return setStatusFb('Não configurada. Cole a configuração do Firebase abaixo.');
+  if (typeof firebase === 'undefined') return setStatusFb('Não foi possível carregar o Firebase. Verifique a conexão e abra pelo endereço publicado.');
+  if (!firebase.apps.length) firebase.initializeApp(fbCfg);
+  fbAuth = firebase.auth();
+  fbDb = firebase.firestore();
+  fbAuth.onAuthStateChanged(user => {
+    document.getElementById('fb-entrar').disabled = !!user;
+    document.getElementById('fb-sair').disabled = !user;
+    if (user){ setStatusFb('Conectado como ' + (user.email || 'conta Google') + '. Sincronizando…'); ligarSync(user.uid); }
+    else { desligarSync(); setStatusFb('Não conectado. O site continua funcionando só neste aparelho.'); }
+  });
+}
+function lerConfigFirebase(txt){
+  const corpo = txt.replace(/^[\s\S]*?=\s*(?=\{)/, '').replace(/;\s*$/, '').trim();
+  const obj = Function('"use strict"; return (' + corpo + ');')();
+  if (!obj || !obj.apiKey || !obj.projectId) throw new Error('configuração incompleta (faltam apiKey ou projectId)');
+  return obj;
+}
+function iniciarSync(){
+  document.getElementById('fb-salvar').addEventListener('click', () => {
+    try {
+      fbCfg = lerConfigFirebase(document.getElementById('fb-cfg').value);
+      gravarJSON(FB_CFG_KEY, fbCfg);
+      document.getElementById('fb-cfg').value = '';
+      iniciarFirebase();
+    } catch (err) { setStatusFb('Configuração inválida: ' + err.message); }
+  });
+  document.getElementById('fb-entrar').addEventListener('click', () => {
+    if (!fbAuth) return setStatusFb('Salve a configuração do Firebase primeiro.');
+    fbAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider())
+      .catch(err => setStatusFb('Não entrou: ' + err.message));
+  });
+  document.getElementById('fb-sair').addEventListener('click', () => { if (fbAuth) fbAuth.signOut(); });
+  iniciarFirebase();
+}
+
+/* ---------- início ---------- */
+iniciarChaves();
+iniciarNotif();
+iniciarSync();
+montarCategorias();
+montarChips();
+montarBusca();
+render();
+requestAnimationFrame(() => requestAnimationFrame(() => {
+  window.__anelPronto = true;
+  renderStats();
+}));
+</script>
+</body>
+</html>
