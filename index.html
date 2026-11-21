@@ -256,7 +256,9 @@ dialog::backdrop{background:rgba(3,4,8,.62);backdrop-filter:blur(6px);-webkit-ba
   .hero > div:first-child{display:contents}
   .hero h1{grid-column:1;grid-row:1;align-self:center;margin:0}
   .ring{grid-column:2;grid-row:1;width:96px;height:96px}
-  .tiles{grid-column:1 / -1;grid-row:2;margin-top:8px}
+  .tiles{grid-column:1;grid-row:2;justify-self:start;grid-template-columns:auto;margin-top:8px}
+  .tiles .tile{padding:6px 12px;min-width:64px}
+  #ringLabel,#ringFrac{display:none}
   .card .meta{height:auto;flex-wrap:wrap;gap:4px}
   .stars{font-size:.8rem;letter-spacing:1px}
   .nota-num{font-size:.78rem}
@@ -657,10 +659,7 @@ function renderStats(){
   const pct = total ? Math.round(cont.concluido / total * 100) : 0;
 
   document.getElementById('tituloCat').textContent = CATS[st.cat].label;
-  document.getElementById('tiles').innerHTML = `
-    <div class="tile"><b>${cont.fila}</b><span>Na fila</span></div>
-    <div class="tile"><b>${cont.andamento}</b><span>Em andamento</span></div>
-    <div class="tile"><b>${media}</b><span>Nota média</span></div>`;
+  document.getElementById('tiles').innerHTML = `<div class="tile"><b>${media}</b><span>Nota média</span></div>`;
   document.getElementById('pct').textContent = pct + '%';
   document.getElementById('ringLabel').textContent = 'concluídos';
   document.getElementById('ringFrac').textContent = `${cont.concluido} de ${total}`;
