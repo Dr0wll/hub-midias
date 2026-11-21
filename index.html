@@ -18,7 +18,7 @@
   --edge:rgba(255,255,255,.07); --edge-2:rgba(255,255,255,.14);
   --chamfer:inset 0 1px 0 rgba(255,255,255,.13);
   --drop:0 14px 30px -18px rgba(0,0,0,.7);
-  --jogo:#7fb3a6; --av:#c9a66b; --livro:#8f95b8;
+  --jogo:#6fd0b0; --av:#e8b25a; --livro:#a196ea;
   --r:10px; --r-img:3px;
   color-scheme:dark;
 }
@@ -198,6 +198,7 @@ h1{font-family:"Unbounded",system-ui,sans-serif;font-weight:700;font-size:clamp(
 .dot-chip{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--c);margin-right:6px;vertical-align:middle}
 
 .ring-val small{color:var(--ink-3);font-size:.78rem;margin-top:4px;font-variant-numeric:tabular-nums}
+#mediaRing{color:var(--ink);font-size:.95rem;font-weight:600}
 .btn.redondo{width:40px;height:40px;padding:0;display:inline-flex;align-items:center;justify-content:center;border-radius:50%}
 
 .notas-bloco{margin-top:18px;display:grid;gap:6px}
@@ -205,6 +206,9 @@ h1{font-family:"Unbounded",system-ui,sans-serif;font-weight:700;font-size:clamp(
 .notas-bloco textarea{width:100%;resize:vertical;min-height:90px;font-family:inherit}
 
 dialog .sheet{max-height:90vh;overflow:auto}
+
+.nota-capa{position:absolute;right:8px;bottom:8px;z-index:2;display:inline-flex;align-items:center;justify-content:center;gap:2px;height:20px;padding:0 8px;border-radius:99px;background:rgba(11,12,15,.8);color:var(--ink);font-size:.68rem;font-weight:600;font-variant-numeric:tabular-nums;line-height:1;white-space:nowrap}
+.nota-capa .est{display:block;font-size:.72rem;line-height:1;transform:translateY(-.5px)}
 
 /* modal */
 dialog{border:0;padding:0;background:transparent;color:var(--ink);width:min(600px,calc(100vw - 32px));max-width:none;margin:auto}
@@ -260,8 +264,9 @@ dialog::backdrop{background:rgba(3,4,8,.62);backdrop-filter:blur(6px);-webkit-ba
   .tiles .tile{padding:6px 12px;min-width:64px}
   #ringLabel,#ringFrac{display:none}
   .card .meta{height:auto;flex-wrap:wrap;gap:4px}
-  .stars{font-size:.8rem;letter-spacing:1px}
-  .nota-num{font-size:.78rem}
+  .dot-status{width:8px;height:8px;left:6px;bottom:6px}
+  .nota-capa{font-size:.6rem;right:6px;bottom:6px;height:18px;padding:0 6px}
+  .nota-capa .est{font-size:.64rem}
   .card .meta .badge{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .card .tg{display:none}
   h1{font-size:1.6rem}
@@ -328,8 +333,7 @@ dialog::backdrop{background:rgba(3,4,8,.62);backdrop-filter:blur(6px);-webkit-ba
   <section class="hero glass facet">
     <div>
       <h1 id="tituloCat">Jogos</h1>
-          <div class="tiles" id="tiles"></div>
-    </div>
+        </div>
     <div class="ring" aria-hidden="false">
       <svg viewBox="0 0 120 120" role="img" aria-label="Porcentagem concluída do catálogo">
         <defs>
@@ -341,7 +345,7 @@ dialog::backdrop{background:rgba(3,4,8,.62);backdrop-filter:blur(6px);-webkit-ba
         <circle class="trk" cx="60" cy="60" r="52"/>
         <circle class="prog" id="prog" cx="60" cy="60" r="52" stroke="url(#gr)" transform="rotate(-90 60 60)"/>
       </svg>
-      <div class="ring-val"><b id="pct">0%</b><span id="ringLabel">concluídos</span><small id="ringFrac"></small></div>
+      <div class="ring-val"><b id="pct">0%</b><small id="mediaRing"></small></div>
     </div>
   </section>
 
@@ -501,7 +505,7 @@ const STATUS_POR_CAT = {
   audiovisual: ['Na fila','Assistindo','Assistido','Abandonado'],
   livro: ['Na fila','Lendo','Lido','Abandonado']
 };
-const STATUS_COR = {'Na fila':'#8a909c','Jogando':'#d4a24c','Assistindo':'#d4a24c','Lendo':'#d4a24c','Jogado':'#5a9bd5','Zerado':'#6fbf73','Platinado':'#f4f1e8','Assistido':'#d08cc0','Lido':'#8fb8e8','No aguardo':'#b07fc0','Abandonado':'#c96b6b'};
+const STATUS_COR = {'Na fila':'#9aa1ae','Jogando':'#ffab2e','Assistindo':'#ffab2e','Lendo':'#ffab2e','Jogado':'#3d9bff','Zerado':'#3fd46a','Platinado':'#ffffff','Assistido':'#ff5fb8','Lido':'#8b7cff','No aguardo':'#d05cff','Abandonado':'#ff4d4d'};
 const FILTROS_POR_CAT = {
   jogo: [['Na fila',['Na fila']],['Jogando',['Jogando']],['Concluído',['Jogado','Zerado','Platinado']],['No aguardo',['No aguardo']],['Abandonado',['Abandonado']]],
   audiovisual: [['Na fila',['Na fila']],['Assistindo',['Assistindo']],['Assistido',['Assistido']],['Abandonado',['Abandonado']]],
@@ -625,10 +629,9 @@ function card(i){
   const nota = i.n != null ? `<div class="nota-linha">${estrelas(i.n)}<span class="nota-num">${fmtNota(i.n)}</span></div>` : '<div class="nota-linha"></div>';
   return `<article class="card" style="--tint:${c.tint}">
     <button class="open" type="button" data-key="${esc(i.key)}" aria-label="Abrir ${esc(i.t)}">
-      <div class="cover${capa ? ' has-img' : ''}">${capaHTML(capa)}<span class="ini" aria-hidden="true">${esc(i.t.charAt(0).toUpperCase())}</span><span class="dot-status${s2 === 'Platinado' ? ' brilho' : ''}" style="--c:${STATUS_COR[s2] || '#7b8190'}" title="${esc(s2)}" role="img" aria-label="Status: ${esc(s2)}"></span></div>
+      <div class="cover${capa ? ' has-img' : ''}">${capaHTML(capa)}<span class="ini" aria-hidden="true">${esc(i.t.charAt(0).toUpperCase())}</span><span class="dot-status${s2 === 'Platinado' ? ' brilho' : ''}" style="--c:${STATUS_COR[s2] || '#7b8190'}" title="${esc(s2)}" role="img" aria-label="Status: ${esc(s2)}"></span>${i.n != null ? `<span class="nota-capa"><span class="est">★</span>${fmtNota(i.n)}</span>` : ''}</div>
       <div class="body">
         <h3>${esc(i.t)}</h3>
-        ${nota}
         ${meta}
         ${dataLanc}
       </div>
@@ -659,10 +662,8 @@ function renderStats(){
   const pct = total ? Math.round(cont.concluido / total * 100) : 0;
 
   document.getElementById('tituloCat').textContent = CATS[st.cat].label;
-  document.getElementById('tiles').innerHTML = `<div class="tile"><b>${media}</b><span>Nota média</span></div>`;
   document.getElementById('pct').textContent = pct + '%';
-  document.getElementById('ringLabel').textContent = 'concluídos';
-  document.getElementById('ringFrac').textContent = `${cont.concluido} de ${total}`;
+  document.getElementById('mediaRing').textContent = media === '—' ? '' : `★ ${media}`;
 
   const C = 2 * Math.PI * 52, prog = document.getElementById('prog');
   prog.style.strokeDasharray = C;
@@ -676,7 +677,7 @@ function renderControles(){
     b.querySelector('.n').textContent = ITEMS.filter(i => i.c === k).length;
   });
   const base = ITEMS.filter(doCat);
-  const filtros = [['todos', 'Todos', null, null], ...(FILTROS_POR_CAT[st.cat] || []).map(([k, s]) => [k, k, s.length === 1 ? STATUS_COR[s[0]] : null, s])];
+  const filtros = [['todos', 'Todos', null, null], ...(FILTROS_POR_CAT[st.cat] || []).map(([k, s]) => [k, k, STATUS_COR[s.length === 1 ? s[0] : 'Zerado'], s])];
   document.getElementById('chips').innerHTML = '<span class="chips-rotulo">Status</span>' + filtros.map(([k, l, cor, s]) => {
     const n = s ? base.filter(i => s.includes(atual(i))).length : base.length;
     return `<button class="chip" type="button" data-grp="${esc(k)}" aria-pressed="${String(k === st.grp)}">${cor ? `<span class="dot-chip" style="--c:${cor}"></span>` : ''}${esc(l)}<span class="n">${n}</span></button>`;
