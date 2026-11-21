@@ -188,6 +188,15 @@ h1{font-family:"Unbounded",system-ui,sans-serif;font-weight:700;font-size:clamp(
 .card .meta .badge{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .card .foot{min-height:24px}
 
+.dot-status{position:absolute;left:8px;bottom:8px;z-index:2;width:10px;height:10px;border-radius:50%;background:var(--c);box-shadow:0 0 0 2px rgba(11,12,15,.85)}
+.dot-status.brilho{box-shadow:0 0 0 2px rgba(11,12,15,.85),0 0 8px 1px rgba(226,220,205,.7)}
+.nota-linha{display:flex;align-items:center;gap:6px;margin:-2px 0 8px;min-height:1em}
+.stars{position:relative;display:inline-block;font-size:.78rem;line-height:1;letter-spacing:1px;color:rgba(255,255,255,.14)}
+.stars-on{position:absolute;left:0;top:0;overflow:hidden;white-space:nowrap;color:var(--ink-2)}
+.nota-num{font-size:.78rem;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.chips-rotulo{color:var(--ink-3);font-size:.8rem;align-self:center;margin-right:4px}
+.dot-chip{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--c);margin-right:6px;vertical-align:middle}
+
 /* modal */
 dialog{border:0;padding:0;background:transparent;color:var(--ink);width:min(600px,calc(100vw - 32px));max-width:none;margin:auto}
 dialog::backdrop{background:rgba(3,4,8,.62);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
@@ -331,7 +340,7 @@ dialog::backdrop{background:rgba(3,4,8,.62);backdrop-filter:blur(6px);-webkit-ba
       <div class="seg" id="cats" role="group" aria-label="Categoria"></div>
       <div class="tools">
         <label class="sr" for="q">Buscar por título</label>
-        <input id="q" class="field busca" type="search" placeholder="Buscar título, tag ou status…" autocomplete="off">
+        <input id="q" class="field busca" type="search" placeholder="Buscar título…" autocomplete="off">
         <label class="sr" for="ord">Ordenar por</label>
         <select id="ord" class="field larg">
           <option value="titulo">Ordenar: título</option>
@@ -340,7 +349,6 @@ dialog::backdrop{background:rgba(3,4,8,.62);backdrop-filter:blur(6px);-webkit-ba
           <option value="conclusao">Ordenar: conclusão</option>
         </select>
         <button id="ordemDir" class="btn larg" type="button">↑ Crescente</button>
-        <select id="tag" class="field larg" aria-label="Filtrar por tag"></select>
         <button id="limparFiltros" class="link" type="button">Limpar filtros</button>
         <button id="atualizarDatas" class="btn" type="button">Atualizar datas</button>
         <button id="novoBtn" class="btn" type="button">+ Adicionar mídia</button>
@@ -472,7 +480,16 @@ function recarregarItens(){
 }
 function gravarEdicoes(){ gravarJSON(EDICOES_KEY, edicoes); }
 recarregarItens();
-const st = {cat:'todos', grp:'todos', q:'', ord:'titulo', dir:'asc', tag:''};
+const st = {cat:'jogo', grp:'todos', q:'', ord:'titulo', dir:'asc', tag:''};
+const STATUS_POR_CAT = {
+  jogo: ['Na fila','Jogando','Jogado','Zerado','Platinado','No aguardo','Abandonado'],
+  audiovisual: ['Na fila','Assistindo','Assistido','Abandonado'],
+  livro: ['Na fila','Lendo','Lido','Abandonado']
+};
+const STATUS_COR = {'Na fila':'#7b8190','Jogando':'#c9a66b','Assistindo':'#c9a66b','Lendo':'#c9a66b','Jogado':'#6d9fb5','Zerado':'#7fb3a6','Platinado':'#e2dccd','Assistido':'#8fb573','Lido':'#9b8fc9','No aguardo':'#b07fc0','Abandonado':'#c58a8a'};
+const statusesDaVista = () => st.cat === 'todos'
+  ? [...new Set(Object.values(STATUS_POR_CAT).flat())]
+  : STATUS_POR_CAT[st.cat];
 const VISTAS_KEY = 'hub-midias-vistas-v1';
 let vistas = lerJSON(VISTAS_KEY, {});
 function salvarVista(){
@@ -487,7 +504,6 @@ function aplicarVista(grp){
 }
 
 const atual = i => i.s;
-const tagsDe = i => [...new Set([...(i.tags || []), atual(i), GRUPOS[grupo(i)].label])];
 function capaHTML(capa){
   if (!capa) return '';
   const erro = "this.parentNode.classList.remove('has-img');this.parentNode.querySelectorAll('img').forEach(x=>x.remove())";
@@ -519,20 +535,17 @@ function definirStatus(key, valor){
 
 /* ---------- construção dos controles ---------- */
 function montarCategorias(){
-  const el = document.getElementById('cats');
-  el.innerHTML = Object.entries(CATS).map(([k, c]) =>
-    `<button class="pill" type="button" data-cat="${k}" aria-pressed="false">${esc(c.label)}<span class="n"></span></button>`
+  const ordem = ['jogo','audiovisual','livro','todos'];
+  document.getElementById('cats').innerHTML = ordem.map(k =>
+    `<button class="pill" type="button" data-cat="${k}" aria-pressed="false">${esc(CATS[k].label)}<span class="n"></span></button>`
   ).join('');
-  el.addEventListener('click', e => {
+  document.getElementById('cats').addEventListener('click', e => {
     const b = e.target.closest('[data-cat]'); if (!b) return;
     st.cat = b.dataset.cat; st.grp = 'todos'; aplicarVista('todos'); render();
   });
 }
 function montarChips(){
-  const el = document.getElementById('chips');
-  el.innerHTML = [['todos','Todos'], ...Object.entries(GRUPOS).map(([k,g]) => [k, g.label])]
-    .map(([k,l]) => `<button class="chip" type="button" data-grp="${k}" aria-pressed="false">${esc(l)}<span class="n"></span></button>`).join('');
-  el.addEventListener('click', e => {
+  document.getElementById('chips').addEventListener('click', e => {
     const b = e.target.closest('[data-grp]'); if (!b) return;
     st.grp = b.dataset.grp; aplicarVista(st.grp); render();
   });
@@ -542,7 +555,7 @@ function montarBusca(){
   document.getElementById('ord').addEventListener('change', e => { st.ord = e.target.value; render(); });
   document.getElementById('ordemDir').addEventListener('click', () => { st.dir = st.dir === 'asc' ? 'desc' : 'asc'; render(); });
   document.getElementById('limparFiltros').addEventListener('click', () => {
-    Object.assign(st, {cat:'todos', grp:'todos', q:'', ord:'titulo', dir:'asc', tag:''});
+    Object.assign(st, {cat:'jogo', grp:'todos', q:'', ord:'titulo', dir:'asc', tag:''});
     salvarVista();
     document.getElementById('q').value = '';
     document.getElementById('ord').value = 'titulo';
@@ -550,7 +563,6 @@ function montarBusca(){
   });
   document.getElementById('novoBtn').addEventListener('click', abrirNovo);
   document.getElementById('atualizarDatas').addEventListener('click', atualizarDatas);
-  document.getElementById('tag').addEventListener('change', e => { st.tag = e.target.value; render(); });
   document.getElementById('abrirConfig').addEventListener('click', () => document.getElementById('config').showModal());
   document.getElementById('limpar').addEventListener('click', () => {
     edicoes = {}; gravarEdicoes(); recarregarItens(); render(); toast('Edições locais desfeitas. As mídias que você adicionou continuam.');
@@ -560,10 +572,9 @@ function montarBusca(){
 /* ---------- lista ---------- */
 function lista(){
   let L = ITEMS.filter(doCat);
-  if (st.grp !== 'todos') L = L.filter(i => grupo(i) === st.grp);
-  if (st.tag) L = L.filter(i => tagsDe(i).includes(st.tag));
+  if (st.grp !== 'todos') L = L.filter(i => atual(i) === st.grp);
   const q = st.q.trim().toLowerCase();
-  if (q) L = L.filter(i => i.t.toLowerCase().includes(q) || tagsDe(i).some(t => t.toLowerCase().includes(q)));
+  if (q) L = L.filter(i => i.t.toLowerCase().includes(q));
   const chave = {titulo:i => i.t, nota:i => i.n, lancamento:i => i.l, conclusao:i => i.k}[st.ord];
   return L.sort((a, b) => {
     const x = chave(a), y = chave(b);
@@ -576,25 +587,24 @@ function lista(){
   });
 }
 
+function estrelas(n){
+  const pct = Math.max(0, Math.min(5, n)) / 5 * 100;
+  return `<span class="stars" aria-hidden="true"><span class="stars-on" style="width:${pct}%">★★★★★</span>★★★★★</span>`;
+}
 function card(i){
   const g = grupo(i), c = CATS[i.c], s2 = atual(i);
   const pode = (g === 'fila' || g === 'andamento') && c.concl;
   const capa = capaDe(i);
-  const tags = (i.tags || []).slice(0, 3).map(t => `<span class="badge tg">#${esc(t)}</span>`).join('');
   const cadeado = i.travado ? '<span class="lock" title="Bloqueado contra atualizações automáticas">🔒</span>' : '';
-  const dataLanc = g === 'aguardo' ? `<div class="data-lanc">${i.l ? esc(fmtData(i.l)) : 'Data a confirmar'}</div>` : '';
-  const erroCapa = "this.parentNode.classList.remove('has-img');this.parentNode.querySelectorAll('img').forEach(x=>x.remove())";
-  const imgs = capaHTML(capa);
+  const dataLanc = s2 === 'No aguardo' ? `<div class="data-lanc">${i.l ? esc(fmtData(i.l)) : 'Data a confirmar'}</div>` : '';
+  const nota = i.n != null ? `<div class="nota-linha">${estrelas(i.n)}<span class="nota-num">${fmtNota(i.n)}</span></div>` : '<div class="nota-linha"></div>';
   return `<article class="card" style="--tint:${c.tint}">
     <button class="open" type="button" data-key="${esc(i.key)}" aria-label="Abrir ${esc(i.t)}">
-      <div class="cover${capa ? ' has-img' : ''}">${imgs}<span class="ini" aria-hidden="true">${esc(i.t.charAt(0).toUpperCase())}</span></div>
+      <div class="cover${capa ? ' has-img' : ''}">${capaHTML(capa)}<span class="ini" aria-hidden="true">${esc(i.t.charAt(0).toUpperCase())}</span><span class="dot-status${s2 === 'Platinado' ? ' brilho' : ''}" style="--c:${STATUS_COR[s2] || '#7b8190'}" title="${esc(s2)}" role="img" aria-label="Status: ${esc(s2)}"></span></div>
       <div class="body">
         <h3>${esc(i.t)}</h3>
-        <div class="meta"><span class="badge">${esc(tipoOf(i))}</span>${i.l && g !== 'aguardo' ? `<span class="badge ghost">${esc(i.l.slice(0,4))}</span>` : ''}${tags}${cadeado}</div>
-        <div class="foot">
-          <span class="status s-${g}">${esc(s2)}</span>
-          ${i.n != null ? `<span class="nota">★ ${fmtNota(i.n)}</span>` : ''}
-        </div>
+        ${nota}
+        <div class="meta"><span class="badge">${esc(tipoOf(i))}</span>${i.l && !dataLanc ? `<span class="badge ghost">${esc(i.l.slice(0,4))}</span>` : ''}${cadeado}</div>
         ${dataLanc}
       </div>
     </button>
@@ -615,9 +625,7 @@ function renderGrid(){
 /* ---------- painéis ---------- */
 function renderStats(){
   const q = st.q.trim().toLowerCase();
-  const base = ITEMS.filter(i => doCat(i)
-    && (!st.tag || tagsDe(i).includes(st.tag))
-    && (!q || i.t.toLowerCase().includes(q) || tagsDe(i).some(t => t.toLowerCase().includes(q))));
+  const base = ITEMS.filter(i => doCat(i) && (!q || i.t.toLowerCase().includes(q)));
   const total = base.length;
   const cont = {fila:0, andamento:0, concluido:0, aguardo:0, abandonado:0};
   base.forEach(i => cont[grupo(i)]++);
@@ -640,7 +648,7 @@ function renderStats(){
 
   const cats = st.cat === 'todos' ? Object.entries(CATS).filter(([k]) => k !== 'todos') : [[st.cat, CATS[st.cat]]];
   document.getElementById('bars').innerHTML = cats.map(([k, c]) => {
-    const itens = ITEMS.filter(i => i.c === k && (!st.tag || tagsDe(i).includes(st.tag)) && (!q || i.t.toLowerCase().includes(q) || tagsDe(i).some(t => t.toLowerCase().includes(q))));
+    const itens = ITEMS.filter(i => i.c === k && (!q || i.t.toLowerCase().includes(q)));
     const n = itens.length;
     const done = itens.filter(i => grupo(i) === 'concluido').length;
     const p = n ? Math.round(done / n * 100) : 0;
@@ -658,21 +666,16 @@ function renderControles(){
     b.querySelector('.n').textContent = k === 'todos' ? ITEMS.length : ITEMS.filter(i => i.c === k).length;
   });
   const base = ITEMS.filter(doCat);
-  document.querySelectorAll('[data-grp]').forEach(b => {
-    const k = b.dataset.grp;
-    b.setAttribute('aria-pressed', String(k === st.grp));
-    b.querySelector('.n').textContent = k === 'todos' ? base.length : base.filter(i => grupo(i) === k).length;
-  });
+  const opcoes = [['todos', 'Todos', null], ...statusesDaVista().map(x => [x, x, STATUS_COR[x]])];
+  document.getElementById('chips').innerHTML = '<span class="chips-rotulo">Status</span>' + opcoes.map(([k, l, cor]) =>
+    `<button class="chip" type="button" data-grp="${esc(k)}" aria-pressed="${String(k === st.grp)}">${cor ? `<span class="dot-chip" style="--c:${cor}"></span>` : ''}${esc(l)}<span class="n">${k === 'todos' ? base.length : base.filter(i => atual(i) === k).length}</span></button>`
+  ).join('');
   document.getElementById('ordemDir').textContent = st.dir === 'asc' ? '↑ Crescente' : '↓ Decrescente';
   const ad = document.getElementById('atualizarDatas');
-  const noAguardo = st.grp === 'aguardo';
+  const noAguardo = st.grp === 'No aguardo';
   ad.style.visibility = noAguardo ? 'visible' : 'hidden';
   ad.disabled = !noAguardo;
-  document.getElementById('limparFiltros').disabled = !(st.cat !== 'todos' || st.grp !== 'todos' || st.q || st.tag || st.ord !== 'titulo' || st.dir !== 'asc');
-  const tags = [...new Set(ITEMS.flatMap(i => tagsDe(i)))].sort((a, b) => a.localeCompare(b, 'pt-BR'));
-  if (st.tag && !tags.includes(st.tag)) st.tag = '';
-  document.getElementById('tag').innerHTML = '<option value="">Todas as tags</option>' +
-    tags.map(t => `<option value="${esc(t)}"${t === st.tag ? ' selected' : ''}>#${esc(t)}</option>`).join('');
+  document.getElementById('limparFiltros').disabled = !(st.cat !== 'jogo' || st.grp !== 'todos' || st.q || st.ord !== 'titulo' || st.dir !== 'asc');
 }
 
 function render(){
@@ -686,7 +689,7 @@ function render(){
 async function atualizarDatas(){
   if (ocupado) return toast('Aguarde a busca terminar.');
   const btn = document.getElementById('atualizarDatas');
-  const alvos = ITEMS.filter(i => grupo(i) === 'aguardo' && !i.travado);
+  const alvos = ITEMS.filter(i => atual(i) === 'No aguardo' && !i.travado);
   if (!alvos.length) return toast('Nenhuma mídia "No aguardo" para atualizar (bloqueadas ficam de fora).');
   ocupado = true; btn.disabled = true;
   const mudancas = []; let semFonte = 0, n = 0;
@@ -773,7 +776,6 @@ function preencherSheet(key){
           <dt>Nota</dt><dd>${i.n != null ? '★ ' + fmtNota(i.n) : '—'}</dd>
           <dt>Lançamento</dt><dd>${esc(fmtData(i.l))}</dd>
           <dt>Conclusão</dt><dd>${esc(fmtData(i.k))}</dd>
-          <dt>Tags</dt><dd>${(i.tags || []).length ? i.tags.map(t => `<span class="badge">#${esc(t)}</span>`).join(' ') : '—'}</dd>
         </dl>
         ${i.c === 'jogo' ? `<label class="switch" style="margin-top:18px"><input type="checkbox" role="switch" data-travar${i.travado ? ' checked' : ''}> Bloquear atualizações automáticas deste jogo</label>` : ''}
         <div class="keys-actions" style="margin-top:22px"><div class="group">
@@ -1136,7 +1138,6 @@ function abrirForm(key){
         <label>Conclusão<input id="n-k" class="field" type="date" value="${esc(i && i.k ? i.k : '')}"></label>
         <label id="lbl-g" class="full">ID da IGDB (jogos, para buscar a capa)<input id="n-g" class="field" type="number" min="1" value="${i && i.g != null ? i.g : ''}"></label>
         <label class="full">Link da capa (opcional, sobrescreve a busca automática)<input id="n-capa" class="field" type="url" placeholder="https://…" value="${esc(i && i.capa ? i.capa : '')}"></label>
-        <label class="full">Tags (separadas por vírgula)<input id="n-tags" class="field" type="text" placeholder="ex.: favorito, co-op" value="${esc(i && i.tags ? i.tags.join(', ') : '')}"></label>
       </div>
       <p class="erro" id="n-erro" role="alert"></p>
       <div class="keys-actions"><div class="group"><button class="btn" id="n-salvar" type="button">${i ? 'Salvar alterações' : 'Adicionar'}</button></div></div>
@@ -1177,7 +1178,6 @@ function salvarItem(key){
   if (k && l && k < l) return erro('A conclusão não pode ser antes do lançamento.');
   const capa = document.getElementById('n-capa').value.trim();
   if (capa && !/^https?:\/\//i.test(capa)) return erro('O link da capa precisa começar com http:// ou https://.');
-  const tags = [...new Set(document.getElementById('n-tags').value.split(',').map(x => x.trim()).filter(Boolean))];
   const gv = document.getElementById('n-g').value;
   const dados = {
     t, c,
@@ -1186,7 +1186,6 @@ function salvarItem(key){
     n, l, k,
     g: c === 'jogo' && gv ? parseInt(gv, 10) : null,
     capa: capa || null,
-    tags,
     travado: key && edicoes[key] ? !!edicoes[key].travado : false
   };
   if (key) {
