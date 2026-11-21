@@ -4,12 +4,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Hub</title>
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0b0c0f">
-<link rel="apple-touch-icon" href="icon-180.png">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Hub">
-
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%230b0c0f'/%3E%3Crect x='16' y='17' width='32' height='6' fill='%23e6e8ee'/%3E%3Crect x='16' y='29' width='32' height='6' fill='%23e6e8ee'/%3E%3Crect x='16' y='41' width='20' height='6' fill='%23e6e8ee'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -215,6 +209,10 @@ dialog .sheet{max-height:90vh;overflow:auto}
 
 .nota-capa{position:absolute;right:8px;bottom:8px;z-index:2;display:inline-flex;align-items:center;justify-content:center;gap:2px;height:20px;padding:0 8px;border-radius:99px;background:rgba(11,12,15,.8);color:var(--ink);font-size:.68rem;font-weight:600;font-variant-numeric:tabular-nums;line-height:1;white-space:nowrap}
 .nota-capa .est{display:block;font-size:.72rem;line-height:1;transform:translateY(-.5px)}
+
+.saude-titulo{grid-column:1/-1;display:flex;gap:8px;align-items:baseline;margin:16px 2px 0;font-size:.95rem;font-weight:600;color:var(--ink-2)}
+.saude-titulo span{color:var(--ink-3);font-weight:500}
+.saude-vazio{grid-column:1/-1;margin:0 2px;color:var(--ink-3);font-size:.88rem}
 
 /* modal */
 dialog{border:0;padding:0;background:transparent;color:var(--ink);width:min(600px,calc(100vw - 32px));max-width:none;margin:auto}
@@ -429,6 +427,7 @@ dialog::backdrop{background:rgba(3,4,8,.62);backdrop-filter:blur(6px);-webkit-ba
       <h3>Exibição</h3>
       <label class="switch" style="margin-top:12px"><input type="checkbox" role="switch" id="pref-meta"> Mostrar tipo e ano nos cards</label>
       <p class="hint">Fora da aba Todos, os cards mostram só o nome, a nota e a bolinha de status.</p>
+      <button class="btn" id="abrirSaude" type="button" style="margin-top:12px">Ver saúde da biblioteca</button>
     </div>
     <div class="fontes-box">
       <h3>Sincronização entre dispositivos</h3>
@@ -549,7 +548,7 @@ const fmtData = s => {
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s);
   return m ? `${m[3]}/${m[2]}/${m[1]}` : s;
 };
-const doCat = i => st.cat === 'todos' || i.c === st.cat;
+const doCat = i => st.cat === 'todos' || st.cat === 'saude' || i.c === st.cat;
 
 function toast(msg){
   const t = document.getElementById('toast');
@@ -565,9 +564,9 @@ function definirStatus(key, valor){
 
 /* ---------- construção dos controles ---------- */
 function montarCategorias(){
-  const ordem = ['jogo','audiovisual','livro'];
-  document.getElementById('cats').innerHTML = ordem.map(k =>
-    `<button class="pill" type="button" data-cat="${k}" aria-pressed="false">${esc(CATS[k].label)}<span class="n"></span></button>`
+  const ordem = [['jogo','Jogos'],['audiovisual','Filmes & Séries'],['livro','Livros & Mangás']];
+  document.getElementById('cats').innerHTML = ordem.map(([k, l]) =>
+    `<button class="pill" type="button" data-cat="${k}" aria-pressed="false">${esc(l)}<span class="n"></span></button>`
   ).join('');
   document.getElementById('cats').addEventListener('click', e => {
     const b = e.target.closest('[data-cat]'); if (!b) return;
@@ -650,6 +649,22 @@ function card(i){
 function renderGrid(){
   const L = lista();
   const el = document.getElementById('grid');
+  if (st.cat === 'saude') {
+    const q = st.q.trim().toLowerCase();
+    const base = ITEMS.filter(i => !q || i.t.toLowerCase().includes(q));
+    const grupos = [
+      ['Sem capa', base.filter(i => !capaDe(i))],
+      ['Concluídos sem nota', base.filter(i => grupo(i) === 'concluido' && i.n == null)],
+      ['No aguardo sem data', base.filter(i => atual(i) === 'No aguardo' && !i.l)]
+    ];
+    const total = grupos.reduce((a, [, l]) => a + l.length, 0);
+    document.getElementById('count').textContent = `${total} ${total === 1 ? 'pendência' : 'pendências'}`;
+    el.innerHTML = grupos.map(([titulo, itens]) =>
+      `<h2 class="saude-titulo">${esc(titulo)} <span>${itens.length}</span></h2>` +
+      (itens.length ? itens.map(card).join('') : '<p class="saude-vazio">Nada aqui.</p>')
+    ).join('');
+    return;
+  }
   document.getElementById('count').textContent =
     `${L.length} ${L.length === 1 ? 'item' : 'itens'}${st.cat !== 'todos' ? ' em ' + CATS[st.cat].label : ''}`;
   el.innerHTML = L.length
@@ -668,7 +683,7 @@ function renderStats(){
   const media = notas.length ? (notas.reduce((a,b) => a+b, 0) / notas.length).toFixed(1).replace('.', ',') : '—';
   const pct = total ? Math.round(cont.concluido / total * 100) : 0;
 
-  document.getElementById('tituloCat').textContent = CATS[st.cat].label;
+  document.getElementById('tituloCat').textContent = st.cat === 'saude' ? 'Saúde' : CATS[st.cat].label;
   document.getElementById('pct').textContent = pct + '%';
   document.getElementById('mediaRing').textContent = media === '—' ? '' : `★ ${media}`;
 
@@ -681,9 +696,10 @@ function renderControles(){
   document.querySelectorAll('[data-cat]').forEach(b => {
     const k = b.dataset.cat;
     b.setAttribute('aria-pressed', String(k === st.cat));
-    b.querySelector('.n').textContent = ITEMS.filter(i => i.c === k).length;
+    b.querySelector('.n').textContent = k === 'saude' ? '' : ITEMS.filter(i => i.c === k).length;
   });
   const base = ITEMS.filter(doCat);
+  document.getElementById('chips').style.display = st.cat === 'saude' ? 'none' : '';
   const filtros = [['todos', 'Todos', null, null], ...(FILTROS_POR_CAT[st.cat] || []).map(([k, s]) => [k, k, STATUS_COR[s.length === 1 ? s[0] : 'Zerado'], s])];
   document.getElementById('chips').innerHTML = '<span class="chips-rotulo">Status</span>' + filtros.map(([k, l, cor, s]) => {
     const n = s ? base.filter(i => s.includes(atual(i))).length : base.length;
@@ -1362,6 +1378,11 @@ function lerConfigFirebase(txt){
 function iniciarPrefs(){
   const pm = document.getElementById('pref-meta');
   pm.checked = !!prefs.mostrarMeta;
+  document.getElementById('abrirSaude').addEventListener('click', () => {
+    document.getElementById('config').close();
+    st.cat = 'saude'; st.grp = 'todos';
+    render();
+  });
   pm.addEventListener('change', e => {
     prefs.mostrarMeta = e.target.checked;
     gravarJSON(PREFS_KEY, prefs);
