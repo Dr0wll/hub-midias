@@ -228,6 +228,57 @@ dialog::backdrop{background:rgba(3,4,8,.62);backdrop-filter:blur(6px);-webkit-ba
   .tools .field:not(#q){flex:1}
   .grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
 }
+@media (max-width:640px){
+  .wrap{padding:14px 12px calc(56px + env(safe-area-inset-bottom,0px))}
+  .topbar{margin-bottom:10px}
+  .topbar .btn{min-height:40px;padding:8px 12px}
+  .topbar .btn span{display:none}
+  .hero{grid-template-columns:1fr auto;gap:14px;padding:18px}
+  h1{font-size:1.9rem}
+  .ring{width:118px;height:118px}
+  .ring-val b{font-size:1.25rem}
+  .escopo{font-size:.82rem}
+  .tiles{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:14px}
+  .tile{padding:10px}
+  .tile b{font-size:1.05rem}
+  .tile span{font-size:.72rem}
+  .bars{grid-template-columns:1fr;padding:14px;gap:14px}
+  .toolbar{padding:10px;gap:10px}
+  .toolbar .row{flex-direction:column;align-items:stretch;gap:10px}
+  .seg{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;width:100%}
+  .seg::-webkit-scrollbar{display:none}
+  .seg .pill{flex:0 0 auto;min-height:40px;padding:8px 12px}
+  .tools{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%}
+  .tools .busca{grid-column:1/-1;width:100%;min-width:0}
+  .tools .field,.tools .btn{width:100%;min-width:0;min-height:42px}
+  #novoBtn{grid-column:1/-1}
+  #limparFiltros{grid-column:1/-1;justify-self:start;min-height:36px}
+  .chips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+  .chips::-webkit-scrollbar{display:none}
+  .chip{flex:0 0 auto;min-height:36px;padding:6px 12px}
+  .count{margin:12px 2px 0;font-size:.82rem}
+  .grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}
+  .cover{margin:6px}
+  .body{padding:2px 8px 10px}
+  .body h3{font-size:.8rem;min-height:2.4em}
+  .meta .badge{font-size:.68rem}
+  .quick{width:38px;height:38px;top:14px;right:14px}
+  .data-lanc{font-size:.76rem}
+  dialog{width:calc(100vw - 20px)}
+  dialog .sheet{padding:18px;max-height:90vh;overflow:auto}
+  .det{flex-direction:column;gap:14px}
+  .det-cover{width:min(180px,55%);margin:0 auto}
+  .novo-grid{grid-template-columns:1fr}
+  .keys-grid{grid-template-columns:1fr}
+  .keys-actions{flex-direction:column;align-items:stretch}
+  .keys-actions .group{width:100%}
+  .keys-actions .group .btn,.keys-actions .group .link{flex:1 1 auto;min-height:40px}
+  .fonte{gap:6px 10px}
+  .fonte .setas .pill{min-width:40px;min-height:36px}
+  .fonte .on{min-width:0}
+  #toast{bottom:calc(14px + env(safe-area-inset-bottom,0px));max-width:calc(100vw - 24px)}
+  .notif-lista{max-height:70vh}
+}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{transition:none!important;animation:none!important}
 }
@@ -240,7 +291,7 @@ dialog::backdrop{background:rgba(3,4,8,.62);backdrop-filter:blur(6px);-webkit-ba
   <header class="topbar">
     <div class="acoes">
       <button id="sino" class="btn" type="button" aria-label="Notificações"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="sino-n" id="sinoN" hidden></span></button>
-      <button id="abrirConfig" class="btn" type="button"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span>Configurações</span></button>
+      <button id="abrirConfig" class="btn" type="button" aria-label="Configurações"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span>Configurações</span></button>
     </div>
   </header>
   <section class="hero glass facet">
