@@ -221,6 +221,65 @@ dialog .sheet{max-height:90vh;overflow:auto}
 .sug button:hover,.sug button:focus-visible{background:rgba(255,255,255,.08)}
 .sug .vazio{margin:0;padding:9px 12px;color:var(--ink-3);font-size:.88rem}
 
+.avatar{padding:0;overflow:hidden}
+.avatar-img{width:100%;height:100%;object-fit:cover;display:block}
+.avatar-ini{font-weight:700;font-size:.95rem}
+.cat-pad{position:absolute;left:8px;top:8px;z-index:1;font-size:.64rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+.card.selecionado{border-color:var(--jogo);box-shadow:inset 0 0 0 2px var(--jogo)}
+.massa{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:8;display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;padding:10px 12px;max-width:calc(100vw - 24px);background:var(--glass-2);box-shadow:var(--drop)}
+.massa[hidden]{display:none!important}
+.massa .field{max-width:160px}
+.perfil{grid-column:1/-1;display:grid;gap:14px}
+.perfil-topo{display:flex;gap:18px;align-items:center;padding:20px}
+.perfil-avatar{width:88px;height:88px;border-radius:50%;overflow:hidden;display:grid;place-items:center;background:rgba(255,255,255,.06);border:1px solid var(--edge-2);flex-shrink:0;font-size:2rem;font-weight:700;color:var(--ink)}
+.perfil-avatar img{width:100%;height:100%;object-fit:cover}
+.perfil-id{min-width:0}
+.perfil-id h2{margin:0;font-family:"Unbounded",sans-serif;font-size:1.25rem;font-weight:500;overflow-wrap:anywhere}
+.perfil-id p{margin:4px 0 10px;color:var(--ink-3);font-size:.88rem;overflow-wrap:anywhere}
+.perfil-numeros{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.perfil-bloco{padding:18px 20px}
+.perfil-bloco h3{margin:0 0 10px;font-size:.95rem;font-weight:600;color:var(--ink-2)}
+.perfil-linha{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:baseline;padding:8px 0;border-top:1px solid var(--edge)}
+.perfil-linha b{font-size:1.05rem}
+.perfil-linha .de{color:var(--ink-3);font-size:.85rem}
+.perfil-cab{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.grafico{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:6px;margin-top:12px}
+.barra-col{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0}
+.barra-area{height:140px;width:100%;display:flex;align-items:flex-end}
+.barra{width:100%;max-width:22px;margin:0 auto;min-height:2px;background:var(--jogo);border-radius:2px}
+.barra-col span{font-size:.7rem;color:var(--ink-3)}
+
+.btn.quadrado{width:40px;height:40px;padding:0;display:inline-flex;align-items:center;justify-content:center}
+.topbar .btn{height:40px;box-sizing:border-box}
+.topbar .avatar{width:40px;height:40px;padding:0}
+.perfil-capa{position:relative;height:220px;border-radius:2px;background:linear-gradient(135deg,#1c2027,#0b0c0f) center/cover no-repeat;overflow:hidden}
+.perfil-capa::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,12,15,.1) 20%,rgba(11,12,15,.85))}
+.perfil-capa .btn{position:absolute;z-index:1;top:10px;background:rgba(11,12,15,.7)}
+.perfil-voltar{left:10px}
+.perfil-editar{right:10px}
+.perfil-cabeca{position:absolute;left:16px;right:16px;bottom:14px;z-index:2;display:flex;gap:16px;align-items:flex-end}
+.perfil-cabeca .perfil-avatar{width:84px;height:84px;border:2px solid rgba(255,255,255,.2);background:var(--glass-2);flex-shrink:0}
+.perfil-id{min-width:0;padding-bottom:2px}
+.perfil-id .perfil-email{color:var(--ink-2)}
+.perfil-id h2{margin:0;font-family:"Unbounded",sans-serif;font-size:1.2rem;font-weight:500;overflow-wrap:anywhere}
+.perfil-email{margin:2px 0 0;color:var(--ink-3);font-size:.84rem;overflow-wrap:anywhere}
+.perfil-bio{margin:6px 0 0;color:var(--ink-2);font-size:.92rem;line-height:1.45}
+.perfil-bio.vazio{color:var(--ink-3);font-style:italic}
+.perfil-ultima{margin:0;color:var(--ink-2);font-size:.9rem}
+.fav-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin:10px 0 12px}
+.fav-grid .card{flex:0 0 140px}
+.perfil-filtros{display:flex;gap:8px;flex-wrap:wrap}
+.mes-lista{display:grid;gap:6px;margin:12px 0 14px}
+.mes-lista h4{margin:0;font-size:.9rem;color:var(--ink-2);font-weight:600}
+.mes-item{display:flex;justify-content:space-between;gap:12px;align-items:baseline;background:rgba(255,255,255,.04);border:1px solid var(--edge);padding:8px 12px;border-radius:2px;color:var(--ink);font:inherit;cursor:pointer;text-align:left}
+.mes-item small{color:var(--ink-3);white-space:nowrap}
+button.barra-col{background:none;border:0;padding:0;color:inherit;font:inherit;cursor:pointer}
+.barra-col.ativo .barra{background:var(--ink)}
+.fav-lista{display:grid;gap:4px;max-height:50vh;overflow:auto;margin-top:12px}
+.fav-lista button{display:flex;justify-content:space-between;gap:12px;width:100%;text-align:left;padding:8px 10px;background:none;border:0;border-radius:2px;color:var(--ink);font:inherit;cursor:pointer}
+.fav-lista button:hover,.fav-lista button:focus-visible{background:rgba(255,255,255,.08)}
+.fav-lista small{color:var(--ink-3);white-space:nowrap}
+
 /* modal */
 dialog{border:0;padding:0;background:transparent;color:var(--ink);width:min(600px,calc(100vw - 32px));max-width:none;margin:auto}
 dialog::backdrop{background:rgba(3,4,8,.62);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
@@ -326,6 +385,19 @@ dialog::backdrop{background:rgba(3,4,8,.62);backdrop-filter:blur(6px);-webkit-ba
   #toast{bottom:calc(14px + env(safe-area-inset-bottom,0px));max-width:calc(100vw - 24px)}
   .notif-lista{max-height:70vh}
 }
+@media (max-width:640px){
+  .perfil-cabeca{flex-direction:column;align-items:center;text-align:center;left:12px;right:12px}
+  .perfil-capa{height:250px}
+  .fav-grid{gap:8px}
+  .fav-grid .card{flex:0 0 calc(33.33% - 6px)}
+  .perfil-numeros{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .grafico{gap:3px}
+  .barra-area{height:110px}
+  .barra{max-width:16px}
+  .barra-col span{font-size:.6rem}
+  .massa{bottom:10px;width:calc(100vw - 20px);max-width:none}
+  .massa .field{max-width:none;flex:1 1 120px}
+}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{transition:none!important;animation:none!important}
 }
@@ -337,12 +409,13 @@ dialog::backdrop{background:rgba(3,4,8,.62);backdrop-filter:blur(6px);-webkit-ba
 <main class="wrap">
   <header class="topbar">
     <div class="acoes">
-      <button id="novoBtn" class="btn redondo" type="button" aria-label="Adicionar mídia" title="Adicionar mídia"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
-      <button id="sino" class="btn" type="button" aria-label="Notificações"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="sino-n" id="sinoN" hidden></span></button>
+      <button id="abrirPerfil" class="btn redondo avatar" type="button" aria-label="Perfil" title="Perfil"></button>
+      <button id="novoBtn" class="btn quadrado" type="button" aria-label="Adicionar mídia" title="Adicionar mídia"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+      <button id="sino" class="btn quadrado" type="button" aria-label="Notificações"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="sino-n" id="sinoN" hidden></span></button>
       <button id="abrirConfig" class="btn" type="button" aria-label="Configurações"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span>Configurações</span></button>
     </div>
   </header>
-  <section class="hero glass facet">
+  <section class="hero glass facet" id="hero">
     <div>
       <h1 id="tituloCat">Jogos</h1>
         </div>
@@ -362,7 +435,7 @@ dialog::backdrop{background:rgba(3,4,8,.62);backdrop-filter:blur(6px);-webkit-ba
   </section>
 
 
-  <section class="toolbar glass facet" aria-label="Filtros">
+  <section class="toolbar glass facet" id="barra" aria-label="Filtros">
     <div class="row">
       <div class="seg" id="cats" role="group" aria-label="Categoria"></div>
       <div class="tools">
@@ -380,6 +453,7 @@ dialog::backdrop{background:rgba(3,4,8,.62);backdrop-filter:blur(6px);-webkit-ba
         </select>
         <button id="ordemDir" class="btn larg" type="button">↑ Crescente</button>
         <button id="limparFiltros" class="link" type="button">Limpar filtros</button>
+        <button id="selecionarBtn" class="btn" type="button" aria-pressed="false">Selecionar</button>
         <button id="atualizarDatas" class="btn" type="button">Atualizar datas</button>
       </div>
     </div>
@@ -395,6 +469,39 @@ dialog::backdrop{background:rgba(3,4,8,.62);backdrop-filter:blur(6px);-webkit-ba
   </footer>
 </main>
 
+<div id="massa" class="massa glass" role="region" aria-label="Ações em massa" hidden>
+  <span id="massaCont">0 selecionada(s)</span>
+  <select id="massaStatus" class="field" aria-label="Mudar status"></select>
+  <button id="massaAplicar" class="btn" type="button">Aplicar status</button>
+  <input id="massaTag" class="field" type="text" placeholder="Tag…" aria-label="Tag">
+  <button id="massaTagAdd" class="btn" type="button">Adicionar tag</button>
+  <button id="massaTudo" class="link" type="button">Selecionar visíveis</button>
+  <button id="massaCancelar" class="link" type="button">Cancelar</button>
+</div>
+<dialog id="perfilDlg" aria-labelledby="pf-title">
+  <div class="sheet">
+    <div class="head"><h2 id="pf-title">Editar perfil</h2><button class="x" type="button" data-fechar-pf aria-label="Fechar">✕</button></div>
+    <div class="novo-grid" style="grid-template-columns:1fr">
+      <label>Nome<input id="pf-nome" class="field" type="text" maxlength="40" autocomplete="off"></label>
+      <label>Foto<input id="pf-foto" class="field" type="file" accept="image/*"></label>
+      <label>Capa de fundo<input id="pf-banner" class="field" type="file" accept="image/*"></label>
+      <label>Bio<textarea id="pf-bio" class="field" rows="3" maxlength="200" placeholder="Uma frase sobre você…"></textarea></label>
+    </div>
+    <div class="keys-actions" style="margin-top:14px"><div class="group">
+      <button class="btn" id="pf-salvar" type="button">Salvar</button>
+      <button class="link" id="pf-sem-foto" type="button">Remover foto</button>
+      <button class="link" id="pf-sem-banner" type="button">Remover capa</button>
+    </div></div>
+    <p class="erro" id="pf-erro" role="alert"></p>
+  </div>
+</dialog>
+<dialog id="favDlg" aria-labelledby="fav-title">
+  <div class="sheet">
+    <div class="head"><h2 id="fav-title">Favoritos</h2><button class="x" type="button" data-fechar-fav aria-label="Fechar">✕</button></div>
+    <label style="display:grid;gap:6px;margin-top:14px">Buscar mídia<input id="favBusca" class="field" type="search" placeholder="Digite um título…" autocomplete="off"></label>
+    <div id="favLista" class="fav-lista"></div>
+  </div>
+</dialog>
 <dialog id="modal" aria-labelledby="m-title">
   <div class="sheet" id="sheet"></div>
 </dialog>
@@ -438,6 +545,15 @@ dialog::backdrop{background:rgba(3,4,8,.62);backdrop-filter:blur(6px);-webkit-ba
       <label class="switch" style="margin-top:12px"><input type="checkbox" role="switch" id="pref-meta"> Mostrar tipo e ano nos cards</label>
       <p class="hint">Fora da aba Todos, os cards mostram só o nome, a nota e a bolinha de status.</p>
       <button class="btn" id="abrirSaude" type="button" style="margin-top:12px">Ver saúde da biblioteca</button>
+    </div>
+    <div class="fontes-box">
+      <h3>Backup</h3>
+      <p class="hint">Exporta suas edições, notas, mídias adicionadas, capas e perfil num arquivo. As chaves de API não entram no backup.</p>
+      <div class="keys-actions" style="margin-top:12px"><div class="group">
+        <button class="btn" id="exportarBackup" type="button">Exportar backup</button>
+        <button class="btn" id="importarBackup" type="button">Importar backup</button>
+        <input id="backupArq" type="file" accept="application/json,.json" hidden>
+      </div></div>
     </div>
     <div class="fontes-box">
       <h3>Sincronização entre dispositivos</h3>
@@ -515,7 +631,10 @@ function recarregarItens(){
 }
 function gravarEdicoes(){ gravarJSON(EDICOES_KEY, edicoes); }
 recarregarItens();
-const st = {cat:'jogo', grp:'todos', q:'', ord:'titulo', dir:'asc', tag:''};
+const st = {cat:'jogo', grp:'todos', q:'', ord:'titulo', dir:'asc', tag:'', sel:false, selecionados:new Set()};
+let anoPerfil = null;
+const MESES = ['J','F','M','A','M','J','J','A','S','O','N','D'];
+const USER_SVG = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>';
 const STATUS_POR_CAT = {
   jogo: ['Na fila','Jogando','Jogado','Zerado','Platinado','No aguardo','Abandonado'],
   audiovisual: ['Na fila','Assistindo','Assistido','Abandonado'],
@@ -679,9 +798,9 @@ function card(i){
   const badges = mostraMeta ? `<span class="badge">${esc(tipoOf(i))}</span>${i.l ? `<span class="badge ghost">${esc(i.l.slice(0,4))}</span>` : ''}` : '';
   const meta = (badges || cadeado) ? `<div class="meta">${badges}${cadeado}</div>` : '';
   const nota = i.n != null ? `<div class="nota-linha">${estrelas(i.n)}<span class="nota-num">${fmtNota(i.n)}</span></div>` : '<div class="nota-linha"></div>';
-  return `<article class="card" style="--tint:${c.tint}">
+  return `<article class="card${st.selecionados.has(i.key) ? ' selecionado' : ''}" style="--tint:${c.tint}">
     <button class="open" type="button" data-key="${esc(i.key)}" aria-label="Abrir ${esc(i.t)}">
-      <div class="cover${capa ? ' has-img' : ''}">${capaHTML(capa)}<span class="ini" aria-hidden="true">${esc(i.t.charAt(0).toUpperCase())}</span><span class="dot-status${s2 === 'Platinado' ? ' brilho' : ''}" style="--c:${STATUS_COR[s2] || '#7b8190'}" title="${esc(s2)}" role="img" aria-label="Status: ${esc(s2)}"></span>${i.n != null ? `<span class="nota-capa"><span class="est">★</span>${fmtNota(i.n)}</span>` : ''}</div>
+      <div class="cover${capa ? ' has-img' : ''}">${capa ? '' : `<span class="cat-pad">${esc(c.label)}</span>`}${capaHTML(capa)}<span class="ini" aria-hidden="true">${esc(i.t.charAt(0).toUpperCase())}</span><span class="dot-status${s2 === 'Platinado' ? ' brilho' : ''}" style="--c:${STATUS_COR[s2] || '#7b8190'}" title="${esc(s2)}" role="img" aria-label="Status: ${esc(s2)}"></span>${i.n != null ? `<span class="nota-capa"><span class="est">★</span>${fmtNota(i.n)}</span>` : ''}</div>
       <div class="body">
         <h3>${esc(i.t)}</h3>
         ${meta}
@@ -761,9 +880,20 @@ function renderControles(){
 
 function render(){
   salvarVista();
+  const perfilOn = st.cat === 'perfil';
+  ['hero','barra'].forEach(id => { document.getElementById(id).style.display = perfilOn ? 'none' : ''; });
+  document.getElementById('count').style.display = perfilOn ? 'none' : '';
+  document.getElementById('abrirPerfil').setAttribute('aria-pressed', String(perfilOn));
+  if (perfilOn) {
+    document.querySelectorAll('[data-cat]').forEach(b => b.setAttribute('aria-pressed', 'false'));
+    document.getElementById('massa').hidden = true;
+    renderPerfil();
+    return;
+  }
   renderControles();
   renderStats();
   renderGrid();
+  atualizarMassa();
 }
 
 /* ---------- ações ---------- */
@@ -854,7 +984,7 @@ function preencherSheet(key){
         <dl>
           <dt for="st-sel">Status</dt>
           <dd><select id="st-sel" class="field">${opts.map(o => `<option${o === atual(i) ? ' selected' : ''}>${esc(o)}</option>`).join('')}</select></dd>
-          <dt>Nota</dt><dd>${i.n != null ? '★ ' + fmtNota(i.n) : '—'}</dd>
+          <dt>Nota</dt><dd>${i.n != null ? '★ ' + fmtNota(i.n) + ' · ' + NOTA_TXT(i.n) : '—'}</dd>
           <dt>Lançamento</dt><dd>${esc(fmtData(i.l))}</dd>
           <dt>Conclusão</dt><dd>${esc(fmtData(i.k))}</dd>
           <dt>Tags</dt><dd>${(i.tags || []).length ? i.tags.map(t => `<span class="badge">#${esc(t)}</span>`).join(' ') : '—'}</dd>
@@ -910,6 +1040,9 @@ function abrir(key){
 }
 
 document.getElementById('grid').addEventListener('click', e => {
+  if (st.cat === 'perfil' && perfilClique(e)) return;
+  if (st.sel) { const o2 = e.target.closest('[data-key]'); if (o2) alternarSel(o2.dataset.key); return; }
+  if (e.target.closest('[data-editar-perfil]')) return abrirPerfilDlg();
   const q = e.target.closest('[data-quick]');
   if (q) return concluir(q.dataset.quick);
   const o = e.target.closest('[data-key]');
@@ -1229,7 +1362,7 @@ function abrirForm(key){
         </select></label>
         <label>Tipo<select id="n-tipo" class="field"></select></label>
         <label>Status<select id="n-s" class="field"></select></label>
-        <label>Nota (0 a 5)<input id="n-n" class="field" type="number" min="0" max="5" step="0.5" value="${i && i.n != null ? i.n : ''}"></label>
+        <label>Nota<select id="n-n" class="field">${opcoesNota(i && i.n != null ? i.n : null)}</select></label>
         <label>Lançamento<input id="n-l" class="field" type="date" value="${esc(i && i.l ? i.l : '')}"></label>
         <label>Conclusão<input id="n-k" class="field" type="date" value="${esc(i && i.k ? i.k : '')}"></label>
         <label id="lbl-g" class="full">ID da IGDB (jogos, para buscar a capa)<input id="n-g" class="field" type="number" min="1" value="${i && i.g != null ? i.g : ''}"></label>
@@ -1357,11 +1490,14 @@ function iniciarNotif(){
 }
 
 /* ---------- sincronização com Firebase ---------- */
-SYNC_KEYS_LIST = [EDICOES_KEY, NOVOS_KEY, CAPAS_KEY, FONTES_KEY];
+const PERFIL_KEY = 'hub-midias-perfil-v1';
+let perfil = lerJSON(PERFIL_KEY, {});
+SYNC_KEYS_LIST = [EDICOES_KEY, NOVOS_KEY, CAPAS_KEY, FONTES_KEY, PERFIL_KEY];
 const FB_CFG_KEY = 'hub-midias-firebase-v1';
 let fbCfg = lerJSON(FB_CFG_KEY, null);
 let fbAuth = null, fbDb = null, fbDocRef = null, fbUnsub = null, fbTimer = null;
 let fbAplicandoRemoto = false;
+let fbUser = null;
 
 function setStatusFb(msg){ const el = document.getElementById('fb-status'); if (el) el.textContent = msg; }
 function agendarEnvio(){
@@ -1371,7 +1507,7 @@ function agendarEnvio(){
 }
 function enviarAgora(){
   if (!fbDocRef) return;
-  const dados = JSON.parse(JSON.stringify({edicoes, novos, capas, fontes: configFontes}));
+  const dados = JSON.parse(JSON.stringify({edicoes, novos, capas, fontes: configFontes, perfil}));
   dados.atualizado = firebase.firestore.FieldValue.serverTimestamp();
   fbDocRef.set(dados)
     .then(() => setStatusFb('Sincronizado às ' + new Date().toLocaleTimeString('pt-BR', {timeStyle:'short'})))
@@ -1388,6 +1524,7 @@ function aplicarRemoto(d){
     gravarJSON(NOVOS_KEY, novos);
     gravarJSON(CAPAS_KEY, capas);
     gravarFontes();
+    if (d.perfil) { perfil = d.perfil; gravarJSON(PERFIL_KEY, perfil); }
   } finally { fbAplicandoRemoto = false; }
   recarregarItens();
   montarFontes();
@@ -1414,6 +1551,10 @@ function iniciarFirebase(){
   fbAuth = firebase.auth();
   fbDb = firebase.firestore();
   fbAuth.onAuthStateChanged(user => {
+    fbUser = user;
+    if (user && !perfil.nome && user.displayName) { perfil.nome = user.displayName; gravarJSON(PERFIL_KEY, perfil); }
+    if (user && !perfil.foto && user.photoURL) { perfil.foto = user.photoURL; gravarJSON(PERFIL_KEY, perfil); }
+    atualizarAvatar();
     document.getElementById('fb-entrar').disabled = !!user;
     document.getElementById('fb-sair').disabled = !user;
     if (user){ setStatusFb('Conectado como ' + (user.email || 'conta Google') + '. Sincronizando…'); ligarSync(user.uid); }
@@ -1459,10 +1600,276 @@ function iniciarSync(){
   iniciarFirebase();
 }
 
+/* ---------- perfil, backup e ações em massa ---------- */
+function estatisticas(){
+  const r = {total: ITEMS.length, concl: 0, and: 0, notaSoma: 0, notaN: 0, cats: {}, anos: {}};
+  for (const i of ITEMS){
+    const g = grupo(i);
+    const c = r.cats[i.c] || (r.cats[i.c] = {total: 0, concl: 0});
+    c.total++;
+    if (g === 'concluido') { r.concl++; c.concl++; }
+    else if (g === 'andamento') r.and++;
+    if (i.n != null) { r.notaSoma += i.n; r.notaN++; }
+    if (g === 'concluido' && i.k && i.k.length >= 4) {
+      const a = i.k.slice(0, 4), m = parseInt(i.k.slice(5, 7), 10);
+      const ano = r.anos[a] || (r.anos[a] = {meses: Array(12).fill(0), total: 0});
+      ano.total++;
+      if (m >= 1 && m <= 12) ano.meses[m - 1]++;
+    }
+  }
+  return r;
+}
+const NOTAS = [[5,'Obra-prima'],[4.5,'Excelente'],[4,'Muito bom'],[3.5,'Bom'],[3,'Ok'],[2.5,'Mediano'],[2,'Fraco'],[1.5,'Ruim'],[1,'Muito ruim'],[0.5,'Insultante']];
+const NOTA_TXT = n => { const x = NOTAS.find(([v]) => v === n); return x ? x[1] : ''; };
+const opcoesNota = v => '<option value="">Sem nota</option>' + NOTAS.map(([n, t]) =>
+  `<option value="${n}"${v != null && Number(v) === n ? ' selected' : ''}>${String(n).replace('.', ',')} · ${t}</option>`).join('');
+const MESES_NOME = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+let perfilUI = {ano: null, cat: 'todos', mes: null};
+let catAnteriorPerfil = 'jogo';
+function renderPerfil(){
+  const e = estatisticas();
+  const concl = ITEMS.filter(i => grupo(i) === 'concluido' && i.k).sort((a, b) => b.k.localeCompare(a.k));
+  const anos = [...new Set(concl.map(i => i.k.slice(0, 4)))].sort().reverse();
+  if (!perfilUI.ano || !anos.includes(perfilUI.ano)) perfilUI.ano = anos[0] || String(new Date().getFullYear());
+  const doAno = concl.filter(i => i.k.slice(0, 4) === perfilUI.ano && (perfilUI.cat === 'todos' || i.c === perfilUI.cat));
+  const meses = Array(12).fill(0);
+  doAno.forEach(i => { const m = parseInt(i.k.slice(5, 7), 10); if (m >= 1 && m <= 12) meses[m - 1]++; });
+  const max = Math.max(1, ...meses);
+  const mesItens = perfilUI.mes == null ? [] : doAno.filter(i => parseInt(i.k.slice(5, 7), 10) === perfilUI.mes + 1).sort((a, b) => a.k.localeCompare(b.k));
+  const ultima = concl[0];
+  const nome = perfil.nome || (fbUser && fbUser.displayName) || 'Seu nome';
+  const email = fbUser ? fbUser.email : 'Não conectado ao Google';
+  const media = e.notaN ? (e.notaSoma / e.notaN).toFixed(1).replace('.', ',') : '—';
+  const favs = (perfil.favoritos || []).map(k => ITEMS.find(i => i.key === k)).filter(Boolean).slice(0, 5);
+  const linha = (k, rot) => { const c = e.cats[k] || {total: 0, concl: 0}; return `<div class="perfil-linha"><span>${rot}</span><b>${c.concl}</b><span class="de">de ${c.total}</span></div>`; };
+  const avatar = perfil.foto ? `<img src="${esc(perfil.foto)}" alt="">` : `<span>${esc((nome || '?').charAt(0).toUpperCase())}</span>`;
+  const catOpts = [['todos','Todas'],['jogo','Jogos'],['audiovisual','Filmes & Séries'],['livro','Livros & Mangás']]
+    .map(([k, l]) => `<option value="${k}"${perfilUI.cat === k ? ' selected' : ''}>${esc(l)}</option>`).join('');
+  document.querySelectorAll('[data-cat]').forEach(b => b.setAttribute('aria-pressed', 'false'));
+  document.getElementById('grid').innerHTML = `
+    <div class="perfil">
+      <div class="perfil-capa" style="${perfil.banner ? `background-image:url('${esc(perfil.banner)}')` : ''}">
+        <button class="btn perfil-voltar" type="button" data-voltar-perfil>← Voltar</button>
+        <button class="btn perfil-editar" type="button" data-editar-perfil>Editar perfil</button>
+        <div class="perfil-cabeca">
+          <div class="perfil-avatar">${avatar}</div>
+          <div class="perfil-id">
+            <h2>${esc(nome)}</h2>
+            <p class="perfil-email">${esc(email)}</p>
+            <p class="perfil-bio${perfil.bio ? '' : ' vazio'}">${esc(perfil.bio || 'Adicione uma bio em Editar perfil.')}</p>
+          </div>
+        </div>
+      </div>
+      <div class="perfil-numeros">
+        <div class="tile"><b>${e.total}</b><span>Mídias</span></div>
+        <div class="tile"><b>${e.concl}</b><span>Concluídas</span></div>
+        <div class="tile"><b>${e.and}</b><span>Em andamento</span></div>
+        <div class="tile"><b>${media}</b><span>Nota média</span></div>
+      </div>
+      <div class="perfil-bloco glass facet">
+        <div class="perfil-cab"><h3>Favoritos</h3><button class="btn" type="button" data-fav-abrir>Gerenciar</button></div>
+        ${favs.length ? `<div class="fav-grid">${favs.map(card).join('')}</div>` : '<p class="hint">Nenhum favorito ainda. Toque em Gerenciar para escolher.</p>'}
+      </div>
+      <div class="perfil-bloco glass facet">
+        <h3>Por categoria</h3>
+        ${linha('jogo', 'Jogos')}${linha('audiovisual', 'Filmes &amp; Séries')}${linha('livro', 'Livros &amp; Mangás')}
+      </div>
+      <div class="perfil-bloco glass facet">
+        <div class="perfil-cab">
+          <h3>Concluídas por mês</h3>
+          <div class="perfil-filtros">
+            <select id="catPerfil" class="field" aria-label="Categoria">${catOpts}</select>
+            <select id="anoPerfil" class="field" aria-label="Ano">${(anos.length ? anos : [perfilUI.ano]).map(a => `<option${a === perfilUI.ano ? ' selected' : ''}>${a}</option>`).join('')}</select>
+          </div>
+        </div>
+        <p class="hint">${doAno.length} concluída(s) em ${esc(perfilUI.ano)}. Toque em um mês para ver quais.</p>
+        ${perfilUI.mes != null ? `<div class="mes-lista"><h4>${MESES_NOME[perfilUI.mes]} · ${mesItens.length}</h4>${mesItens.length ? mesItens.map(i => `<button type="button" class="mes-item" data-key="${esc(i.key)}"><span>${esc(i.t)}</span><small>${esc(fmtData(i.k))}</small></button>`).join('') : '<p class="hint">Nada concluído neste mês.</p>'}</div>` : ''}
+        <div class="grafico">${meses.map((n, idx) => `<button type="button" class="barra-col${perfilUI.mes === idx ? ' ativo' : ''}" data-mes="${idx}" aria-label="${MESES_NOME[idx]}: ${n}"><div class="barra-area"><div class="barra" style="height:${Math.round(n / max * 100)}%"></div></div><span>${MESES[idx]}</span></button>`).join('')}</div>
+      </div>
+      ${ultima ? `<p class="perfil-ultima">Última conclusão: <b>${esc(ultima.t)}</b> · ${esc(fmtData(ultima.k))}</p>` : ''}
+    </div>`;
+  atualizarAvatar();
+}
+function atualizarAvatar(){
+  const b = document.getElementById('abrirPerfil');
+  const nome = perfil.nome || (fbUser && fbUser.displayName) || '';
+  b.innerHTML = perfil.foto ? `<img class="avatar-img" src="${esc(perfil.foto)}" alt="">`
+    : (nome ? `<span class="avatar-ini">${esc(nome.charAt(0).toUpperCase())}</span>` : USER_SVG);
+}
+function abrirPerfilDlg(){
+  document.getElementById('pf-nome').value = perfil.nome || '';
+  document.getElementById('pf-bio').value = perfil.bio || '';
+  document.getElementById('pf-foto').value = '';
+  document.getElementById('pf-banner').value = '';
+  document.getElementById('pf-erro').textContent = '';
+  fotoTmp = undefined; bannerTmp = undefined;
+  document.getElementById('perfilDlg').showModal();
+}
+let fotoTmp = undefined, bannerTmp = undefined;
+function imagemRedimensionada(file, W, H, qualidade){
+  return new Promise(res => {
+    const img = new Image();
+    img.onload = () => {
+      const c = document.createElement('canvas'); c.width = W; c.height = H;
+      const sc = Math.max(W / img.width, H / img.height), w = img.width * sc, h = img.height * sc;
+      c.getContext('2d').drawImage(img, (W - w) / 2, (H - h) / 2, w, h);
+      res(c.toDataURL('image/jpeg', qualidade));
+    };
+    img.src = URL.createObjectURL(file);
+  });
+}
+function renderFavLista(){
+  const q = document.getElementById('favBusca').value.trim().toLowerCase();
+  const fav = new Set(perfil.favoritos || []);
+  const itens = ITEMS.filter(i => !q || i.t.toLowerCase().includes(q)).slice(0, 80);
+  document.getElementById('favLista').innerHTML = itens.length
+    ? itens.map(i => `<button type="button" data-fav="${esc(i.key)}"><span>${fav.has(i.key) ? '★' : '☆'} ${esc(i.t)}</span><small>${esc(CATS[i.c].label)}</small></button>`).join('')
+    : '<p class="hint">Nenhuma mídia encontrada.</p>';
+}
+function iniciarPerfil(){
+  document.getElementById('abrirPerfil').addEventListener('click', () => {
+    if (st.cat !== 'perfil') { catAnteriorPerfil = st.cat; st.cat = 'perfil'; }
+    render();
+  });
+  const dlg = document.getElementById('perfilDlg');
+  dlg.querySelector('[data-fechar-pf]').addEventListener('click', () => dlg.close());
+  document.getElementById('pf-foto').addEventListener('change', async e => {
+    const f = e.target.files && e.target.files[0]; if (f) fotoTmp = await imagemRedimensionada(f, 160, 160, 0.85);
+  });
+  document.getElementById('pf-banner').addEventListener('change', async e => {
+    const f = e.target.files && e.target.files[0]; if (f) bannerTmp = await imagemRedimensionada(f, 800, 240, 0.7);
+  });
+  document.getElementById('pf-sem-foto').addEventListener('click', () => { fotoTmp = null; document.getElementById('pf-foto').value = ''; toast('Foto será removida ao salvar.'); });
+  document.getElementById('pf-sem-banner').addEventListener('click', () => { bannerTmp = null; document.getElementById('pf-banner').value = ''; toast('Capa será removida ao salvar.'); });
+  document.getElementById('pf-salvar').addEventListener('click', () => {
+    const nome = document.getElementById('pf-nome').value.trim();
+    if (!nome) return document.getElementById('pf-erro').textContent = 'Informe um nome.';
+    perfil.nome = nome;
+    perfil.bio = document.getElementById('pf-bio').value.trim().slice(0, 200);
+    if (fotoTmp !== undefined) perfil.foto = fotoTmp;
+    if (bannerTmp !== undefined) perfil.banner = bannerTmp;
+    fotoTmp = undefined; bannerTmp = undefined;
+    gravarJSON(PERFIL_KEY, perfil);
+    dlg.close(); render();
+    toast('Perfil atualizado.');
+  });
+  const fav = document.getElementById('favDlg');
+  fav.querySelector('[data-fechar-fav]').addEventListener('click', () => fav.close());
+  document.getElementById('favBusca').addEventListener('input', renderFavLista);
+  document.getElementById('favLista').addEventListener('click', e => {
+    const b = e.target.closest('[data-fav]'); if (!b) return;
+    const k = b.dataset.fav;
+    const lista = perfil.favoritos || [];
+    if (!lista.includes(k) && lista.length >= 5) return toast('Você já tem 5 favoritos. Remova um para adicionar outro.');
+    perfil.favoritos = lista.includes(k) ? lista.filter(x => x !== k) : [...lista, k];
+    gravarJSON(PERFIL_KEY, perfil);
+    renderFavLista(); render();
+  });
+  document.getElementById('grid').addEventListener('change', e => {
+    if (e.target.id === 'anoPerfil') { perfilUI.ano = e.target.value; perfilUI.mes = null; render(); }
+    if (e.target.id === 'catPerfil') { perfilUI.cat = e.target.value; perfilUI.mes = null; render(); }
+  });
+  atualizarAvatar();
+}
+function perfilClique(e){
+  const t = e.target;
+  if (t.closest('[data-voltar-perfil]')) { st.cat = catAnteriorPerfil || 'jogo'; render(); return true; }
+  if (t.closest('[data-editar-perfil]')) { abrirPerfilDlg(); return true; }
+  if (t.closest('[data-fav-abrir]')) { document.getElementById('favBusca').value = ''; renderFavLista(); document.getElementById('favDlg').showModal(); return true; }
+  const m = t.closest('[data-mes]');
+  if (m) { const idx = parseInt(m.dataset.mes, 10); perfilUI.mes = perfilUI.mes === idx ? null : idx; render(); return true; }
+  return false;
+}
+function exportarBackup(){
+  const dados = {versao: 1, exportado: new Date().toISOString(), edicoes, novos, capas, fontes: configFontes, perfil};
+  const blob = new Blob([JSON.stringify(dados, null, 2)], {type: 'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'hub-backup-' + new Date().toISOString().slice(0, 10) + '.json';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  toast('Backup exportado.');
+}
+function importarBackup(file){
+  const r = new FileReader();
+  r.onload = () => {
+    let d;
+    try { d = JSON.parse(r.result); } catch (err) { return toast('Arquivo inválido.'); }
+    if (!d || d.versao !== 1 || typeof d.edicoes !== 'object') return toast('Esse arquivo não é um backup deste site.');
+    if (!confirm('Substituir os dados atuais pelo backup?')) return;
+    edicoes = d.edicoes || {};
+    novos = Array.isArray(d.novos) ? d.novos : [];
+    capas = d.capas || {};
+    if (d.fontes) { configFontes = {...configFontes, ...d.fontes}; configFontes.on = configFontes.on || {}; }
+    if (d.perfil) perfil = d.perfil;
+    gravarEdicoes(); gravarJSON(NOVOS_KEY, novos); gravarJSON(CAPAS_KEY, capas);
+    gravarFontes(); gravarJSON(PERFIL_KEY, perfil);
+    recarregarItens(); montarFontes(); atualizarAvatar(); render();
+    toast('Backup importado.');
+  };
+  r.readAsText(file);
+}
+function iniciarBackup(){
+  document.getElementById('exportarBackup').addEventListener('click', exportarBackup);
+  document.getElementById('importarBackup').addEventListener('click', () => document.getElementById('backupArq').click());
+  document.getElementById('backupArq').addEventListener('change', e => {
+    const f = e.target.files && e.target.files[0];
+    e.target.value = '';
+    if (f) importarBackup(f);
+  });
+}
+function alternarSel(key){
+  if (st.selecionados.has(key)) st.selecionados.delete(key); else st.selecionados.add(key);
+  render();
+}
+function atualizarMassa(){
+  const bar = document.getElementById('massa');
+  bar.hidden = !st.sel;
+  document.getElementById('selecionarBtn').setAttribute('aria-pressed', String(st.sel));
+  document.getElementById('massaCont').textContent = `${st.selecionados.size} selecionada(s)`;
+  const todos = [...new Set(Object.values(STATUS_POR_CAT).flat())];
+  const atual_ = document.getElementById('massaStatus').value;
+  document.getElementById('massaStatus').innerHTML = '<option value="">Mudar status…</option>' + todos.map(x => `<option${x === atual_ ? ' selected' : ''}>${esc(x)}</option>`).join('');
+}
+function aplicarMassaStatus(){
+  const v = document.getElementById('massaStatus').value;
+  if (!v) return toast('Escolha um status.');
+  let n = 0, pulados = 0;
+  for (const key of st.selecionados){
+    const it = ITEMS.find(x => x.key === key); if (!it) continue;
+    if (!(STATUS_POR_CAT[it.c] || []).includes(v)) { pulados++; continue; }
+    edicoes[key] = {...(edicoes[key] || {}), s: v}; n++;
+  }
+  gravarEdicoes(); recarregarItens(); render();
+  toast(`${n} atualizada(s).` + (pulados ? ` ${pulados} não tem esse status na categoria.` : ''));
+}
+function aplicarMassaTag(){
+  const t = document.getElementById('massaTag').value.trim();
+  if (!t) return;
+  for (const key of st.selecionados){
+    const it = ITEMS.find(x => x.key === key); if (!it) continue;
+    edicoes[key] = {...(edicoes[key] || {}), tags: [...new Set([...(it.tags || []), t])]};
+  }
+  gravarEdicoes(); recarregarItens();
+  document.getElementById('massaTag').value = '';
+  render(); toast(`Tag #${t} adicionada.`);
+}
+function iniciarMassa(){
+  document.getElementById('selecionarBtn').addEventListener('click', () => { st.sel = !st.sel; st.selecionados.clear(); render(); });
+  document.getElementById('massaAplicar').addEventListener('click', aplicarMassaStatus);
+  document.getElementById('massaTagAdd').addEventListener('click', aplicarMassaTag);
+  document.getElementById('massaTudo').addEventListener('click', () => { lista().forEach(i => st.selecionados.add(i.key)); render(); });
+  document.getElementById('massaCancelar').addEventListener('click', () => { st.sel = false; st.selecionados.clear(); render(); });
+}
+
 /* ---------- início ---------- */
 iniciarChaves();
 iniciarNotif();
 iniciarSync();
+iniciarPerfil();
+iniciarBackup();
+iniciarMassa();
+render();
 montarCategorias();
 montarChips();
 montarBusca();
