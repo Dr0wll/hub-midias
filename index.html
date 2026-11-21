@@ -214,6 +214,13 @@ dialog .sheet{max-height:90vh;overflow:auto}
 .saude-titulo span{color:var(--ink-3);font-weight:500}
 .saude-vazio{grid-column:1/-1;margin:0 2px;color:var(--ink-3);font-size:.88rem}
 
+.busca-wrap{position:relative;flex:1;min-width:220px}
+.busca-wrap .busca{width:100%}
+.sug{position:absolute;top:100%;left:0;right:0;z-index:5;margin-top:4px;max-height:240px;overflow:auto;background:var(--glass-2);border:1px solid var(--edge-2);border-radius:2px;box-shadow:var(--drop)}
+.sug button{display:block;width:100%;text-align:left;padding:9px 12px;background:none;border:0;color:var(--ink);font:inherit;cursor:pointer}
+.sug button:hover,.sug button:focus-visible{background:rgba(255,255,255,.08)}
+.sug .vazio{margin:0;padding:9px 12px;color:var(--ink-3);font-size:.88rem}
+
 /* modal */
 dialog{border:0;padding:0;background:transparent;color:var(--ink);width:min(600px,calc(100vw - 32px));max-width:none;margin:auto}
 dialog::backdrop{background:rgba(3,4,8,.62);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
@@ -288,7 +295,7 @@ dialog::backdrop{background:rgba(3,4,8,.62);backdrop-filter:blur(6px);-webkit-ba
   .seg::-webkit-scrollbar{display:none}
   .seg .pill{flex:0 0 auto;min-height:40px;padding:8px 12px}
   .tools{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%}
-  .tools .busca{grid-column:1/-1;width:100%;min-width:0}
+  .tools .busca-wrap{grid-column:1/-1;min-width:0}
   .tools .field,.tools .btn{width:100%;min-width:0;min-height:42px}
   #novoBtn{grid-column:1/-1}
   #limparFiltros{grid-column:1/-1;justify-self:start;min-height:36px}
@@ -360,7 +367,10 @@ dialog::backdrop{background:rgba(3,4,8,.62);backdrop-filter:blur(6px);-webkit-ba
       <div class="seg" id="cats" role="group" aria-label="Categoria"></div>
       <div class="tools">
         <label class="sr" for="q">Buscar por título</label>
-        <input id="q" class="field busca" type="search" placeholder="Buscar título…" autocomplete="off">
+        <div class="busca-wrap">
+          <input id="q" class="field busca" type="search" placeholder="Buscar título ou #tag…" autocomplete="off" aria-controls="tagsSug" aria-autocomplete="list">
+          <div id="tagsSug" class="sug" role="listbox" hidden></div>
+        </div>
         <label class="sr" for="ord">Ordenar por</label>
         <select id="ord" class="field larg">
           <option value="titulo">Ordenar: título</option>
@@ -528,7 +538,7 @@ function salvarVista(){
 function aplicarVista(grp){
   const v = vistas[grp] || {ord:'titulo', dir:'asc', tag:'', q:''};
   Object.assign(st, {ord: v.ord, dir: v.dir, tag: v.tag, q: v.q});
-  document.getElementById('q').value = st.q;
+  document.getElementById('q').value = st.tag ? '#' + st.tag : st.q;
   document.getElementById('ord').value = st.ord;
 }
 
@@ -547,6 +557,11 @@ const fmtData = s => {
   if (!s) return '—';
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s);
   return m ? `${m[3]}/${m[2]}/${m[1]}` : s;
+};
+const casaBusca = i => {
+  if (st.tag) return (i.tags || []).includes(st.tag);
+  const q = st.q.trim().toLowerCase();
+  return !q || i.t.toLowerCase().includes(q);
 };
 const doCat = i => st.cat === 'todos' || st.cat === 'saude' || i.c === st.cat;
 
@@ -579,8 +594,40 @@ function montarChips(){
     st.grp = b.dataset.grp; aplicarVista(st.grp); render();
   });
 }
+function tagsTodas(){
+  return [...new Set(ITEMS.flatMap(i => i.tags || []))].sort((a, b) => a.localeCompare(b, 'pt-BR'));
+}
+function atualizarSugestoes(){
+  const inp = document.getElementById('q'), box = document.getElementById('tagsSug');
+  const v = inp.value;
+  if (!v.startsWith('#')) { box.hidden = true; return; }
+  const termo = v.slice(1).trim().toLowerCase();
+  const tags = tagsTodas().filter(t => t.toLowerCase().includes(termo));
+  box.innerHTML = tags.length
+    ? tags.map(t => `<button type="button" role="option" data-tag="${esc(t)}">#${esc(t)}</button>`).join('')
+    : '<p class="vazio">Nenhuma tag encontrada. Adicione tags pelo "Editar mídia".</p>';
+  box.hidden = false;
+}
 function montarBusca(){
-  document.getElementById('q').addEventListener('input', e => { st.q = e.target.value; render(); });
+  const inp = document.getElementById('q');
+  inp.addEventListener('input', () => {
+    st.tag = '';
+    st.q = inp.value.startsWith('#') ? '' : inp.value;
+    atualizarSugestoes();
+    render();
+  });
+  inp.addEventListener('keydown', e => {
+    if (e.key === 'Escape') document.getElementById('tagsSug').hidden = true;
+  });
+  inp.addEventListener('blur', () => setTimeout(() => { document.getElementById('tagsSug').hidden = true; }, 150));
+  inp.addEventListener('focus', () => atualizarSugestoes());
+  document.getElementById('tagsSug').addEventListener('click', e => {
+    const b = e.target.closest('[data-tag]'); if (!b) return;
+    st.tag = b.dataset.tag; st.q = '';
+    inp.value = '#' + st.tag;
+    document.getElementById('tagsSug').hidden = true;
+    render();
+  });
   document.getElementById('ord').addEventListener('change', e => { st.ord = e.target.value; render(); });
   document.getElementById('ordemDir').addEventListener('click', () => { st.dir = st.dir === 'asc' ? 'desc' : 'asc'; render(); });
   document.getElementById('limparFiltros').addEventListener('click', () => {
@@ -605,8 +652,7 @@ function lista(){
     const f = (FILTROS_POR_CAT[st.cat] || []).find(x => x[0] === st.grp);
     if (f) L = L.filter(i => f[1].includes(atual(i)));
   }
-  const q = st.q.trim().toLowerCase();
-  if (q) L = L.filter(i => i.t.toLowerCase().includes(q));
+  L = L.filter(casaBusca);
   const chave = {titulo:i => i.t, nota:i => i.n, lancamento:i => i.l, conclusao:i => i.k}[st.ord];
   return L.sort((a, b) => {
     const x = chave(a), y = chave(b);
@@ -651,7 +697,7 @@ function renderGrid(){
   const el = document.getElementById('grid');
   if (st.cat === 'saude') {
     const q = st.q.trim().toLowerCase();
-    const base = ITEMS.filter(i => !q || i.t.toLowerCase().includes(q));
+    const base = ITEMS.filter(casaBusca);
     const grupos = [
       ['Sem capa', base.filter(i => !capaDe(i))],
       ['Concluídos sem nota', base.filter(i => grupo(i) === 'concluido' && i.n == null)],
@@ -675,7 +721,7 @@ function renderGrid(){
 /* ---------- painéis ---------- */
 function renderStats(){
   const q = st.q.trim().toLowerCase();
-  const base = ITEMS.filter(i => doCat(i) && (!q || i.t.toLowerCase().includes(q)));
+  const base = ITEMS.filter(i => doCat(i) && casaBusca(i));
   const total = base.length;
   const cont = {fila:0, andamento:0, concluido:0, aguardo:0, abandonado:0};
   base.forEach(i => cont[grupo(i)]++);
@@ -811,6 +857,7 @@ function preencherSheet(key){
           <dt>Nota</dt><dd>${i.n != null ? '★ ' + fmtNota(i.n) : '—'}</dd>
           <dt>Lançamento</dt><dd>${esc(fmtData(i.l))}</dd>
           <dt>Conclusão</dt><dd>${esc(fmtData(i.k))}</dd>
+          <dt>Tags</dt><dd>${(i.tags || []).length ? i.tags.map(t => `<span class="badge">#${esc(t)}</span>`).join(' ') : '—'}</dd>
         </dl>
         <div class="notas-bloco">
           <label for="notas-item">Anotações</label>
@@ -819,6 +866,7 @@ function preencherSheet(key){
         ${i.c === 'jogo' ? `<label class="switch" style="margin-top:18px"><input type="checkbox" role="switch" data-travar${i.travado ? ' checked' : ''}> Bloquear atualizações automáticas deste jogo</label>` : ''}
         <div class="keys-actions" style="margin-top:22px"><div class="group">
           <button class="btn" type="button" data-editar>Editar mídia</button>
+          ${i.c === 'jogo' ? `<a class="btn" href="https://howlongtobeat.com/?q=${encodeURIComponent(i.t)}" target="_blank" rel="noopener">Ver no HowLongToBeat</a>` : ''}
           <button class="btn" type="button" data-buscar-capa>Buscar capa</button>
           ${capa ? '<button class="link" type="button" data-remover-capa>Remover capa</button>' : ''}
           ${i.novo ? '<button class="link" type="button" data-remover>Remover esta mídia</button>' : ''}
@@ -1186,6 +1234,7 @@ function abrirForm(key){
         <label>Conclusão<input id="n-k" class="field" type="date" value="${esc(i && i.k ? i.k : '')}"></label>
         <label id="lbl-g" class="full">ID da IGDB (jogos, para buscar a capa)<input id="n-g" class="field" type="number" min="1" value="${i && i.g != null ? i.g : ''}"></label>
         <label class="full">Link da capa (opcional, sobrescreve a busca automática)<input id="n-capa" class="field" type="url" placeholder="https://…" value="${esc(i && i.capa ? i.capa : '')}"></label>
+        <label class="full">Tags (separadas por vírgula)<input id="n-tags" class="field" type="text" placeholder="ex.: favorito, co-op" value="${esc(i && i.tags ? i.tags.join(', ') : '')}"></label>
       </div>
       <p class="erro" id="n-erro" role="alert"></p>
       <div class="keys-actions"><div class="group"><button class="btn" id="n-salvar" type="button">${i ? 'Salvar alterações' : 'Adicionar'}</button></div></div>
@@ -1226,6 +1275,7 @@ function salvarItem(key){
   if (k && l && k < l) return erro('A conclusão não pode ser antes do lançamento.');
   const capa = document.getElementById('n-capa').value.trim();
   if (capa && !/^https?:\/\//i.test(capa)) return erro('O link da capa precisa começar com http:// ou https://.');
+  const tags = [...new Set(document.getElementById('n-tags').value.split(',').map(x => x.trim()).filter(Boolean))];
   const gv = document.getElementById('n-g').value;
   const dados = {
     t, c,
@@ -1234,6 +1284,7 @@ function salvarItem(key){
     n, l, k,
     g: c === 'jogo' && gv ? parseInt(gv, 10) : null,
     capa: capa || null,
+    tags,
     travado: key && edicoes[key] ? !!edicoes[key].travado : false,
     notas: key && edicoes[key] && edicoes[key].notas != null ? edicoes[key].notas : null
   };
