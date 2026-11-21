@@ -454,6 +454,7 @@ dialog::backdrop{background:rgba(3,4,8,.62);backdrop-filter:blur(6px);-webkit-ba
           <option value="lancamento">Ordenar: lançamento</option>
           <option value="conclusao">Ordenar: conclusão</option>
           <option value="status">Ordenar: status</option>
+          <option value="adicao">Ordenar: adição</option>
         </select>
         <button id="ordemDir" class="btn larg" type="button">↑ Crescente</button>
         <button id="limparFiltros" class="link" type="button">Limpar filtros</button>
@@ -777,7 +778,7 @@ function lista(){
   }
   L = L.filter(casaBusca);
   const ordemStatus = i => { const k = (STATUS_POR_CAT[i.c] || []).indexOf(atual(i)); return k < 0 ? 99 : k; };
-  const chave = {titulo:i => i.t, nota:i => i.n, lancamento:i => i.l, conclusao:i => i.k, status:ordemStatus}[st.ord];
+  const chave = {titulo:i => i.t, nota:i => i.n, lancamento:i => i.l, conclusao:i => i.k, status:ordemStatus, adicao:i => i.adicionadoEm || 0}[st.ord];
   return L.sort((a, b) => {
     const x = chave(a), y = chave(b);
     const xv = x == null || x === '', yv = y == null || y === '';
@@ -785,6 +786,7 @@ function lista(){
     if (xv) return 1;
     if (yv) return -1;
     const c = typeof x === 'number' ? x - y : String(x).localeCompare(String(y), 'pt-BR');
+    if (c === 0) return a.t.localeCompare(b.t, 'pt-BR');
     return st.dir === 'desc' ? -c : c;
   });
 }
@@ -1430,7 +1432,7 @@ function salvarItem(key){
     edicoes[key] = dados;
   } else {
     const nk = 'n' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
-    novos.push({key: nk, ...dados});
+    novos.push({key: nk, ...dados, adicionadoEm: Date.now()});
     gravarJSON(NOVOS_KEY, novos);
   }
   gravarEdicoes();
