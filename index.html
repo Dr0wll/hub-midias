@@ -314,16 +314,18 @@ dialog::backdrop{background:rgba(3,4,8,.62);backdrop-filter:blur(6px);-webkit-ba
         <button class="btn" id="buscarCapas" type="button">Buscar capas pendentes</button>
       </div>
       <div class="keys-grid">
-        <label>TMDB · chave v3 (filmes e séries)<input id="k-tmdb" class="field" type="password" autocomplete="off" placeholder="cole a chave"></label>
-        <label>IGDB · Client ID (jogos)<input id="k-igdb-id" class="field" type="password" autocomplete="off" placeholder="cole o Client ID"></label>
-        <label>IGDB · Access token (jogos)<input id="k-igdb-tok" class="field" type="password" autocomplete="off" placeholder="cole o token"></label>
-        <label>RAWG · chave gratuita (jogos, opcional)<input id="k-rawg" class="field" type="password" autocomplete="off" placeholder="cole a chave"></label>
-        <label>OMDb · chave gratuita (filmes e séries, opcional)<input id="k-omdb" class="field" type="password" autocomplete="off" placeholder="cole a chave"></label>
+        <label>TMDB · chave v3 (filmes e séries)<input id="k-tmdb" class="field chave" type="password" autocomplete="off" placeholder="cole a chave"></label>
+        <label>IGDB · Client ID (jogos)<input id="k-igdb-id" class="field chave" type="password" autocomplete="off" placeholder="cole o Client ID"></label>
+        <label>IGDB · Access token (jogos)<input id="k-igdb-tok" class="field chave" type="password" autocomplete="off" placeholder="cole o token"></label>
+        <label>Proxy da IGDB · endereço (vazio = usar o do PC)<input id="k-proxy" class="field" type="url" autocomplete="off" placeholder="https://seu-worker.workers.dev"></label>
+        <label>RAWG · chave gratuita (jogos, opcional)<input id="k-rawg" class="field chave" type="password" autocomplete="off" placeholder="cole a chave"></label>
+        <label>OMDb · chave gratuita (filmes e séries, opcional)<input id="k-omdb" class="field chave" type="password" autocomplete="off" placeholder="cole a chave"></label>
       </div>
       <div class="keys-actions">
         <div class="group">
           <button class="btn" id="salvarChaves" type="button">Salvar chaves</button>
           <button class="link" id="apagarChaves" type="button">Apagar chaves</button>
+          <button class="link" id="mostrarChaves" type="button" aria-pressed="false">Mostrar chaves</button>
           <button class="link" id="buscarNaoAchadas" type="button">Buscar de novo as sem capa</button>
         </div>
         <p class="status-line" id="kstatus" aria-live="polite">Livros usam Open Library e animes/mangás usam Jikan, gratuitos e sem chave.</p>
@@ -763,7 +765,8 @@ let capas = lerJSON(CAPAS_KEY, {});
 Object.keys(capas).forEach(k => { if (capas[k] === '') delete capas[k]; });
 let ocupado = false;
 
-const PROXY_IGDB = 'http://localhost:8787/igdb';
+const PROXY_PADRAO_IGDB = 'http://localhost:8787/igdb';
+const proxyIgdb = () => (chaves && chaves.proxyIgdb) || PROXY_PADRAO_IGDB;
 const TIMEOUT_FONTE = 10000;
 const FONTES_KEY = 'hub-midias-fontes-v1';
 
@@ -785,7 +788,7 @@ const FONTES = {
   igdb: {nome:'IGDB (via proxy)', tipos:['Jogo'], precisa:'Client ID e token da IGDB', ok:() => !!(chaves.igdbId && chaves.igdbTok),
     busca: async (i, s) => {
       if (i.g == null) return '';
-      const r = await fetch(PROXY_IGDB, {method:'POST', signal: s,
+      const r = await fetch(proxyIgdb(), {method:'POST', signal: s,
         headers:{'Client-ID': chaves.igdbId, 'Authorization': 'Bearer ' + chaves.igdbTok},
         body: `fields cover.image_id; where id = ${i.g};`});
       if (!r.ok) throw new Error(`IGDB HTTP ${r.status}`);
@@ -852,7 +855,7 @@ FONTES.omdb.data = async (i, s) => {
 };
 FONTES.igdb.data = async (i, s) => {
   if (i.g == null) return '';
-  const r = await fetch(PROXY_IGDB, {method:'POST', signal: s,
+  const r = await fetch(proxyIgdb(), {method:'POST', signal: s,
     headers:{'Client-ID': chaves.igdbId, 'Authorization': 'Bearer ' + chaves.igdbTok},
     body: `fields first_release_date; where id = ${i.g};`});
   if (!r.ok) throw new Error(`IGDB HTTP ${r.status}`);
@@ -1007,6 +1010,7 @@ function iniciarChaves(){
   document.getElementById('k-igdb-id').value = chaves.igdbId || '';
   document.getElementById('k-igdb-tok').value = chaves.igdbTok || '';
   document.getElementById('k-rawg').value = chaves.rawg || '';
+  document.getElementById('k-proxy').value = chaves.proxyIgdb || '';
   document.getElementById('k-omdb').value = chaves.omdb || '';
   montarFontes();
   iniciarFontes();
@@ -1016,6 +1020,7 @@ function iniciarChaves(){
       igdbId: document.getElementById('k-igdb-id').value.trim(),
       igdbTok: document.getElementById('k-igdb-tok').value.trim(),
       rawg: document.getElementById('k-rawg').value.trim(),
+      proxyIgdb: document.getElementById('k-proxy').value.trim(),
       omdb: document.getElementById('k-omdb').value.trim()
     };
     gravarJSON(KEYS_KEY, chaves);
@@ -1024,11 +1029,17 @@ function iniciarChaves(){
   });
   document.getElementById('apagarChaves').addEventListener('click', () => {
     chaves = {}; gravarJSON(KEYS_KEY, chaves);
-    ['k-tmdb','k-igdb-id','k-igdb-tok','k-rawg','k-omdb'].forEach(id => document.getElementById(id).value = '');
+    ['k-tmdb','k-igdb-id','k-igdb-tok','k-rawg','k-omdb','k-proxy'].forEach(id => document.getElementById(id).value = '');
     montarFontes();
     document.getElementById('kstatus').textContent = 'Chaves apagadas deste navegador.';
   });
   document.getElementById('buscarCapas').addEventListener('click', buscarCapasPendentes);
+  document.getElementById('mostrarChaves').addEventListener('click', e => {
+    const mostrar = e.currentTarget.getAttribute('aria-pressed') !== 'true';
+    document.querySelectorAll('.chave').forEach(el => el.type = mostrar ? 'text' : 'password');
+    e.currentTarget.setAttribute('aria-pressed', String(mostrar));
+    e.currentTarget.textContent = mostrar ? 'Ocultar chaves' : 'Mostrar chaves';
+  });
   document.getElementById('buscarNaoAchadas').addEventListener('click', () => {
     ITEMS.forEach(i => { if (capas[i.key] === null) delete capas[i.key]; });
     gravarJSON(CAPAS_KEY, capas);
