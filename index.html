@@ -998,7 +998,7 @@ function preencherSheet(key){
           <label for="notas-item">Anotações</label>
           <textarea id="notas-item" class="field" rows="4" placeholder="Anotações sobre esta mídia…">${esc(i.notas || '')}</textarea>
         </div>
-        ${i.c === 'jogo' ? `<label class="switch" style="margin-top:18px"><input type="checkbox" role="switch" data-travar${i.travado ? ' checked' : ''}> Bloquear atualizações automáticas deste jogo</label>` : ''}
+        <label class="switch" style="margin-top:18px"><input type="checkbox" role="switch" data-travar${i.travado ? ' checked' : ''}> Bloquear atualizações automáticas deste item</label>
         <div class="keys-actions" style="margin-top:22px"><div class="group">
           <button class="btn" type="button" data-editar>Editar mídia</button>
           ${i.c === 'jogo' ? `<a class="btn" href="https://howlongtobeat.com/?q=${encodeURIComponent(i.t)}" target="_blank" rel="noopener">Ver no HowLongToBeat</a>` : ''}
