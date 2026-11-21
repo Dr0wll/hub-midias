@@ -67,8 +67,12 @@ h1{font-family:"Unbounded",system-ui,sans-serif;font-weight:700;font-size:clamp(
 .track i{display:block;height:100%;border-radius:inherit;background:var(--tint);width:0;transition:width .6s ease}
 
 /* toolbar */
-.toolbar{margin-top:16px;padding:14px;display:flex;flex-direction:column;gap:12px}
-.toolbar .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.toolbar{margin-top:16px;padding:14px;display:flex;flex-direction:column;gap:0}
+.toolbar .row{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center;justify-content:space-between}
+.toolbar .chips-linha{display:flex;align-items:center;gap:10px;margin-top:8px}
+.toolbar .chips-linha .chips{flex:1;min-width:0}
+#atualizarDatas{flex-shrink:0}
+.toolbar .row{margin-bottom:0}
 .seg{display:flex;gap:4px;padding:4px;border-radius:var(--r);background:rgba(255,255,255,.05);border:1px solid var(--edge);flex-wrap:wrap}
 .pill{font:inherit;font-size:.88rem;color:var(--ink-2);background:transparent;border:1px solid transparent;border-radius:var(--r);padding:7px 13px;cursor:pointer;white-space:nowrap}
 .pill:hover{color:var(--ink)}
@@ -281,6 +285,8 @@ button.barra-col{background:none;border:0;padding:0;color:inherit;font:inherit;c
 .fav-lista button:hover,.fav-lista button:focus-visible{background:rgba(255,255,255,.08)}
 .fav-lista small{color:var(--ink-3);white-space:nowrap}
 
+#statusSel{width:210px}
+
 /* modal */
 dialog{border:0;padding:0;background:transparent;color:var(--ink);width:min(600px,calc(100vw - 32px));max-width:none;margin:auto}
 dialog::backdrop{background:rgba(3,4,8,.62);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
@@ -445,20 +451,25 @@ dialog::backdrop{background:rgba(3,4,8,.62);backdrop-filter:blur(6px);-webkit-ba
           <input id="q" class="field busca" type="search" placeholder="Buscar título ou #tag…" autocomplete="off" aria-controls="tagsSug" aria-autocomplete="list">
           <div id="tagsSug" class="sug" role="listbox" hidden></div>
         </div>
+        <label class="sr" for="statusSel">Filtrar por status</label>
+        <select id="statusSel" class="field larg" aria-label="Filtrar por status"></select>
         <label class="sr" for="ord">Ordenar por</label>
         <select id="ord" class="field larg">
           <option value="titulo">Ordenar: título</option>
           <option value="nota">Ordenar: nota</option>
           <option value="lancamento">Ordenar: lançamento</option>
           <option value="conclusao">Ordenar: conclusão</option>
+          <option value="status">Ordenar: status</option>
         </select>
         <button id="ordemDir" class="btn larg" type="button">↑ Crescente</button>
         <button id="limparFiltros" class="link" type="button">Limpar filtros</button>
         <button id="selecionarBtn" class="btn" type="button" aria-pressed="false">Selecionar</button>
-        <button id="atualizarDatas" class="btn" type="button">Atualizar datas</button>
       </div>
     </div>
-    <div class="chips" id="chips" role="group" aria-label="Status"></div>
+    <div class="chips-linha">
+      <div class="chips" id="chips" role="group" aria-label="Status"></div>
+      <button id="atualizarDatas" class="btn" type="button">Atualizar datas</button>
+    </div>
   </section>
 
   <p class="count" id="count" aria-live="polite"></p>
@@ -749,6 +760,7 @@ function montarBusca(){
     render();
   });
   document.getElementById('ord').addEventListener('change', e => { st.ord = e.target.value; render(); });
+  document.getElementById('statusSel').addEventListener('change', e => { st.grp = e.target.value; aplicarVista(st.grp); render(); });
   document.getElementById('ordemDir').addEventListener('click', () => { st.dir = st.dir === 'asc' ? 'desc' : 'asc'; render(); });
   document.getElementById('limparFiltros').addEventListener('click', () => {
     Object.assign(st, {cat:'jogo', grp:'todos', q:'', ord:'titulo', dir:'asc', tag:''});
@@ -773,7 +785,8 @@ function lista(){
     if (f) L = L.filter(i => f[1].includes(atual(i)));
   }
   L = L.filter(casaBusca);
-  const chave = {titulo:i => i.t, nota:i => i.n, lancamento:i => i.l, conclusao:i => i.k}[st.ord];
+  const ordemStatus = i => { const k = (STATUS_POR_CAT[i.c] || []).indexOf(atual(i)); return k < 0 ? 99 : k; };
+  const chave = {titulo:i => i.t, nota:i => i.n, lancamento:i => i.l, conclusao:i => i.k, status:ordemStatus}[st.ord];
   return L.sort((a, b) => {
     const x = chave(a), y = chave(b);
     const xv = x == null || x === '', yv = y == null || y === '';
@@ -866,6 +879,13 @@ function renderControles(){
   });
   const base = ITEMS.filter(doCat);
   document.getElementById('chips').style.display = st.cat === 'saude' ? 'none' : '';
+  const selSt = document.getElementById('statusSel');
+  const opsSt = [['todos', 'Todos os status', null], ...(FILTROS_POR_CAT[st.cat] || []).map(([k, sts]) => [k, k, sts])];
+  selSt.innerHTML = opsSt.map(([k, l, sts]) => {
+    const n = sts ? base.filter(i => sts.includes(atual(i))).length : base.length;
+    return `<option value="${esc(k)}"${k === st.grp ? ' selected' : ''}>${esc(l)} (${n})</option>`;
+  }).join('');
+  selSt.disabled = st.cat === 'saude';
   const filtros = [['todos', 'Todos', null, null], ...(FILTROS_POR_CAT[st.cat] || []).map(([k, s]) => [k, k, STATUS_COR[s.length === 1 ? s[0] : 'Zerado'], s])];
   document.getElementById('chips').innerHTML = '<span class="chips-rotulo">Status</span>' + filtros.map(([k, l, cor, s]) => {
     const n = s ? base.filter(i => s.includes(atual(i))).length : base.length;
