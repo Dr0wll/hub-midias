@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Hub de Mídias</title>
+<title>Hub</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%230b0c0f'/%3E%3Crect x='16' y='17' width='32' height='6' fill='%23e6e8ee'/%3E%3Crect x='16' y='29' width='32' height='6' fill='%23e6e8ee'/%3E%3Crect x='16' y='41' width='20' height='6' fill='%23e6e8ee'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -188,14 +188,23 @@ h1{font-family:"Unbounded",system-ui,sans-serif;font-weight:700;font-size:clamp(
 .card .meta .badge{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .card .foot{min-height:24px}
 
-.dot-status{position:absolute;left:8px;bottom:8px;z-index:2;width:10px;height:10px;border-radius:50%;background:var(--c);box-shadow:0 0 0 2px rgba(11,12,15,.85)}
-.dot-status.brilho{box-shadow:0 0 0 2px rgba(11,12,15,.85),0 0 8px 1px rgba(226,220,205,.7)}
+.dot-status{position:absolute;left:8px;bottom:8px;z-index:2;width:10px;height:10px;border-radius:50%;background:var(--c);box-shadow:0 0 0 2px rgba(11,12,15,.85),0 0 8px 1px color-mix(in srgb,var(--c) 65%,transparent)}
+.dot-status.brilho{box-shadow:0 0 0 2px rgba(11,12,15,.85),0 0 10px 2px rgba(255,255,255,.75)}
 .nota-linha{display:flex;align-items:center;gap:6px;margin:-2px 0 8px;min-height:1em}
-.stars{position:relative;display:inline-block;font-size:.78rem;line-height:1;letter-spacing:1px;color:rgba(255,255,255,.14)}
+.stars{position:relative;display:inline-block;font-size:1.05rem;line-height:1;letter-spacing:2px;color:rgba(255,255,255,.16)}
 .stars-on{position:absolute;left:0;top:0;overflow:hidden;white-space:nowrap;color:var(--ink-2)}
-.nota-num{font-size:.78rem;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.nota-num{font-size:.9rem;color:var(--ink-2);font-variant-numeric:tabular-nums}
 .chips-rotulo{color:var(--ink-3);font-size:.8rem;align-self:center;margin-right:4px}
 .dot-chip{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--c);margin-right:6px;vertical-align:middle}
+
+.ring-val small{color:var(--ink-3);font-size:.78rem;margin-top:4px;font-variant-numeric:tabular-nums}
+.btn.redondo{width:40px;height:40px;padding:0;display:inline-flex;align-items:center;justify-content:center;border-radius:50%}
+
+.notas-bloco{margin-top:18px;display:grid;gap:6px}
+.notas-bloco label{font-size:.84rem;color:var(--ink-2)}
+.notas-bloco textarea{width:100%;resize:vertical;min-height:90px;font-family:inherit}
+
+dialog .sheet{max-height:90vh;overflow:auto}
 
 /* modal */
 dialog{border:0;padding:0;background:transparent;color:var(--ink);width:min(600px,calc(100vw - 32px));max-width:none;margin:auto}
@@ -245,11 +254,12 @@ dialog::backdrop{background:rgba(3,4,8,.62);backdrop-filter:blur(6px);-webkit-ba
   .topbar .btn span{display:none}
   .hero{grid-template-columns:1fr auto;gap:8px 14px;padding:16px}
   .hero > div:first-child{display:contents}
-  .hero h1{grid-column:1;grid-row:1;align-self:end;margin:0 0 4px}
-  .escopo{grid-column:1;grid-row:2;margin:0}
-  .ring{grid-column:2;grid-row:1 / span 2;width:96px;height:96px}
-  .tiles{grid-column:1 / -1;grid-row:3;margin-top:8px}
+  .hero h1{grid-column:1;grid-row:1;align-self:center;margin:0}
+  .ring{grid-column:2;grid-row:1;width:96px;height:96px}
+  .tiles{grid-column:1 / -1;grid-row:2;margin-top:8px}
   .card .meta{height:auto;flex-wrap:wrap;gap:4px}
+  .stars{font-size:.8rem;letter-spacing:1px}
+  .nota-num{font-size:.78rem}
   .card .meta .badge{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .card .tg{display:none}
   h1{font-size:1.6rem}
@@ -308,15 +318,15 @@ dialog::backdrop{background:rgba(3,4,8,.62);backdrop-filter:blur(6px);-webkit-ba
 <main class="wrap">
   <header class="topbar">
     <div class="acoes">
+      <button id="novoBtn" class="btn redondo" type="button" aria-label="Adicionar mídia" title="Adicionar mídia"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
       <button id="sino" class="btn" type="button" aria-label="Notificações"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="sino-n" id="sinoN" hidden></span></button>
       <button id="abrirConfig" class="btn" type="button" aria-label="Configurações"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span>Configurações</span></button>
     </div>
   </header>
   <section class="hero glass facet">
     <div>
-      <h1>Hub de Mídias</h1>
-          <p class="escopo" id="escopo"></p>
-      <div class="tiles" id="tiles"></div>
+      <h1 id="tituloCat">Jogos</h1>
+          <div class="tiles" id="tiles"></div>
     </div>
     <div class="ring" aria-hidden="false">
       <svg viewBox="0 0 120 120" role="img" aria-label="Porcentagem concluída do catálogo">
@@ -329,11 +339,10 @@ dialog::backdrop{background:rgba(3,4,8,.62);backdrop-filter:blur(6px);-webkit-ba
         <circle class="trk" cx="60" cy="60" r="52"/>
         <circle class="prog" id="prog" cx="60" cy="60" r="52" stroke="url(#gr)" transform="rotate(-90 60 60)"/>
       </svg>
-      <div class="ring-val"><b id="pct">0%</b><span id="ringLabel">concluído</span></div>
+      <div class="ring-val"><b id="pct">0%</b><span id="ringLabel">concluídos</span><small id="ringFrac"></small></div>
     </div>
   </section>
 
-  <section class="bars glass facet" id="bars" aria-label="Progresso por categoria"></section>
 
   <section class="toolbar glass facet" aria-label="Filtros">
     <div class="row">
@@ -351,7 +360,6 @@ dialog::backdrop{background:rgba(3,4,8,.62);backdrop-filter:blur(6px);-webkit-ba
         <button id="ordemDir" class="btn larg" type="button">↑ Crescente</button>
         <button id="limparFiltros" class="link" type="button">Limpar filtros</button>
         <button id="atualizarDatas" class="btn" type="button">Atualizar datas</button>
-        <button id="novoBtn" class="btn" type="button">+ Adicionar mídia</button>
       </div>
     </div>
     <div class="chips" id="chips" role="group" aria-label="Status"></div>
@@ -403,6 +411,11 @@ dialog::backdrop{background:rgba(3,4,8,.62);backdrop-filter:blur(6px);-webkit-ba
       <h3>Fontes de capa</h3>
       <p class="hint">Arraste pelo ⋮⋮ para ordenar, da favorita para a menos. Cada mídia tenta a primeira fonte ativa da sua categoria. Se passar de 10 segundos ou não achar capa, tenta a próxima. Se nenhuma achar, fica sem capa.</p>
       <ol id="fontes" class="fontes"></ol>
+    </div>
+    <div class="fontes-box">
+      <h3>Exibição</h3>
+      <label class="switch" style="margin-top:12px"><input type="checkbox" role="switch" id="pref-meta"> Mostrar tipo e ano nos cards</label>
+      <p class="hint">Fora da aba Todos, os cards mostram só o nome, a nota e a bolinha de status.</p>
     </div>
     <div class="fontes-box">
       <h3>Sincronização entre dispositivos</h3>
@@ -486,11 +499,15 @@ const STATUS_POR_CAT = {
   audiovisual: ['Na fila','Assistindo','Assistido','Abandonado'],
   livro: ['Na fila','Lendo','Lido','Abandonado']
 };
-const STATUS_COR = {'Na fila':'#7b8190','Jogando':'#c9a66b','Assistindo':'#c9a66b','Lendo':'#c9a66b','Jogado':'#6d9fb5','Zerado':'#7fb3a6','Platinado':'#e2dccd','Assistido':'#8fb573','Lido':'#9b8fc9','No aguardo':'#b07fc0','Abandonado':'#c58a8a'};
-const statusesDaVista = () => st.cat === 'todos'
-  ? [...new Set(Object.values(STATUS_POR_CAT).flat())]
-  : STATUS_POR_CAT[st.cat];
+const STATUS_COR = {'Na fila':'#8a909c','Jogando':'#d4a24c','Assistindo':'#d4a24c','Lendo':'#d4a24c','Jogado':'#5a9bd5','Zerado':'#6fbf73','Platinado':'#f4f1e8','Assistido':'#d08cc0','Lido':'#8fb8e8','No aguardo':'#b07fc0','Abandonado':'#c96b6b'};
+const FILTROS_POR_CAT = {
+  jogo: [['Na fila',['Na fila']],['Jogando',['Jogando']],['Concluído',['Jogado','Zerado','Platinado']],['No aguardo',['No aguardo']],['Abandonado',['Abandonado']]],
+  audiovisual: [['Na fila',['Na fila']],['Assistindo',['Assistindo']],['Assistido',['Assistido']],['Abandonado',['Abandonado']]],
+  livro: [['Na fila',['Na fila']],['Lendo',['Lendo']],['Lido',['Lido']],['Abandonado',['Abandonado']]]
+};
 const VISTAS_KEY = 'hub-midias-vistas-v1';
+const PREFS_KEY = 'hub-midias-prefs-v1';
+let prefs = lerJSON(PREFS_KEY, {mostrarMeta: false});
 let vistas = lerJSON(VISTAS_KEY, {});
 function salvarVista(){
   vistas[st.grp] = {ord: st.ord, dir: st.dir, tag: st.tag, q: st.q};
@@ -535,7 +552,7 @@ function definirStatus(key, valor){
 
 /* ---------- construção dos controles ---------- */
 function montarCategorias(){
-  const ordem = ['jogo','audiovisual','livro','todos'];
+  const ordem = ['jogo','audiovisual','livro'];
   document.getElementById('cats').innerHTML = ordem.map(k =>
     `<button class="pill" type="button" data-cat="${k}" aria-pressed="false">${esc(CATS[k].label)}<span class="n"></span></button>`
   ).join('');
@@ -572,7 +589,10 @@ function montarBusca(){
 /* ---------- lista ---------- */
 function lista(){
   let L = ITEMS.filter(doCat);
-  if (st.grp !== 'todos') L = L.filter(i => atual(i) === st.grp);
+  if (st.grp !== 'todos') {
+    const f = (FILTROS_POR_CAT[st.cat] || []).find(x => x[0] === st.grp);
+    if (f) L = L.filter(i => f[1].includes(atual(i)));
+  }
   const q = st.q.trim().toLowerCase();
   if (q) L = L.filter(i => i.t.toLowerCase().includes(q));
   const chave = {titulo:i => i.t, nota:i => i.n, lancamento:i => i.l, conclusao:i => i.k}[st.ord];
@@ -596,7 +616,10 @@ function card(i){
   const pode = (g === 'fila' || g === 'andamento') && c.concl;
   const capa = capaDe(i);
   const cadeado = i.travado ? '<span class="lock" title="Bloqueado contra atualizações automáticas">🔒</span>' : '';
-  const dataLanc = s2 === 'No aguardo' ? `<div class="data-lanc">${i.l ? esc(fmtData(i.l)) : 'Data a confirmar'}</div>` : '';
+  const dataLanc = st.grp === 'No aguardo' ? `<div class="data-lanc">${i.l ? esc(fmtData(i.l)) : 'Data a confirmar'}</div>` : '';
+  const mostraMeta = st.cat === 'todos' || prefs.mostrarMeta;
+  const badges = mostraMeta ? `<span class="badge">${esc(tipoOf(i))}</span>${i.l ? `<span class="badge ghost">${esc(i.l.slice(0,4))}</span>` : ''}` : '';
+  const meta = (badges || cadeado) ? `<div class="meta">${badges}${cadeado}</div>` : '';
   const nota = i.n != null ? `<div class="nota-linha">${estrelas(i.n)}<span class="nota-num">${fmtNota(i.n)}</span></div>` : '<div class="nota-linha"></div>';
   return `<article class="card" style="--tint:${c.tint}">
     <button class="open" type="button" data-key="${esc(i.key)}" aria-label="Abrir ${esc(i.t)}">
@@ -604,7 +627,7 @@ function card(i){
       <div class="body">
         <h3>${esc(i.t)}</h3>
         ${nota}
-        <div class="meta"><span class="badge">${esc(tipoOf(i))}</span>${i.l && !dataLanc ? `<span class="badge ghost">${esc(i.l.slice(0,4))}</span>` : ''}${cadeado}</div>
+        ${meta}
         ${dataLanc}
       </div>
     </button>
@@ -632,44 +655,33 @@ function renderStats(){
   const notas = base.map(i => i.n).filter(n => n != null);
   const media = notas.length ? (notas.reduce((a,b) => a+b, 0) / notas.length).toFixed(1).replace('.', ',') : '—';
   const pct = total ? Math.round(cont.concluido / total * 100) : 0;
-  const rotulo = st.cat === 'todos' ? 'tudo' : CATS[st.cat].label;
 
+  document.getElementById('tituloCat').textContent = CATS[st.cat].label;
   document.getElementById('tiles').innerHTML = `
     <div class="tile"><b>${cont.fila}</b><span>Na fila</span></div>
     <div class="tile"><b>${cont.andamento}</b><span>Em andamento</span></div>
     <div class="tile"><b>${media}</b><span>Nota média</span></div>`;
   document.getElementById('pct').textContent = pct + '%';
-  document.getElementById('ringLabel').textContent = 'concluído';
-  document.getElementById('escopo').textContent = `${rotulo} · ${total} ${total === 1 ? 'mídia' : 'mídias'}`;
+  document.getElementById('ringLabel').textContent = 'concluídos';
+  document.getElementById('ringFrac').textContent = `${cont.concluido} de ${total}`;
 
   const C = 2 * Math.PI * 52, prog = document.getElementById('prog');
   prog.style.strokeDasharray = C;
   prog.style.strokeDashoffset = window.__anelPronto ? C * (1 - pct / 100) : C;
-
-  const cats = st.cat === 'todos' ? Object.entries(CATS).filter(([k]) => k !== 'todos') : [[st.cat, CATS[st.cat]]];
-  document.getElementById('bars').innerHTML = cats.map(([k, c]) => {
-    const itens = ITEMS.filter(i => i.c === k && (!q || i.t.toLowerCase().includes(q)));
-    const n = itens.length;
-    const done = itens.filter(i => grupo(i) === 'concluido').length;
-    const p = n ? Math.round(done / n * 100) : 0;
-    return `<div class="bar-row" style="--tint:${c.tint}">
-      <div class="top"><span>${esc(c.label)}</span><b>${done} / ${n}</b></div>
-      <div class="track" role="progressbar" aria-label="${esc(c.label)}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${p}"><i style="width:${p}%"></i></div>
-    </div>`;
-  }).join('');
 }
 
 function renderControles(){
   document.querySelectorAll('[data-cat]').forEach(b => {
     const k = b.dataset.cat;
     b.setAttribute('aria-pressed', String(k === st.cat));
-    b.querySelector('.n').textContent = k === 'todos' ? ITEMS.length : ITEMS.filter(i => i.c === k).length;
+    b.querySelector('.n').textContent = ITEMS.filter(i => i.c === k).length;
   });
   const base = ITEMS.filter(doCat);
-  const opcoes = [['todos', 'Todos', null], ...statusesDaVista().map(x => [x, x, STATUS_COR[x]])];
-  document.getElementById('chips').innerHTML = '<span class="chips-rotulo">Status</span>' + opcoes.map(([k, l, cor]) =>
-    `<button class="chip" type="button" data-grp="${esc(k)}" aria-pressed="${String(k === st.grp)}">${cor ? `<span class="dot-chip" style="--c:${cor}"></span>` : ''}${esc(l)}<span class="n">${k === 'todos' ? base.length : base.filter(i => atual(i) === k).length}</span></button>`
-  ).join('');
+  const filtros = [['todos', 'Todos', null, null], ...(FILTROS_POR_CAT[st.cat] || []).map(([k, s]) => [k, k, s.length === 1 ? STATUS_COR[s[0]] : null, s])];
+  document.getElementById('chips').innerHTML = '<span class="chips-rotulo">Status</span>' + filtros.map(([k, l, cor, s]) => {
+    const n = s ? base.filter(i => s.includes(atual(i))).length : base.length;
+    return `<button class="chip" type="button" data-grp="${esc(k)}" aria-pressed="${String(k === st.grp)}">${cor ? `<span class="dot-chip" style="--c:${cor}"></span>` : ''}${esc(l)}<span class="n">${n}</span></button>`;
+  }).join('');
   document.getElementById('ordemDir').textContent = st.dir === 'asc' ? '↑ Crescente' : '↓ Decrescente';
   const ad = document.getElementById('atualizarDatas');
   const noAguardo = st.grp === 'No aguardo';
@@ -777,6 +789,10 @@ function preencherSheet(key){
           <dt>Lançamento</dt><dd>${esc(fmtData(i.l))}</dd>
           <dt>Conclusão</dt><dd>${esc(fmtData(i.k))}</dd>
         </dl>
+        <div class="notas-bloco">
+          <label for="notas-item">Anotações</label>
+          <textarea id="notas-item" class="field" rows="4" placeholder="Anotações sobre esta mídia…">${esc(i.notas || '')}</textarea>
+        </div>
         ${i.c === 'jogo' ? `<label class="switch" style="margin-top:18px"><input type="checkbox" role="switch" data-travar${i.travado ? ' checked' : ''}> Bloquear atualizações automáticas deste jogo</label>` : ''}
         <div class="keys-actions" style="margin-top:22px"><div class="group">
           <button class="btn" type="button" data-editar>Editar mídia</button>
@@ -789,6 +805,15 @@ function preencherSheet(key){
     </div>`;
   document.querySelector('[data-fechar]').addEventListener('click', () => document.getElementById('modal').close());
   document.querySelector('[data-editar]').addEventListener('click', () => abrirForm(key));
+  const ta = document.getElementById('notas-item');
+  let tNotas = null;
+  const salvarNotas = () => {
+    clearTimeout(tNotas);
+    edicoes[key] = {...(edicoes[key] || {}), notas: ta.value};
+    gravarEdicoes(); recarregarItens();
+  };
+  ta.addEventListener('input', () => { clearTimeout(tNotas); tNotas = setTimeout(salvarNotas, 600); });
+  ta.addEventListener('blur', salvarNotas);
   const tr = document.querySelector('[data-travar]');
   if (tr) tr.addEventListener('change', e => {
     edicoes[key] = {...(edicoes[key] || {}), travado: e.target.checked};
@@ -1186,7 +1211,8 @@ function salvarItem(key){
     n, l, k,
     g: c === 'jogo' && gv ? parseInt(gv, 10) : null,
     capa: capa || null,
-    travado: key && edicoes[key] ? !!edicoes[key].travado : false
+    travado: key && edicoes[key] ? !!edicoes[key].travado : false,
+    notas: key && edicoes[key] && edicoes[key].notas != null ? edicoes[key].notas : null
   };
   if (key) {
     edicoes[key] = dados;
@@ -1326,7 +1352,17 @@ function lerConfigFirebase(txt){
   if (!obj || !obj.apiKey || !obj.projectId) throw new Error('configuração incompleta (faltam apiKey ou projectId)');
   return obj;
 }
+function iniciarPrefs(){
+  const pm = document.getElementById('pref-meta');
+  pm.checked = !!prefs.mostrarMeta;
+  pm.addEventListener('change', e => {
+    prefs.mostrarMeta = e.target.checked;
+    gravarJSON(PREFS_KEY, prefs);
+    render();
+  });
+}
 function iniciarSync(){
+  iniciarPrefs();
   document.getElementById('fb-salvar').addEventListener('click', () => {
     try {
       fbCfg = lerConfigFirebase(document.getElementById('fb-cfg').value);
