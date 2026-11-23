@@ -283,6 +283,14 @@ button.barra-col{background:none;border:0;padding:0;color:inherit;font:inherit;c
 .fav-lista button:hover,.fav-lista button:focus-visible{background:rgba(255,255,255,.08)}
 .fav-lista small{color:var(--ink-3);white-space:nowrap}
 
+.sugestoes{margin-top:-4px}
+.sug-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;max-height:280px;overflow:auto;padding:2px}
+.sug-item{display:grid;gap:4px;text-align:left;background:rgba(255,255,255,.04);border:1px solid var(--edge);border-radius:var(--r);padding:6px;color:var(--ink);font:inherit;cursor:pointer}
+.sug-item:hover,.sug-item:focus-visible{border-color:var(--edge-2);background:rgba(255,255,255,.08)}
+.sug-item img,.sug-sem{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:2px;background:rgba(255,255,255,.05);display:grid;place-items:center;color:var(--ink-3)}
+.sug-item b{font-size:.8rem;font-weight:600;line-height:1.2;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.sug-item small{color:var(--ink-3);font-size:.72rem}
+
 /* modal */
 dialog{border:0;padding:0;background:transparent;color:var(--ink);width:min(600px,calc(100vw - 32px));max-width:none;margin:auto}
 dialog::backdrop{background:rgba(3,4,8,.62);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
@@ -1183,6 +1191,50 @@ FONTES.anilist.data = async (i, s) => {
   if (!sd.day) return `${sd.year}-${p(sd.month)}`;
   return `${sd.year}-${p(sd.month)}-${p(sd.day)}`;
 };
+FONTES.tmdb.sugerir = async (termo, tipo, s) => {
+  const kind = tipo === 'Filme' ? 'movie' : 'tv';
+  const r = await getJSON(`https://api.themoviedb.org/3/search/${kind}?api_key=${encodeURIComponent(chaves.tmdb)}&language=pt-BR&query=${encodeURIComponent(termo)}`, null, s);
+  return (r.results || []).slice(0, 6).map(x => ({t: x.title || x.name, capa: x.poster_path ? `https://image.tmdb.org/t/p/w342${x.poster_path}` : '', ano: (x.release_date || x.first_air_date || '').slice(0, 4), data: x.release_date || x.first_air_date || '', fonte: 'TMDB'}));
+};
+FONTES.omdb.sugerir = async (termo, tipo, s) => {
+  const kind = tipo === 'Filme' ? 'movie' : 'series';
+  const r = await getJSON(`https://www.omdbapi.com/?apikey=${encodeURIComponent(chaves.omdb)}&s=${encodeURIComponent(termo)}&type=${kind}`, null, s);
+  return (r.Search || []).slice(0, 6).map(x => ({t: x.Title, capa: x.Poster && x.Poster !== 'N/A' ? x.Poster : '', ano: x.Year || '', fonte: 'OMDb'}));
+};
+FONTES.igdb.sugerir = async (termo, tipo, s) => {
+  const r = await fetch(proxyIgdb(), {method: 'POST', signal: s,
+    headers: {'Client-ID': chaves.igdbId, 'Authorization': 'Bearer ' + chaves.igdbTok},
+    body: `search "${termo.replace(/"/g, '')}"; fields name,cover.image_id,first_release_date; limit 6;`});
+  if (!r.ok) throw new Error(`IGDB HTTP ${r.status}`);
+  return (await r.json()).map(x => ({t: x.name, capa: x.cover && x.cover.image_id ? `https://images.igdb.com/igdb/image/upload/t_cover_big/${x.cover.image_id}.jpg` : '', ano: x.first_release_date ? String(new Date(x.first_release_date * 1000).getFullYear()) : '', data: x.first_release_date ? isoLocal(new Date(x.first_release_date * 1000)) : '', g: x.id, fonte: 'IGDB'}));
+};
+FONTES.rawg.sugerir = async (termo, tipo, s) => {
+  const r = await getJSON(`https://api.rawg.io/api/games?key=${encodeURIComponent(chaves.rawg)}&search=${encodeURIComponent(termo)}&page_size=6`, null, s);
+  return (r.results || []).map(x => ({t: x.name, capa: x.background_image || '', ano: (x.released || '').slice(0, 4), data: x.released || '', fonte: 'RAWG'}));
+};
+FONTES.jikan.sugerir = async (termo, tipo, s) => {
+  const kind = tipo === 'Mangá' ? 'manga' : 'anime';
+  const r = await getJSON(`https://api.jikan.moe/v4/${kind}?q=${encodeURIComponent(termo)}&limit=6`, null, s);
+  return (r.data || []).map(x => ({t: x.title_english || x.title, capa: (x.images && x.images.jpg && x.images.jpg.large_image_url) || '', ano: String(((x.aired && x.aired.from) || (x.published && x.published.from) || '')).slice(0, 4), data: String(((x.aired && x.aired.from) || (x.published && x.published.from) || '')).slice(0, 10), fonte: 'Jikan'}));
+};
+FONTES.anilist.sugerir = async (termo, tipo, s) => {
+  const r = await fetch('https://graphql.anilist.co', {method: 'POST', signal: s,
+    headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
+    body: JSON.stringify({query: 'query($s:String,$t:MediaType){Page(perPage:6){media(search:$s,type:$t){title{romaji english} coverImage{large} startDate{year}}}}',
+      variables: {s: termo, t: tipo === 'Mangá' ? 'MANGA' : 'ANIME'}})});
+  if (!r.ok) throw new Error(`AniList HTTP ${r.status}`);
+  const lista = (await r.json()).data?.Page?.media || [];
+  return lista.map(m => ({t: (m.title && (m.title.english || m.title.romaji)) || '', capa: (m.coverImage && m.coverImage.large) || '', ano: m.startDate && m.startDate.year ? String(m.startDate.year) : '', data: m.startDate && m.startDate.month && m.startDate.day ? `${m.startDate.year}-${String(m.startDate.month).padStart(2, '0')}-${String(m.startDate.day).padStart(2, '0')}` : '', fonte: 'AniList'}));
+};
+FONTES.openlibrary.sugerir = async (termo, tipo, s) => {
+  const r = await getJSON(`https://openlibrary.org/search.json?q=${encodeURIComponent(termo)}&limit=6&fields=title,cover_i,first_publish_year`, null, s);
+  return (r.docs || []).map(x => ({t: x.title, capa: x.cover_i ? `https://covers.openlibrary.org/b/id/${x.cover_i}-L.jpg` : '', ano: x.first_publish_year ? String(x.first_publish_year) : '', fonte: 'Open Library'}));
+};
+FONTES.googlebooks.sugerir = async (termo, tipo, s) => {
+  const r = await getJSON(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(termo)}&maxResults=6`, null, s);
+  return (r.items || []).map(x => { const v = x.volumeInfo || {}, l = v.imageLinks || {}; return {t: v.title || '', capa: (l.thumbnail || '').replace('http://', 'https://'), ano: (v.publishedDate || '').slice(0, 4), data: (v.publishedDate || '').length === 10 ? v.publishedDate : '', fonte: 'Google Books'}; });
+};
+
 FONTES.googlebooks.data = async (i, s) => {
   const r = await getJSON(`https://www.googleapis.com/books/v1/volumes?q=intitle:${encodeURIComponent(i.t)}&maxResults=1`, null, s);
   return r.items?.[0]?.volumeInfo?.publishedDate || '';
@@ -1216,6 +1268,25 @@ async function buscarEmFontes(i, ids, metodo = 'busca'){
     }
   }
   return null;
+}
+
+async function sugerirMidias(termo, cat, tipo){
+  const tipoAtual = cat === 'jogo' ? 'Jogo' : tipo;
+  const ids = configFontes.ordem.filter(id => FONTES[id].sugerir && FONTES[id].tipos.includes(tipoAtual) && configFontes.on[id] !== false && FONTES[id].ok());
+  const porFonte = await Promise.all(ids.map(async id => {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), TIMEOUT_FONTE);
+    try { return await FONTES[id].sugerir(termo, tipoAtual, ctrl.signal); }
+    catch (err) { return []; }
+    finally { clearTimeout(timer); }
+  }));
+  const vistos = new Set(), out = [];
+  porFonte.flat().forEach(r => {
+    const k = (r.t || '').toLowerCase();
+    if (!r.t || vistos.has(k)) return;
+    vistos.add(k); out.push(r);
+  });
+  return out.slice(0, 12);
 }
 
 async function buscarCapasPendentes(){
@@ -1364,6 +1435,7 @@ function abrirForm(key){
       </div>
       <div class="novo-grid">
         <label class="full">Título<input id="n-t" class="field" type="text" autocomplete="off" value="${esc(i ? i.t : '')}"></label>
+        <div id="n-sug" class="sugestoes full" hidden></div>
         <label>Categoria<select id="n-c" class="field">
           ${Object.entries(CATS).filter(([k]) => k !== 'todos').map(([k, c]) => `<option value="${k}"${(i ? i.c : 'jogo') === k ? ' selected' : ''}>${esc(c.label)}</option>`).join('')}
         </select></label>
@@ -1380,13 +1452,42 @@ function abrirForm(key){
       <div class="keys-actions"><div class="group"><button class="btn" id="n-salvar" type="button">${i ? 'Salvar alterações' : 'Adicionar'}</button></div></div>
     </div>`;
   d.querySelector('[data-fechar-novo]').addEventListener('click', () => d.close());
-  document.getElementById('n-c').addEventListener('change', () => atualizarCamposForm(i));
+  document.getElementById('n-c').addEventListener('change', () => { atualizarCamposForm(i); buscarSugestoes(); });
+  document.getElementById('n-tipo').addEventListener('change', buscarSugestoes);
+  document.getElementById('n-t').addEventListener('input', buscarSugestoes);
+  document.getElementById('n-sug').addEventListener('click', e => {
+    const b = e.target.closest('[data-sug]'); if (!b) return;
+    const r = ultimasSugestoes[Number(b.dataset.sug)]; if (!r) return;
+    document.getElementById('n-t').value = r.t;
+    if (r.capa) document.getElementById('n-capa').value = r.capa;
+    if (r.g != null) document.getElementById('n-g').value = r.g;
+    if (r.data && /^\d{4}-\d{2}-\d{2}$/.test(r.data) && !document.getElementById('n-l').value) document.getElementById('n-l').value = r.data;
+    document.getElementById('n-sug').hidden = true;
+  });
   document.getElementById('n-salvar').addEventListener('click', () => salvarItem(key));
   atualizarCamposForm(i);
   if (!d.open) d.showModal();
   document.getElementById('n-t').focus();
 }
 
+let ultimasSugestoes = [], reqSugestoes = 0, tSugestoes = null;
+function buscarSugestoes(){
+  clearTimeout(tSugestoes);
+  tSugestoes = setTimeout(async () => {
+    const termo = document.getElementById('n-t').value.trim();
+    const box = document.getElementById('n-sug');
+    if (termo.length < 2) { box.hidden = true; return; }
+    const meu = ++reqSugestoes;
+    box.hidden = false;
+    box.innerHTML = '<p class="hint">Buscando…</p>';
+    const lista = await sugerirMidias(termo, document.getElementById('n-c').value, document.getElementById('n-tipo').value);
+    if (meu !== reqSugestoes) return;
+    ultimasSugestoes = lista;
+    box.innerHTML = lista.length
+      ? `<div class="sug-grid">${lista.map((r, k) => `<button type="button" class="sug-item" data-sug="${k}">${r.capa ? `<img src="${esc(r.capa)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : '<span class="sug-sem">?</span>'}<b>${esc(r.t)}</b><small>${esc(r.ano)}${r.ano ? ' · ' : ''}${esc(r.fonte)}</small></button>`).join('')}</div>`
+      : '<p class="hint">Nada encontrado nas fontes ativas para esta categoria.</p>';
+  }, 500);
+}
 function atualizarCamposForm(i){
   const c = document.getElementById('n-c').value;
   const opts = OPCOES_TIPO[c];
