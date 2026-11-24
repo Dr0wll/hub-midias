@@ -535,6 +535,7 @@ dialog::backdrop{background:rgba(3,4,8,.62);backdrop-filter:blur(6px);-webkit-ba
         <label>IGDB · Client ID (jogos)<input id="k-igdb-id" class="field chave" type="password" autocomplete="off" placeholder="cole o Client ID"></label>
         <label>IGDB · Access token (jogos)<input id="k-igdb-tok" class="field chave" type="password" autocomplete="off" placeholder="cole o token"></label>
         <label>Proxy da IGDB · endereço (vazio = usar o do PC)<input id="k-proxy" class="field" type="url" autocomplete="off" placeholder="https://seu-worker.workers.dev"></label>
+        <label>MyAnimeList · Client ID (opcional)<input id="k-mal" class="field chave" type="password" autocomplete="off" placeholder="cole o Client ID"></label>
         <label>RAWG · chave gratuita (jogos, opcional)<input id="k-rawg" class="field chave" type="password" autocomplete="off" placeholder="cole a chave"></label>
         <label>OMDb · chave gratuita (filmes e séries, opcional)<input id="k-omdb" class="field chave" type="password" autocomplete="off" placeholder="cole a chave"></label>
       </div>
@@ -1239,7 +1240,36 @@ FONTES.googlebooks.data = async (i, s) => {
   const r = await getJSON(`https://www.googleapis.com/books/v1/volumes?q=intitle:${encodeURIComponent(i.t)}&maxResults=1`, null, s);
   return r.items?.[0]?.volumeInfo?.publishedDate || '';
 };
-const FONTES_PADRAO = ['tmdb','omdb','igdb','rawg','jikan','anilist','openlibrary','googlebooks'];
+async function malBusca(termo, tipo, limite, s){
+  const kind = tipo === 'Mangá' ? 'manga' : 'anime';
+  const r = await fetch(`https://api.myanimelist.net/v2/${kind}?q=${encodeURIComponent(termo)}&limit=${limite}&fields=title,main_picture,start_date`,
+    {headers: {'X-MAL-CLIENT-ID': chaves.malId}, signal: s});
+  if (!r.ok) throw new Error(`MyAnimeList HTTP ${r.status}`);
+  return ((await r.json()).data || []).map(x => {
+    const n = x.node || {}, pic = n.main_picture || {}, d = n.start_date || '';
+    return {t: n.title || '', capa: pic.large || pic.medium || '', ano: d.slice(0, 4), data: d.length === 10 ? d : '', fonte: 'MyAnimeList'};
+  });
+}
+FONTES.mal = {nome: 'MyAnimeList (oficial)', tipos: ['Anime', 'Mangá'], precisa: 'Client ID do MyAnimeList', ok: () => !!chaves.malId,
+  busca: async (i, s) => { const r = await malBusca(i.t, tipoOf(i), 1, s); return r[0] ? r[0].capa : ''; },
+  data: async (i, s) => { const r = await malBusca(i.t, tipoOf(i), 1, s); return r[0] ? r[0].data : ''; },
+  sugerir: (termo, tipo, s) => malBusca(termo, tipo, 6, s)
+};
+async function mangadexBusca(termo, limite, s){
+  const r = await getJSON(`https://api.mangadex.org/manga?title=${encodeURIComponent(termo)}&limit=${limite}&includes[]=cover_art`, null, s);
+  return (r.data || []).map(m => {
+    const at = m.attributes || {};
+    const titulo = (at.title && (at.title.en || Object.values(at.title)[0])) || '';
+    const cov = (m.relationships || []).find(x => x.type === 'cover_art');
+    const arq = cov && cov.attributes && cov.attributes.fileName;
+    return {t: titulo, capa: arq ? `https://uploads.mangadex.org/covers/${m.id}/${arq}.256.jpg` : '', ano: at.year ? String(at.year) : '', fonte: 'MangaDex'};
+  });
+}
+FONTES.mangadex = {nome: 'MangaDex', tipos: ['Mangá'], precisa: null, ok: () => true,
+  busca: async (i, s) => { const r = await mangadexBusca(i.t, 1, s); return r[0] ? r[0].capa : ''; },
+  sugerir: (termo, tipo, s) => mangadexBusca(termo, 6, s)
+};
+const FONTES_PADRAO = ['tmdb','omdb','igdb','rawg','jikan','anilist','mal','mangadex','openlibrary','googlebooks'];
 
 const precisaChave = f => false; /* compatibilidade: a checagem agora é feita por fonte */
 
@@ -1380,6 +1410,7 @@ function iniciarChaves(){
   document.getElementById('k-igdb-tok').value = chaves.igdbTok || '';
   document.getElementById('k-rawg').value = chaves.rawg || '';
   document.getElementById('k-proxy').value = chaves.proxyIgdb || '';
+  document.getElementById('k-mal').value = chaves.malId || '';
   document.getElementById('k-omdb').value = chaves.omdb || '';
   montarFontes();
   iniciarFontes();
@@ -1390,6 +1421,7 @@ function iniciarChaves(){
       igdbTok: document.getElementById('k-igdb-tok').value.trim(),
       rawg: document.getElementById('k-rawg').value.trim(),
       proxyIgdb: document.getElementById('k-proxy').value.trim(),
+      malId: document.getElementById('k-mal').value.trim(),
       omdb: document.getElementById('k-omdb').value.trim()
     };
     gravarJSON(KEYS_KEY, chaves);
@@ -1398,7 +1430,7 @@ function iniciarChaves(){
   });
   document.getElementById('apagarChaves').addEventListener('click', () => {
     chaves = {}; gravarJSON(KEYS_KEY, chaves);
-    ['k-tmdb','k-igdb-id','k-igdb-tok','k-rawg','k-omdb','k-proxy'].forEach(id => document.getElementById(id).value = '');
+    ['k-tmdb','k-igdb-id','k-igdb-tok','k-rawg','k-omdb','k-proxy','k-mal'].forEach(id => document.getElementById(id).value = '');
     montarFontes();
     document.getElementById('kstatus').textContent = 'Chaves apagadas deste navegador.';
   });
