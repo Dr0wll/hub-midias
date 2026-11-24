@@ -1274,11 +1274,12 @@ const FONTES_PADRAO = ['tmdb','omdb','igdb','rawg','jikan','anilist','mal','mang
 const precisaChave = f => false; /* compatibilidade: a checagem agora é feita por fonte */
 
 let configFontes = lerJSON(FONTES_KEY, {});
-configFontes.on = configFontes.on || {};
-configFontes.ordem = [
-  ...(configFontes.ordem || []).filter(id => FONTES[id]),
-  ...FONTES_PADRAO.filter(id => !(configFontes.ordem || []).includes(id))
-];
+function normalizarFontes(){
+  configFontes.on = configFontes.on || {};
+  const salvas = (configFontes.ordem || []).filter(id => FONTES[id]);
+  configFontes.ordem = [...salvas, ...FONTES_PADRAO.filter(id => !salvas.includes(id))];
+}
+normalizarFontes();
 const gravarFontes = () => gravarJSON(FONTES_KEY, configFontes);
 const fontesAplicaveis = i => configFontes.ordem.filter(id =>
   FONTES[id].tipos.includes(tipoOf(i)) && configFontes.on[id] !== false && FONTES[id].ok());
@@ -1659,7 +1660,7 @@ function aplicarRemoto(d){
     edicoes = d.edicoes || {};
     novos = d.novos || [];
     capas = d.capas || {};
-    if (d.fontes) { configFontes = {...configFontes, ...d.fontes}; configFontes.on = configFontes.on || {}; }
+    if (d.fontes) { configFontes = {...configFontes, ...d.fontes}; normalizarFontes(); }
     gravarJSON(EDICOES_KEY, edicoes);
     gravarJSON(NOVOS_KEY, novos);
     gravarJSON(CAPAS_KEY, capas);
@@ -1940,7 +1941,7 @@ function importarBackup(file){
     edicoes = d.edicoes || {};
     novos = Array.isArray(d.novos) ? d.novos : [];
     capas = d.capas || {};
-    if (d.fontes) { configFontes = {...configFontes, ...d.fontes}; configFontes.on = configFontes.on || {}; }
+    if (d.fontes) { configFontes = {...configFontes, ...d.fontes}; normalizarFontes(); }
     if (d.perfil) perfil = d.perfil;
     gravarEdicoes(); gravarJSON(NOVOS_KEY, novos); gravarJSON(CAPAS_KEY, capas);
     gravarFontes(); gravarJSON(PERFIL_KEY, perfil);
