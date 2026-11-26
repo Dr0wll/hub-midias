@@ -337,6 +337,69 @@ textarea.field{min-height:84px;line-height:1.45}
 }
 .card:focus-within{border-color:var(--edge-2)}
 .card.selecionado{border-color:var(--jogo);box-shadow:inset 0 0 0 2px var(--jogo),0 14px 28px -18px rgba(0,0,0,.85)}
+@keyframes shinySweep{
+  0%{opacity:0;background-position:135% 135%}
+  22%{opacity:.92}
+  100%{opacity:0;background-position:-35% -35%}
+}
+.card[class*="shiny-"],.flip-card[class*="shiny-"]{--rx:0deg;--ry:0deg;--gx:50%;--gy:50%;--sh-op:.28}
+.flip-card[class*="shiny-"]{--sh-op:.38}
+.card.shiny-reflective{border-color:rgba(226,234,255,.28);box-shadow:inset 0 1px 0 rgba(255,255,255,.32),0 14px 28px -18px rgba(0,0,0,.85)}
+.card.shiny-holo-rainbow{border-color:rgba(161,150,234,.4);box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 14px 30px -16px rgba(130,118,220,.32)}
+.card.shiny-holo-gold{border-color:rgba(232,196,106,.46);box-shadow:inset 0 1px 0 rgba(255,242,200,.34),0 14px 30px -16px rgba(232,178,90,.3)}
+.card.shiny-holo-prism{border-color:rgba(255,234,176,.54);box-shadow:inset 0 1px 0 rgba(255,250,230,.4),0 16px 34px -16px rgba(232,190,115,.42)}
+.card.is-tilting{
+  transition:transform 70ms linear,border-color var(--dur-fast) ease,box-shadow var(--dur-fast) ease;
+  transform:perspective(760px) rotateX(var(--rx)) rotateY(var(--ry)) translateY(-2px);
+  --sh-op:.72;
+}
+.flip-card.is-tilting:not(.is-flipped) .flip-inner{transition:transform 75ms linear;transform:rotateX(var(--rx)) rotateY(var(--ry))}
+.flip-card.is-tilting{--sh-op:.78}
+[class*="shiny-"] .cover::before,[class*="shiny-"] .cover::after{
+  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:2;
+}
+[class*="shiny-"] .cover::before{opacity:var(--sh-op);transition:opacity 220ms ease}
+[class*="shiny-"] .cover::after{
+  opacity:0;transition:opacity 220ms ease;mix-blend-mode:screen;
+  background:radial-gradient(circle at var(--gx) var(--gy),rgba(255,255,255,.55) 0%,rgba(255,255,255,.16) 24%,transparent 58%);
+}
+[class*="shiny-"].is-tilting .cover::after{opacity:.85}
+.shiny-reflective .cover::before{
+  background:linear-gradient(118deg,transparent 22%,rgba(255,255,255,.08) 38%,rgba(242,247,255,.52) 48%,rgba(190,214,255,.22) 54%,transparent 68%);
+  background-size:240% 240%;background-position:var(--gx) var(--gy);
+  mix-blend-mode:screen;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.32);
+}
+.shiny-holo-rainbow .cover::before{
+  background-image:
+    repeating-linear-gradient(125deg,rgba(255,255,255,0) 0%,rgba(255,255,255,.12) 4%,rgba(255,255,255,0) 8%),
+    linear-gradient(115deg,transparent 10%,rgba(111,208,176,.55) 28%,rgba(120,175,255,.6) 44%,rgba(192,146,255,.62) 60%,rgba(255,196,112,.52) 76%,transparent 90%);
+  background-size:200% 200%,260% 260%;
+  background-position:var(--gx) var(--gy),var(--gx) var(--gy);
+  mix-blend-mode:color-dodge;filter:saturate(1.35) brightness(1.06);
+}
+.shiny-holo-gold .cover::before{
+  background-image:
+    repeating-linear-gradient(135deg,rgba(255,244,207,0) 0%,rgba(255,244,207,.16) 3%,rgba(255,244,207,0) 7%),
+    linear-gradient(120deg,transparent 14%,rgba(217,155,56,.48) 32%,rgba(255,244,207,.75) 48%,rgba(242,198,109,.55) 64%,rgba(230,239,255,.4) 78%,transparent 90%);
+  background-size:200% 200%,260% 260%;
+  background-position:var(--gx) var(--gy),var(--gx) var(--gy);
+  mix-blend-mode:color-dodge;filter:saturate(1.25) brightness(1.05);
+}
+.shiny-holo-prism .cover::before{
+  background-image:
+    repeating-linear-gradient(128deg,rgba(255,255,255,0) 0%,rgba(255,255,255,.18) 3.5%,rgba(255,255,255,0) 7%),
+    linear-gradient(116deg,transparent 8%,rgba(255,244,200,.72) 24%,rgba(111,225,195,.62) 40%,rgba(168,148,255,.68) 58%,rgba(255,196,98,.72) 74%,transparent 92%);
+  background-size:210% 210%,270% 270%;
+  background-position:var(--gx) var(--gy),var(--gx) var(--gy);
+  mix-blend-mode:color-dodge;filter:saturate(1.45) brightness(1.08);
+  box-shadow:inset 0 0 0 1.5px rgba(255,242,200,.4);
+}
+.shiny-intro .cover::after{
+  opacity:1;
+  background:linear-gradient(115deg,transparent 25%,rgba(255,255,255,.68) 49%,rgba(255,255,255,.22) 55%,transparent 75%);
+  background-size:240% 240%;
+  animation:shinySweep 820ms var(--ease-out) forwards;
+}
 .open{all:unset;display:block;width:100%;cursor:pointer;border-radius:var(--r)}
 .cover{
   margin:8px;aspect-ratio:3/4;border-radius:var(--r-img);position:relative;
@@ -356,14 +419,14 @@ textarea.field{min-height:84px;line-height:1.45}
   font-size:.64rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);
 }
 .dot-status{
-  position:absolute;left:7px;bottom:7px;z-index:2;width:9px;height:9px;border-radius:50%;
+  position:absolute;left:7px;bottom:7px;z-index:3;width:9px;height:9px;border-radius:50%;
   background:var(--c);
   box-shadow:0 0 0 2px rgba(11,12,15,.88),0 0 8px 1px color-mix(in srgb,var(--c) 60%,transparent);
 }
 .dot-status.brilho{box-shadow:0 0 0 2px rgba(11,12,15,.88),0 0 10px 2px rgba(255,255,255,.75)}
 .dot-status.saiu{animation:saiuPulse 2.4s ease-in-out infinite}
 .nota-capa{
-  position:absolute;right:7px;bottom:7px;z-index:2;
+  position:absolute;right:7px;bottom:7px;z-index:3;
   display:inline-flex;align-items:center;justify-content:center;gap:3px;
   height:20px;padding:0 7px;border-radius:99px;
   background:rgba(11,12,15,.82);border:1px solid rgba(255,255,255,.16);
@@ -408,33 +471,56 @@ textarea.field{min-height:84px;line-height:1.45}
 .concl-cab{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
 .concl-filtros{display:flex;gap:8px;flex-wrap:wrap}
 .concl-ultima{margin:12px 0 0;color:var(--ink-2);font-size:.88rem}
-.mes-lista{display:grid;gap:6px;margin:12px 0 14px;animation:popIn 180ms var(--ease-out)}
-.mes-lista h4{margin:0;font-size:.88rem;color:var(--ink-2);font-weight:600}
-.mes-item{
-  display:flex;justify-content:space-between;gap:12px;align-items:baseline;
-  background:rgba(255,255,255,.05);border:1px solid var(--edge);padding:9px 12px;
-  border-radius:var(--r-sm);color:var(--ink);font:inherit;cursor:pointer;text-align:left;
-  transition:background-color var(--dur-fast) var(--ease-out),border-color var(--dur-fast) var(--ease-out);
+@keyframes sgDraw{to{stroke-dashoffset:0}}
+@keyframes sgFade{from{opacity:0}to{opacity:1}}
+.sg-wrap{position:relative;margin-top:14px;--sg-color:var(--jogo)}
+.sg-svg{width:100%;height:auto;display:block;overflow:visible;touch-action:manipulation}
+.sg-grid{stroke:rgba(255,255,255,.08);stroke-width:1;stroke-dasharray:4 5}
+.sg-axis{fill:var(--ink-3);font-size:11px;font-family:inherit;font-variant-numeric:tabular-nums}
+.sg-guide{stroke:rgba(255,255,255,.16);stroke-width:1;stroke-dasharray:3 4;opacity:0;transition:opacity 160ms ease;pointer-events:none}
+.sg-guide.on{opacity:1}
+.sg-area{opacity:1;transition:opacity 400ms ease}
+.sg-wrap.is-anim .sg-area{animation:sgFade 700ms var(--ease-out) 180ms both}
+.sg-line{
+  fill:none;stroke:var(--sg-color);stroke-width:3;stroke-linecap:round;stroke-linejoin:round;
+  filter:drop-shadow(0 0 8px color-mix(in srgb,var(--sg-color) 45%,transparent));
 }
-.mes-item small{color:var(--ink-3);white-space:nowrap}
-.grafico{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:6px;margin-top:14px}
-button.barra-col{
-  display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0;
-  background:none;border:0;padding:4px 0;color:inherit;font:inherit;cursor:pointer;
+.sg-wrap.is-anim .sg-line{stroke-dasharray:var(--sg-len);stroke-dashoffset:var(--sg-len);animation:sgDraw 950ms var(--ease-out) forwards}
+.sg-pt{cursor:pointer;outline:none}
+.sg-hit{fill:transparent}
+.sg-glow{
+  fill:var(--sg-color);opacity:0;pointer-events:none;filter:blur(4px);
+  transition:opacity 180ms ease,r 220ms var(--ease-spring);
 }
-.barra-area{height:140px;width:100%;display:flex;align-items:flex-end}
-.barra{
-  width:100%;max-width:30px;margin:0 auto;min-height:3px;
-  background:var(--jogo);border-radius:3px 3px 2px 2px;
-  transition:height 360ms var(--ease-out),background-color var(--dur-fast) ease,opacity var(--dur-fast) ease;
+.sg-dot{
+  fill:#0d1018;stroke:var(--sg-color);stroke-width:2.6;
+  transition:r 200ms var(--ease-spring),fill 160ms ease,stroke 160ms ease;
 }
-.barra-col.ativo .barra{background:var(--ink)}
-.barra-col span{font-size:.72rem;color:var(--ink-3);font-weight:500}
-.barra-col.ativo span{color:var(--ink);font-weight:700}
+.sg-pt:hover .sg-glow,.sg-pt:focus-visible .sg-glow,.sg-pt.ativo .sg-glow{opacity:.45}
+.sg-pt:hover .sg-dot,.sg-pt:focus-visible .sg-dot{fill:var(--sg-color)}
+.sg-pt.ativo .sg-dot{fill:var(--ink);stroke:var(--sg-color);stroke-width:3}
+.sg-lbl{fill:var(--ink-3);font-size:11px;font-weight:500;text-anchor:middle;transition:fill 160ms ease;pointer-events:none}
+.sg-pt:hover .sg-lbl,.sg-pt.ativo .sg-lbl{fill:var(--ink);font-weight:700}
+.sg-tip{
+  position:absolute;top:0;left:0;transform:translate(-50%,calc(-100% - 10px));
+  pointer-events:none;z-index:5;padding:6px 11px;border-radius:999px;
+  background:linear-gradient(160deg,rgba(24,28,40,.96),rgba(12,15,22,.98));
+  border:1px solid var(--edge-2);box-shadow:var(--chamfer),0 10px 24px -10px rgba(0,0,0,.85);
+  font-size:.78rem;white-space:nowrap;color:var(--ink);opacity:0;
+  transition:opacity 160ms ease,left 180ms var(--ease-out),top 180ms var(--ease-out);
+}
+.sg-tip.on{opacity:1}
+.sg-tip small{color:var(--ink-3);margin-left:6px;font-variant-numeric:tabular-nums}
+.concl-mes-wrap{display:grid;gap:10px;animation:popIn 200ms var(--ease-out)}
+.concl-mes-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 2px}
+.concl-mes-head h4{margin:0;font-size:.96rem;font-weight:600;color:var(--ink);display:inline-flex;align-items:center;gap:8px}
+.concl-mes-head h4 span{color:var(--ink-3);font-size:.78rem;padding:1px 8px;border-radius:99px;background:rgba(255,255,255,.08);font-variant-numeric:tabular-nums}
+.concl-mes-wrap .grid{margin-top:0}
 
 /* coleções + accordion (transitions.dev) + saúde */
 .colecoes{grid-column:1/-1;display:grid;gap:16px}
 .col-topo{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.col-sub{color:var(--ink-3);font-size:.88rem;font-weight:500}
 .col-titulo{margin:0;font-family:"Unbounded",sans-serif;font-weight:500;font-size:1.3rem}
 .col-acoes{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .col-grupo{display:grid;gap:10px}
@@ -859,9 +945,7 @@ dialog#modal.morph-open .sheet,dialog#modal.morph-close .sheet{animation:none!im
   .sheet .x:hover{background:rgba(255,255,255,.15);color:var(--ink)}
   .sug-item:hover,.sug-item:focus-visible{border-color:var(--edge-2);background:rgba(255,255,255,.09)}
   .fav-lista button:hover,.fav-lista button:focus-visible{background:rgba(255,255,255,.09)}
-  .mes-item:hover,.mes-item:focus-visible{background:rgba(255,255,255,.09);border-color:var(--edge-2)}
   .notif-corpo:not([disabled]):hover{background:rgba(255,255,255,.08);border-color:var(--edge-2)}
-  .barra-col:hover .barra{opacity:.88}
   .csel-trigger:hover:not(:disabled){border-color:var(--edge-3)}
   .csel-opt:hover{background:rgba(255,255,255,.08);color:var(--ink)}
   .csel-opt.is-selected:hover{background:rgba(255,255,255,.14)}
@@ -959,12 +1043,10 @@ dialog#modal.morph-open .sheet,dialog#modal.morph-close .sheet{animation:none!im
   .fonte .on{min-width:0}
   .notif-lista{max-height:66vh}
   .concl-bloco{padding:16px}
+  .sg-axis{font-size:10px}
+  .sg-lbl{font-size:10px}
   .col-lista{grid-template-columns:1fr}
   .col-filtros .csel,.col-filtros .col-busca{width:100%;flex:1 1 100%}
-  .grafico{gap:3px}
-  .barra-area{height:110px}
-  .barra{max-width:16px}
-  .barra-col span{font-size:.6rem}
   #toast{bottom:calc(14px + env(safe-area-inset-bottom,0px));max-width:calc(100vw - 24px)}
 }
 @media (max-width:380px){
@@ -1140,6 +1222,7 @@ dialog#modal.morph-open .sheet,dialog#modal.morph-close .sheet{animation:none!im
         <div class="acc-panel"><div class="acc-inner"><div class="acc-body">
           <label class="switch" style="margin-top:4px"><input type="checkbox" role="switch" id="pref-meta"> Mostrar tipo e ano nos cards</label>
           <p class="hint">Fora da aba Todos, os cards mostram só o nome, a nota e a bolinha de status.</p>
+          <label class="switch" style="margin-top:10px"><input type="checkbox" role="switch" id="pref-shiny"> Efeito shiny em notas 9–10 e Platinados</label>
           <div class="keys-actions" style="margin-top:12px"><div class="group">
             <button class="btn" id="abrirSaude" type="button">Ver saúde da biblioteca</button>
             <button class="btn" id="abrirConcluidas" type="button">Concluídas por mês</button>
@@ -1279,7 +1362,7 @@ const FILTROS_POR_CAT = {
 };
 const VISTAS_KEY = 'hub-midias-vistas-v1';
 const PREFS_KEY = 'hub-midias-prefs-v1';
-let prefs = lerJSON(PREFS_KEY, {mostrarMeta: false});
+let prefs = {mostrarMeta: false, shiny: true, ...lerJSON(PREFS_KEY, {})};
 let vistas = lerJSON(VISTAS_KEY, {});
 function salvarVista(){
   vistas[st.grp] = {ord: st.ord, dir: st.dir, tag: st.tag, onde: st.onde, notaFiltro: st.notaFiltro, q: st.q};
@@ -1892,16 +1975,82 @@ function verificarLancamentos(){
   novos.forEach(i => { notificar(`“${i.t}” já saiu. Atualize o status se já jogou ou assistiu.`, i.key); jaAvisados.push(i.key); });
   if (novos.length) { gravarJSON(SAIU_KEY, jaAvisados); render(); }
 }
+function tipoShiny(i){
+  if (!i || prefs.shiny === false) return '';
+  const plat = atual(i) === 'Platinado';
+  const n = i.n != null ? Number(i.n) : null;
+  if (plat && n === 10) return 'holo-prism';
+  if (plat) return 'holo-gold';
+  if (n === 10) return 'holo-rainbow';
+  if (n === 9) return 'reflective';
+  return '';
+}
+function aplicarClasseShiny(el, tipo, animIntro){
+  if (!el) return;
+  el.classList.remove('shiny-reflective', 'shiny-holo-rainbow', 'shiny-holo-gold', 'shiny-holo-prism', 'shiny-intro');
+  if (tipo) {
+    el.classList.add('shiny-' + tipo);
+    if (animIntro) {
+      void el.offsetWidth;
+      el.classList.add('shiny-intro');
+      clearTimeout(el._shIntroT);
+      el._shIntroT = setTimeout(() => el.classList.remove('shiny-intro'), 860);
+    }
+  }
+}
+function iniciarShiny(){
+  const grid = document.getElementById('grid');
+  if (!grid) return;
+  const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduced) return;
+  let ativo = null, raf = 0, px = 0, py = 0;
+  const reset = el => {
+    if (!el) return;
+    el.classList.remove('is-tilting');
+    el.style.removeProperty('--rx');
+    el.style.removeProperty('--ry');
+    el.style.removeProperty('--gx');
+    el.style.removeProperty('--gy');
+  };
+  grid.addEventListener('pointermove', e => {
+    if (e.pointerType === 'touch' || prefs.shiny === false) return;
+    const c = e.target.closest('.card[class*="shiny-"]');
+    if (ativo && ativo !== c) { reset(ativo); ativo = null; }
+    if (!c) return;
+    ativo = c; px = e.clientX; py = e.clientY;
+    if (raf) return;
+    raf = requestAnimationFrame(() => {
+      raf = 0;
+      if (!ativo || !ativo.isConnected) return;
+      const r = ativo.getBoundingClientRect();
+      if (!r.width || !r.height) return;
+      const nx = Math.max(0, Math.min(1, (px - r.left) / r.width));
+      const ny = Math.max(0, Math.min(1, (py - r.top) / r.height));
+      ativo.style.setProperty('--rx', ((0.5 - ny) * 18).toFixed(2) + 'deg');
+      ativo.style.setProperty('--ry', ((nx - 0.5) * 18).toFixed(2) + 'deg');
+      ativo.style.setProperty('--gx', (nx * 100).toFixed(1) + '%');
+      ativo.style.setProperty('--gy', (ny * 100).toFixed(1) + '%');
+      ativo.classList.add('is-tilting');
+    });
+  }, {passive: true});
+  grid.addEventListener('pointerout', e => {
+    if (!ativo) return;
+    if (!e.relatedTarget || !ativo.contains(e.relatedTarget)) { reset(ativo); ativo = null; }
+  });
+  grid.addEventListener('pointerleave', () => { reset(ativo); ativo = null; });
+}
+
 function card(i){
   const c = CATS[i.c], s2 = atual(i);
   const capa = capaDe(i);
+  const sh = tipoShiny(i);
   const cadeado = i.travado ? '<span class="lock" title="Bloqueado contra atualizações automáticas">🔒</span>' : '';
   const dataLanc = st.grp === 'No aguardo' ? `<div class="data-lanc">${i.l ? esc(fmtData(i.l)) : 'Data a confirmar'}</div>` : '';
   const mostraMeta = st.cat === 'todos' || prefs.mostrarMeta;
   const badges = mostraMeta ? `<span class="badge">${esc(tipoOf(i))}</span>${i.l ? `<span class="badge ghost">${esc(i.l.slice(0,4))}</span>` : ''}` : '';
   const meta = (badges || cadeado) ? `<div class="meta">${badges}${cadeado}</div>` : '';
   const nota = i.n != null ? `<div class="nota-linha">${estrelas(i.n)}<span class="nota-num">${fmtNota(i.n)}</span></div>` : '<div class="nota-linha"></div>';
-  return `<article class="card${st.selecionados.has(i.key) ? ' selecionado' : ''}" style="--tint:${c.tint}">
+  return `<article class="card${st.selecionados.has(i.key) ? ' selecionado' : ''}${sh ? ' shiny-' + sh : ''}" style="--tint:${c.tint}">
     <button class="open" type="button" data-key="${esc(i.key)}" aria-label="Abrir ${esc(i.t)}">
       <div class="cover${capa ? ' has-img' : ''}">${capa ? '' : `<span class="cat-pad">${esc(c.label)}</span>`}${capaHTML(capa)}<span class="ini" aria-hidden="true">${esc(i.t.charAt(0).toUpperCase())}</span><span class="dot-status${s2 === 'Platinado' ? ' brilho' : ''}${jaSaiu(i) ? ' saiu' : ''}" style="--c:${jaSaiu(i) ? '#ffc93c' : (STATUS_COR[s2] || '#7b8190')}" title="${jaSaiu(i) ? 'Já saiu: atualize o status' : esc(s2)}" role="img" aria-label="${jaSaiu(i) ? 'Já saiu' : 'Status: ' + esc(s2)}"></span>${i.n != null ? `<span class="nota-capa"><span class="est">★</span>${fmtNota(i.n)}</span>` : ''}</div>
       <div class="body">
@@ -1992,17 +2141,39 @@ function renderSplitFlap(el, texto){
 }
 
 function renderStats(){
-  const base = ITEMS.filter(i => doCat(i) && casaBusca(i));
-  const total = base.length;
-  const cont = {fila:0, andamento:0, concluido:0, aguardo:0, abandonado:0};
-  base.forEach(i => cont[grupo(i)]++);
-  const notas = base.map(i => i.n).filter(n => n != null);
-  const media = notas.length ? (notas.reduce((a,b) => a+b, 0) / notas.length).toFixed(1).replace('.', ',') : '—';
-  const pct = total ? Math.round(cont.concluido / total * 100) : 0;
+  let titulo = '', corCat = 'var(--jogo)', pct = 0, media = '—';
+  if (st.cat === 'colecoes') {
+    const colAberta = colecoes.find(c => c.id === colUI.aberta);
+    if (colAberta) {
+      const s = statsColecao(colAberta);
+      titulo = colAberta.nome;
+      corCat = {jogo:'var(--jogo)', audiovisual:'var(--av)', livro:'var(--livro)', misto:'var(--jogo)'}[colAberta.grupo] || 'var(--jogo)';
+      pct = s.pct;
+      media = s.media || '—';
+    } else {
+      const keysCol = new Set(colecoes.flatMap(c => c.itens));
+      const baseCol = ITEMS.filter(i => keysCol.has(i.key));
+      const totalCol = baseCol.length;
+      const conclCol = baseCol.filter(i => grupo(i) === 'concluido').length;
+      const notasCol = baseCol.map(i => i.n).filter(n => n != null);
+      titulo = 'Coleções';
+      corCat = 'var(--jogo)';
+      pct = totalCol ? Math.round(conclCol / totalCol * 100) : 0;
+      media = notasCol.length ? (notasCol.reduce((a, b) => a + b, 0) / notasCol.length).toFixed(1).replace('.', ',') : '—';
+    }
+  } else {
+    const base = ITEMS.filter(i => doCat(i) && casaBusca(i));
+    const total = base.length;
+    let concl = 0;
+    base.forEach(i => { if (grupo(i) === 'concluido') concl++; });
+    const notas = base.map(i => i.n).filter(n => n != null);
+    media = notas.length ? (notas.reduce((a,b) => a+b, 0) / notas.length).toFixed(1).replace('.', ',') : '—';
+    pct = total ? Math.round(concl / total * 100) : 0;
+    titulo = st.cat === 'saude' ? 'Saúde' : (st.cat === 'concluidas' ? 'Concluídas' : CATS[st.cat].label);
+    corCat = {jogo:'var(--jogo)', audiovisual:'var(--av)', livro:'var(--livro)', saude:'var(--ink-2)', concluidas:'var(--jogo)'}[st.cat] || 'var(--jogo)';
+  }
 
-  const titulo = st.cat === 'saude' ? 'Saúde' : (st.cat === 'concluidas' ? 'Concluídas' : CATS[st.cat].label);
   renderSplitFlap(document.getElementById('tituloCat'), titulo);
-  const corCat = {jogo:'var(--jogo)', audiovisual:'var(--av)', livro:'var(--livro)', saude:'var(--ink-2)', concluidas:'var(--jogo)'}[st.cat] || 'var(--jogo)';
   document.getElementById('hero').style.setProperty('--cat-tint', corCat);
   document.getElementById('pct').textContent = pct + '%';
   document.getElementById('mediaRing').textContent = media === '—' ? '' : `★ ${media}`;
@@ -2057,8 +2228,9 @@ function render(){
   salvarVista();
   const colecoesOn = st.cat === 'colecoes';
   const conclOn = st.cat === 'concluidas';
+  if (!conclOn) ultimoGraficoId = '';
   const vistaId = st.cat + '|' + (colecoesOn ? (colUI.aberta || '') : '');
-  document.getElementById('hero').style.display = colecoesOn ? 'none' : '';
+  document.getElementById('hero').style.display = '';
   document.getElementById('barra').style.display = '';
   const ferr = document.querySelector('#barra .tools');
   const sep = document.querySelector('#barra .bar-sep');
@@ -2072,6 +2244,7 @@ function render(){
     ad.hidden = true;
     document.getElementById('massa').hidden = true;
     document.getElementById('count').style.display = 'none';
+    renderStats();
     renderColecoes();
     animarVista(vistaId);
     return;
@@ -2247,12 +2420,13 @@ function preencherSheet(key){
   const c = CATS[i.c];
   const opts = [...new Set([...c.opts, atual(i)])];
   const capa = capaDe(i);
+  const sh = tipoShiny(i);
   const sheet = document.getElementById('sheet');
   sheet.className = 'sheet';
   sheet.style.setProperty('--modal-tint', c.tint);
   sheet.innerHTML = `
     <div class="det">
-      <div class="flip-card" id="det-flip">
+      <div class="flip-card${sh ? ' shiny-' + sh : ''}" id="det-flip">
         <div class="flip-inner">
           <div class="flip-face flip-front">
             <div class="cover${capa ? ' has-img' : ''}">${capaHTML(capa, true)}<span class="ini" aria-hidden="true">${esc(i.t.charAt(0).toUpperCase())}</span></div>
@@ -2297,9 +2471,18 @@ function preencherSheet(key){
   document.querySelector('[data-fechar]').addEventListener('click', () => fecharDialogo(document.getElementById('modal')));
   document.querySelector('[data-editar]').addEventListener('click', () => abrirForm(key));
   const flipCard = document.getElementById('det-flip');
+  const flipFront = flipCard.querySelector('.flip-front');
   const ta = document.getElementById('notas-item');
+  const resetFlipTilt = () => {
+    flipCard.classList.remove('is-tilting');
+    flipCard.style.removeProperty('--rx');
+    flipCard.style.removeProperty('--ry');
+    flipCard.style.removeProperty('--gx');
+    flipCard.style.removeProperty('--gy');
+  };
   const toggleFlip = (forcar) => {
     const on = typeof forcar === 'boolean' ? forcar : !flipCard.classList.contains('is-flipped');
+    if (on) resetFlipTilt();
     flipCard.classList.toggle('is-flipped', on);
     if (on) setTimeout(() => ta.focus(), 260);
     else ta.blur();
@@ -2315,7 +2498,23 @@ function preencherSheet(key){
     flipStartX = null;
     if (Math.abs(dx) >= 40) toggleFlip();
   });
-  flipCard.querySelector('.flip-front').addEventListener('click', () => {
+  flipFront.addEventListener('pointermove', e => {
+    if (prefs.shiny === false || flipCard.classList.contains('is-flipped')) return;
+    if (![...flipCard.classList].some(cl => cl.startsWith('shiny-'))) return;
+    const r = flipFront.getBoundingClientRect();
+    if (!r.width || !r.height) return;
+    const nx = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
+    const ny = Math.max(0, Math.min(1, (e.clientY - r.top) / r.height));
+    flipCard.style.setProperty('--rx', ((0.5 - ny) * 22).toFixed(2) + 'deg');
+    flipCard.style.setProperty('--ry', ((nx - 0.5) * 22).toFixed(2) + 'deg');
+    flipCard.style.setProperty('--gx', (nx * 100).toFixed(1) + '%');
+    flipCard.style.setProperty('--gy', (ny * 100).toFixed(1) + '%');
+    flipCard.classList.add('is-tilting');
+  }, {passive: true});
+  flipFront.addEventListener('pointerleave', resetFlipTilt);
+  flipFront.addEventListener('pointercancel', resetFlipTilt);
+  flipFront.addEventListener('pointerup', resetFlipTilt);
+  flipFront.addEventListener('click', () => {
     if (!flipCard.classList.contains('is-flipped')) toggleFlip(true);
   });
   flipCard.querySelector('[data-flip-toggle]').addEventListener('click', e => {
@@ -2334,6 +2533,8 @@ function preencherSheet(key){
   criarPeekRating(document.getElementById('det-rating'), i.n, v => {
     edicoes[key] = {...(edicoes[key] || {}), n: v};
     gravarEdicoes(); recarregarItens(); render();
+    const novoTipo = tipoShiny(ITEMS.find(x => x.key === key));
+    aplicarClasseShiny(flipCard, novoTipo, !!novoTipo);
     toast(v != null ? `Nota: ${NOTA_TXT(v)}` : 'Nota removida.');
   });
   const tr = document.querySelector('[data-travar]');
@@ -2350,6 +2551,8 @@ function preencherSheet(key){
   document.getElementById('st-sel').addEventListener('change', e => {
     definirStatus(key, e.target.value);
     render();
+    const novoTipo = tipoShiny(ITEMS.find(x => x.key === key));
+    aplicarClasseShiny(flipCard, novoTipo, !!novoTipo);
     toast(`Status atualizado para ${e.target.value.toLowerCase()}.`);
   });
   melhorarSelects(sheet);
@@ -2408,6 +2611,8 @@ function abrir(key, origemEl){
         sheet.style.opacity = '';
         sheet.style.transform = '';
         m.classList.remove('morph-open');
+        const shT = tipoShiny(ITEMS.find(x => x.key === key));
+        if (shT) aplicarClasseShiny(flipCard, shT, true);
       };
       const onEnd = e => { if (e.target === ghost && e.propertyName === 'transform') finalizar(); };
       ghost.addEventListener('transitionend', onEnd);
@@ -2419,8 +2624,11 @@ function abrir(key, origemEl){
         sheet.style.transform = 'none';
       });
       m._openT = setTimeout(finalizar, 360);
+      return;
     }
   }
+  const shT = tipoShiny(ITEMS.find(x => x.key === key));
+  if (shT && flipCard) aplicarClasseShiny(flipCard, shT, true);
 }
 
 document.getElementById('grid').addEventListener('click', e => {
@@ -3149,6 +3357,15 @@ function lerConfigFirebase(txt){
 function iniciarPrefs(){
   const pm = document.getElementById('pref-meta');
   pm.checked = !!prefs.mostrarMeta;
+  const ps = document.getElementById('pref-shiny');
+  if (ps) {
+    ps.checked = prefs.shiny !== false;
+    ps.addEventListener('change', e => {
+      prefs.shiny = e.target.checked;
+      gravarJSON(PREFS_KEY, prefs);
+      render();
+    });
+  }
   document.getElementById('abrirSaude').addEventListener('click', () => {
     fecharDialogo(document.getElementById('config'));
     st.cat = 'saude'; st.grp = 'todos';
@@ -3208,7 +3425,78 @@ const NOTA_TXT = n => { const x = NOTAS.find(([v]) => v === n); return x ? x[1] 
 const opcoesNota = v => '<option value="">Sem nota</option>' + NOTAS.map(([n, t]) =>
   `<option value="${n}"${v != null && Number(v) === n ? ' selected' : ''}>${t}</option>`).join('');
 const MESES_NOME = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+const MESES_CURTO = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
 let conclUI = {ano: null, cat: 'todos', mes: null};
+let ultimoGraficoId = '';
+function curvaSuaveSVG(pts, minY, maxY){
+  if (!pts.length) return '';
+  if (pts.length === 1) return `M${pts[0].x.toFixed(1)},${pts[0].y.toFixed(1)}`;
+  const n = pts.length;
+  const dy = Array(n).fill(0);
+  for (let i = 1; i < n - 1; i++) {
+    const prev = pts[i].y - pts[i - 1].y;
+    const next = pts[i + 1].y - pts[i].y;
+    dy[i] = (prev * next <= 0) ? 0 : (pts[i + 1].y - pts[i - 1].y) / 2;
+  }
+  dy[0] = (pts[1].y - pts[0].y) * 0.4;
+  dy[n - 1] = (pts[n - 1].y - pts[n - 2].y) * 0.4;
+  const clampY = y => Math.max(minY, Math.min(maxY, y));
+  let d = `M${pts[0].x.toFixed(1)},${pts[0].y.toFixed(1)}`;
+  for (let i = 0; i < n - 1; i++) {
+    const p0 = pts[i], p1 = pts[i + 1];
+    const step = (p1.x - p0.x) / 3;
+    const c1y = clampY(p0.y + dy[i] / 3);
+    const c2y = clampY(p1.y - dy[i + 1] / 3);
+    d += ` C${(p0.x + step).toFixed(1)},${c1y.toFixed(1)} ${(p1.x - step).toFixed(1)},${c2y.toFixed(1)} ${p1.x.toFixed(1)},${p1.y.toFixed(1)}`;
+  }
+  return d;
+}
+function iniciarGraficoConcl(meses, pts, animar){
+  const wrap = document.getElementById('sgWrap');
+  const line = document.getElementById('sgLine');
+  const tip = document.getElementById('sgTip');
+  const guide = document.getElementById('sgGuide');
+  if (!wrap || !line) return;
+  try {
+    const len = line.getTotalLength();
+    wrap.style.setProperty('--sg-len', Math.ceil(len) + 'px');
+    if (animar) {
+      wrap.classList.remove('is-anim');
+      void wrap.offsetWidth;
+      wrap.classList.add('is-anim');
+    }
+  } catch (e) {}
+  const mostrarTip = idx => {
+    const p = pts[idx];
+    if (!p || !tip || !guide) return;
+    tip.innerHTML = `<b>${esc(MESES_NOME[idx])}</b><small>${meses[idx]} ${meses[idx] === 1 ? 'item' : 'itens'}</small>`;
+    tip.style.left = (p.x / 720 * 100).toFixed(2) + '%';
+    tip.style.top = (p.y / 220 * 100).toFixed(2) + '%';
+    tip.classList.add('on');
+    guide.setAttribute('x1', p.x.toFixed(1));
+    guide.setAttribute('x2', p.x.toFixed(1));
+    guide.classList.add('on');
+  };
+  const restaurarTip = () => {
+    if (conclUI.mes != null) { mostrarTip(conclUI.mes); return; }
+    if (tip) tip.classList.remove('on');
+    if (guide) guide.classList.remove('on');
+  };
+  wrap.querySelectorAll('.sg-pt').forEach(pt => {
+    const idx = Number(pt.dataset.mes);
+    pt.addEventListener('pointerenter', () => mostrarTip(idx));
+    pt.addEventListener('focus', () => mostrarTip(idx));
+    pt.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        conclUI.mes = conclUI.mes === idx ? null : idx;
+        render();
+      }
+    });
+  });
+  wrap.addEventListener('pointerleave', restaurarTip);
+  restaurarTip();
+}
 function renderConcluidas(){
   const concl = ITEMS.filter(i => grupo(i) === 'concluido' && i.k).sort((a, b) => b.k.localeCompare(a.k));
   const anos = [...new Set(concl.map(i => i.k.slice(0, 4)))].sort().reverse();
@@ -3221,6 +3509,20 @@ function renderConcluidas(){
   const ultima = concl[0];
   const catOpts = [['todos','Todas'],['jogo','Jogos'],['audiovisual','Filmes & Séries'],['livro','Livros & Mangás']]
     .map(([k, l]) => `<option value="${k}"${conclUI.cat === k ? ' selected' : ''}>${esc(l)}</option>`).join('');
+  const corLinha = {jogo:'var(--jogo)', audiovisual:'var(--av)', livro:'var(--livro)', todos:'var(--jogo)'}[conclUI.cat] || 'var(--jogo)';
+  const W = 720, H = 220, padL = 36, padR = 20, padT = 22, padB = 34;
+  const plotW = W - padL - padR, plotH = H - padT - padB, baseY = H - padB;
+  const pts = meses.map((n, idx) => ({
+    x: padL + (idx / 11) * plotW,
+    y: baseY - (n / max) * plotH
+  }));
+  const dLine = curvaSuaveSVG(pts, padT, baseY);
+  const dArea = dLine ? `${dLine} L${pts[11].x.toFixed(1)},${baseY} L${pts[0].x.toFixed(1)},${baseY} Z` : '';
+  const gridVals = [...new Set([max, Math.round(max * 2 / 3), Math.round(max / 3), 0])];
+  const grafId = conclUI.ano + '|' + conclUI.cat;
+  const animar = grafId !== ultimoGraficoId;
+  ultimoGraficoId = grafId;
+
   document.getElementById('grid').innerHTML = `
     <div class="concl-view">
       <div class="concl-bloco glass facet">
@@ -3231,13 +3533,48 @@ function renderConcluidas(){
             <select id="anoConcl" class="field" aria-label="Ano">${(anos.length ? anos : [conclUI.ano]).map(a => `<option${a === conclUI.ano ? ' selected' : ''}>${a}</option>`).join('')}</select>
           </div>
         </div>
-        <p class="hint">${doAno.length} concluída(s) em ${esc(conclUI.ano)}. Toque em um mês para ver quais.</p>
-        ${conclUI.mes != null ? `<div class="mes-lista"><h4>${MESES_NOME[conclUI.mes]} · ${mesItens.length}</h4>${mesItens.length ? mesItens.map(i => `<button type="button" class="mes-item" data-key="${esc(i.key)}"><span>${esc(i.t)}</span><small>${esc(fmtData(i.k))}</small></button>`).join('') : '<p class="hint">Nada concluído neste mês.</p>'}</div>` : ''}
-        <div class="grafico">${meses.map((n, idx) => `<button type="button" class="barra-col${conclUI.mes === idx ? ' ativo' : ''}" data-mes="${idx}" aria-label="${MESES_NOME[idx]}: ${n}"><div class="barra-area"><div class="barra" style="height:${Math.round(n / max * 100)}%"></div></div><span>${MESES[idx]}</span></button>`).join('')}</div>
+        <p class="hint">${doAno.length} concluída(s) em ${esc(conclUI.ano)}. Toque em um mês do gráfico para ver as capas abaixo.</p>
+        <div class="sg-wrap" id="sgWrap" style="--sg-color:${corLinha}">
+          <div class="sg-tip" id="sgTip" aria-hidden="true"></div>
+          <svg class="sg-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Gráfico de concluídas por mês">
+            <defs>
+              <linearGradient id="sgGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="${corLinha}" stop-opacity=".34"/>
+                <stop offset="100%" stop-color="${corLinha}" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            ${gridVals.map(v => {
+              const y = (baseY - (v / max) * plotH).toFixed(1);
+              return `<line class="sg-grid" x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}"/><text class="sg-axis" x="${padL - 8}" y="${Number(y) + 4}" text-anchor="end">${v}</text>`;
+            }).join('')}
+            <line class="sg-guide" id="sgGuide" x1="0" y1="${padT}" x2="0" y2="${baseY}"/>
+            <path class="sg-area" d="${dArea}" fill="url(#sgGrad)"/>
+            <path class="sg-line" id="sgLine" d="${dLine}"/>
+            ${pts.map((p, idx) => {
+              const ativo = conclUI.mes === idx;
+              return `<g class="sg-pt${ativo ? ' ativo' : ''}" data-mes="${idx}" tabindex="0" role="button" aria-label="${MESES_NOME[idx]}: ${meses[idx]} concluída(s)">
+                <rect class="sg-hit" x="${(p.x - plotW / 24).toFixed(1)}" y="${padT - 10}" width="${(plotW / 12).toFixed(1)}" height="${plotH + 36}"/>
+                <circle class="sg-glow" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${ativo ? 12 : 10}"/>
+                <circle class="sg-dot" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${ativo ? 6 : 4.5}"/>
+                <text class="sg-lbl" x="${p.x.toFixed(1)}" y="${H - 8}">${MESES_CURTO[idx]}</text>
+              </g>`;
+            }).join('')}
+          </svg>
+        </div>
         ${ultima ? `<p class="concl-ultima">Última conclusão: <b>${esc(ultima.t)}</b> · ${esc(fmtData(ultima.k))}</p>` : ''}
       </div>
+      ${conclUI.mes != null ? `
+        <div class="concl-mes-wrap">
+          <div class="concl-mes-head">
+            <h4>${MESES_NOME[conclUI.mes]} <span>${mesItens.length}</span></h4>
+            <button type="button" class="link" data-mes-fechar>Ocultar</button>
+          </div>
+          ${mesItens.length ? `<div class="grid">${mesItens.map(card).join('')}</div>` : '<p class="saude-vazio">Nada concluído neste mês.</p>'}
+        </div>
+      ` : ''}
     </div>`;
   melhorarSelects(document.getElementById('grid'));
+  iniciarGraficoConcl(meses, pts, animar);
 }
 function iniciarConcluidas(){
   document.getElementById('grid').addEventListener('change', e => {
@@ -3246,6 +3583,7 @@ function iniciarConcluidas(){
   });
 }
 function conclClique(e){
+  if (e.target.closest('[data-mes-fechar]')) { conclUI.mes = null; render(); return true; }
   const m = e.target.closest('[data-mes]');
   if (m) { const idx = parseInt(m.dataset.mes, 10); conclUI.mes = conclUI.mes === idx ? null : idx; render(); return true; }
   return false;
@@ -3373,7 +3711,7 @@ function renderColecoes(){
     </section>`;
   }).join('');
   el.innerHTML = `<div class="colecoes">
-    <div class="col-topo"><h2 class="col-titulo">Coleções</h2><button class="btn" type="button" data-col-nova>+ Nova coleção</button></div>
+    <div class="col-topo"><span class="col-sub">${colecoes.length} ${colecoes.length === 1 ? 'coleção' : 'coleções'}</span><button class="btn" type="button" data-col-nova>+ Nova coleção</button></div>
     ${grupos}
   </div>`;
 }
@@ -3464,7 +3802,6 @@ function renderColecaoAberta(c){
   document.getElementById('grid').innerHTML = `<div class="colecoes">
     <div class="col-topo">
       <button class="btn" type="button" data-col-voltar>← Coleções</button>
-      <h2 class="col-titulo">${esc(c.nome)}</h2>
       <div class="col-acoes">
         <button class="btn" type="button" data-col-editar>Gerenciar mídias</button>
         <button class="btn" type="button" data-col-reordenar aria-pressed="${String(colUI.reordenar)}">${colUI.reordenar ? 'Concluir ordem' : 'Reordenar'}</button>
@@ -3635,6 +3972,7 @@ verificarLancamentos();
 iniciarConcluidas();
 iniciarBackup();
 iniciarMassa();
+iniciarShiny();
 render();
 montarCategorias();
 montarBusca();
