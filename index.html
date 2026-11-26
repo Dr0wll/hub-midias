@@ -191,6 +191,7 @@ h1{font-family:"Unbounded",system-ui,sans-serif;font-weight:700;font-size:clamp(
 .card .foot{min-height:24px}
 
 .dot-status{position:absolute;left:8px;bottom:8px;z-index:2;width:10px;height:10px;border-radius:50%;background:var(--c);box-shadow:0 0 0 2px rgba(11,12,15,.85),0 0 8px 1px color-mix(in srgb,var(--c) 65%,transparent)}
+.dot-status.saiu{box-shadow:0 0 0 2px rgba(11,12,15,.85),0 0 0 4px rgba(255,201,60,.35),0 0 14px 4px rgba(255,201,60,.9)}
 .dot-status.brilho{box-shadow:0 0 0 2px rgba(11,12,15,.85),0 0 10px 2px rgba(255,255,255,.75)}
 .nota-linha{display:flex;align-items:center;gap:6px;margin:-2px 0 8px;min-height:1em}
 .stars{position:relative;display:inline-block;font-size:1.05rem;line-height:1;letter-spacing:2px;color:rgba(255,255,255,.16)}
@@ -290,6 +291,20 @@ button.barra-col{background:none;border:0;padding:0;color:inherit;font:inherit;c
 .sug-item img,.sug-sem{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:2px;background:rgba(255,255,255,.05);display:grid;place-items:center;color:var(--ink-3)}
 .sug-item b{font-size:.8rem;font-weight:600;line-height:1.2;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .sug-item small{color:var(--ink-3);font-size:.72rem}
+
+.colecoes{grid-column:1/-1;display:grid;gap:14px}
+.col-topo{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.col-titulo{margin:0;font-family:"Unbounded",sans-serif;font-weight:500;font-size:1.3rem}
+.col-acoes{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.col-grupo{display:grid;gap:8px}
+.col-lista{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+.col-card{display:flex;align-items:center;gap:12px;text-align:left;background:var(--glass);border:1px solid var(--edge);border-radius:var(--r);padding:12px;color:var(--ink);font:inherit;cursor:pointer}
+.col-ico{flex-shrink:0;width:40px;height:40px;display:grid;place-items:center;border-radius:var(--r);background:rgba(255,255,255,.06);border:1px solid var(--edge-2);font-weight:700;font-size:1.05rem;color:var(--ink);overflow:hidden}
+.col-ico img{width:100%;height:100%;object-fit:contain;display:block}
+.col-txt{display:grid;gap:2px;min-width:0}
+.col-txt b{overflow-wrap:anywhere}
+.col-card:hover,.col-card:focus-visible{border-color:var(--edge-2)}
+.col-card small{color:var(--ink-3)}
 
 /* modal */
 dialog{border:0;padding:0;background:transparent;color:var(--ink);width:min(600px,calc(100vw - 32px));max-width:none;margin:auto}
@@ -400,6 +415,7 @@ dialog::backdrop{background:rgba(3,4,8,.62);backdrop-filter:blur(6px);-webkit-ba
   .perfil-cabeca{flex-direction:column;align-items:center;text-align:center;left:12px;right:12px}
   .perfil-capa{height:250px}
   .fav-grid{gap:8px}
+  .col-lista{grid-template-columns:repeat(2,minmax(0,1fr))}
   .fav-grid .card{flex:0 0 calc(33.33% - 6px)}
   .perfil-numeros{grid-template-columns:repeat(2,minmax(0,1fr))}
   .grafico{gap:3px}
@@ -513,6 +529,28 @@ dialog::backdrop{background:rgba(3,4,8,.62);backdrop-filter:blur(6px);-webkit-ba
     <div class="head"><h2 id="fav-title">Favoritos</h2><button class="x" type="button" data-fechar-fav aria-label="Fechar">✕</button></div>
     <label style="display:grid;gap:6px;margin-top:14px">Buscar mídia<input id="favBusca" class="field" type="search" placeholder="Digite um título…" autocomplete="off"></label>
     <div id="favLista" class="fav-lista"></div>
+  </div>
+</dialog>
+<dialog id="colDlg" aria-labelledby="col-titulo-dlg">
+  <div class="sheet">
+    <div class="head"><h2 id="col-titulo-dlg">Nova coleção</h2><button class="x" type="button" data-fechar-col aria-label="Fechar">✕</button></div>
+    <div class="novo-grid" style="grid-template-columns:1fr">
+      <label>Nome<input id="col-nome" class="field" type="text" maxlength="60" placeholder="ex.: Zelda" autocomplete="off"></label>
+      <label>Ícone (opcional, vazio usa a inicial)<input id="col-icone" class="field" type="text" maxlength="4" placeholder="ex.: 🎮" autocomplete="off"></label>
+      <label>Link da imagem do ícone (opcional)<input id="col-imagem" class="field" type="url" placeholder="https://…" autocomplete="off"></label>
+      <label>Aparece em<select id="col-grupo" class="field">
+        <option value="jogo">Jogos</option><option value="audiovisual">Filmes &amp; Séries</option><option value="livro">Livros &amp; Mangás</option>
+      </select></label>
+    </div>
+    <div class="keys-actions" style="margin-top:14px"><div class="group"><button class="btn" id="col-salvar" type="button">Salvar</button></div></div>
+    <p class="erro" id="col-erro" role="alert"></p>
+  </div>
+</dialog>
+<dialog id="colItensDlg" aria-labelledby="col-itens-titulo">
+  <div class="sheet">
+    <div class="head"><h2 id="col-itens-titulo">Mídias da coleção</h2><button class="x" type="button" data-fechar-col-itens aria-label="Fechar">✕</button></div>
+    <label style="display:grid;gap:6px;margin-top:14px">Buscar mídia<input id="colBusca" class="field" type="search" placeholder="Título ou #tag…" autocomplete="off"></label>
+    <div id="colLista" class="fav-lista"></div>
   </div>
 </dialog>
 <dialog id="modal" aria-labelledby="m-title">
@@ -712,7 +750,7 @@ function definirStatus(key, valor){
 
 /* ---------- construção dos controles ---------- */
 function montarCategorias(){
-  const ordem = [['jogo','Jogos'],['audiovisual','Filmes & Séries'],['livro','Livros & Mangás']];
+  const ordem = [['jogo','Jogos'],['audiovisual','Filmes & Séries'],['livro','Livros & Mangás'],['colecoes','Coleções']];
   document.getElementById('cats').innerHTML = ordem.map(([k, l]) =>
     `<button class="pill" type="button" data-cat="${k}" aria-pressed="false">${esc(l)}<span class="n"></span></button>`
   ).join('');
@@ -804,6 +842,15 @@ function estrelas(n){
   const pct = Math.max(0, Math.min(5, n)) / 5 * 100;
   return `<span class="stars" aria-hidden="true"><span class="stars-on" style="width:${pct}%">★★★★★</span>★★★★★</span>`;
 }
+const hojeISO = () => { const d = new Date(), p = n => String(n).padStart(2, '0'); return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`; };
+const jaSaiu = i => atual(i) === 'No aguardo' && !!i.l && i.l.length === 10 && i.l <= hojeISO();
+const SAIU_KEY = 'hub-midias-saiu-v1';
+let jaAvisados = lerJSON(SAIU_KEY, []);
+function verificarLancamentos(){
+  const novos = ITEMS.filter(i => jaSaiu(i) && !jaAvisados.includes(i.key));
+  novos.forEach(i => { notificar(`“${i.t}” já saiu. Atualize o status se já jogou ou assistiu.`, i.key); jaAvisados.push(i.key); });
+  if (novos.length) { gravarJSON(SAIU_KEY, jaAvisados); render(); }
+}
 function card(i){
   const g = grupo(i), c = CATS[i.c], s2 = atual(i);
   const pode = (g === 'fila' || g === 'andamento') && c.concl;
@@ -816,7 +863,7 @@ function card(i){
   const nota = i.n != null ? `<div class="nota-linha">${estrelas(i.n)}<span class="nota-num">${fmtNota(i.n)}</span></div>` : '<div class="nota-linha"></div>';
   return `<article class="card${st.selecionados.has(i.key) ? ' selecionado' : ''}" style="--tint:${c.tint}">
     <button class="open" type="button" data-key="${esc(i.key)}" aria-label="Abrir ${esc(i.t)}">
-      <div class="cover${capa ? ' has-img' : ''}">${capa ? '' : `<span class="cat-pad">${esc(c.label)}</span>`}${capaHTML(capa)}<span class="ini" aria-hidden="true">${esc(i.t.charAt(0).toUpperCase())}</span><span class="dot-status${s2 === 'Platinado' ? ' brilho' : ''}" style="--c:${STATUS_COR[s2] || '#7b8190'}" title="${esc(s2)}" role="img" aria-label="Status: ${esc(s2)}"></span>${i.n != null ? `<span class="nota-capa"><span class="est">★</span>${fmtNota(i.n)}</span>` : ''}</div>
+      <div class="cover${capa ? ' has-img' : ''}">${capa ? '' : `<span class="cat-pad">${esc(c.label)}</span>`}${capaHTML(capa)}<span class="ini" aria-hidden="true">${esc(i.t.charAt(0).toUpperCase())}</span><span class="dot-status${s2 === 'Platinado' ? ' brilho' : ''}${jaSaiu(i) ? ' saiu' : ''}" style="--c:${jaSaiu(i) ? '#ffc93c' : (STATUS_COR[s2] || '#7b8190')}" title="${jaSaiu(i) ? 'Já saiu: atualize o status' : esc(s2)}" role="img" aria-label="${jaSaiu(i) ? 'Já saiu' : 'Status: ' + esc(s2)}"></span>${i.n != null ? `<span class="nota-capa"><span class="est">★</span>${fmtNota(i.n)}</span>` : ''}</div>
       <div class="body">
         <h3>${esc(i.t)}</h3>
         ${meta}
@@ -836,7 +883,8 @@ function renderGrid(){
     const grupos = [
       ['Sem capa', base.filter(i => !capaDe(i))],
       ['Concluídos sem nota', base.filter(i => grupo(i) === 'concluido' && i.n == null)],
-      ['No aguardo sem data', base.filter(i => atual(i) === 'No aguardo' && !i.l)]
+      ['No aguardo sem data', base.filter(i => atual(i) === 'No aguardo' && !i.l)],
+      ['Possíveis duplicados', base.filter(i => base.some(o => o !== i && o.t.trim().toLowerCase() === i.t.trim().toLowerCase()))]
     ];
     const total = grupos.reduce((a, [, l]) => a + l.length, 0);
     document.getElementById('count').textContent = `${total} ${total === 1 ? 'pendência' : 'pendências'}`;
@@ -877,7 +925,7 @@ function renderControles(){
   document.querySelectorAll('[data-cat]').forEach(b => {
     const k = b.dataset.cat;
     b.setAttribute('aria-pressed', String(k === st.cat));
-    b.querySelector('.n').textContent = k === 'saude' ? '' : ITEMS.filter(i => i.c === k).length;
+    b.querySelector('.n').textContent = (k === 'saude' || k === 'colecoes') ? '' : ITEMS.filter(i => i.c === k).length;
   });
   const base = ITEMS.filter(doCat);
   document.getElementById('chips').style.display = st.cat === 'saude' ? 'none' : '';
@@ -896,8 +944,13 @@ function renderControles(){
 
 function render(){
   salvarVista();
+  const colecoesOn = st.cat === 'colecoes';
   const perfilOn = st.cat === 'perfil';
-  ['hero','barra'].forEach(id => { document.getElementById(id).style.display = perfilOn ? 'none' : ''; });
+  document.getElementById('hero').style.display = (perfilOn || colecoesOn) ? 'none' : '';
+  document.getElementById('barra').style.display = perfilOn ? 'none' : '';
+  const ferr = document.querySelector('#barra .tools'), chipsEl = document.getElementById('chips');
+  ferr.style.display = colecoesOn ? 'none' : '';
+  if (colecoesOn) { chipsEl.style.display = 'none'; document.getElementById('massa').hidden = true; document.getElementById('count').style.display = 'none'; document.getElementById('abrirPerfil').setAttribute('aria-pressed', 'false'); renderColecoes(); return; }
   document.getElementById('count').style.display = perfilOn ? 'none' : '';
   document.getElementById('abrirPerfil').setAttribute('aria-pressed', String(perfilOn));
   if (perfilOn) {
@@ -906,6 +959,7 @@ function render(){
     renderPerfil();
     return;
   }
+  document.getElementById('count').style.display = '';
   renderControles();
   renderStats();
   renderGrid();
@@ -934,6 +988,7 @@ async function atualizarDatas(){
     await new Promise(r => setTimeout(r, 150));
   }
   gravarEdicoes(); recarregarItens();
+  verificarLancamentos();
   ocupado = false; btn.disabled = false; btn.textContent = 'Atualizar datas';
   render();
   const quando = new Date().toLocaleString('pt-BR', {dateStyle:'short', timeStyle:'short'});
@@ -1003,6 +1058,7 @@ function preencherSheet(key){
           <dt>Nota</dt><dd>${i.n != null ? '★ ' + fmtNota(i.n) + ' · ' + NOTA_TXT(i.n) : '—'}</dd>
           <dt>Lançamento</dt><dd>${esc(fmtData(i.l))}</dd>
           <dt>Conclusão</dt><dd>${esc(fmtData(i.k))}</dd>
+          <dt>Onde</dt><dd>${esc(i.onde || '—')}</dd>
           <dt>Tags</dt><dd>${(i.tags || []).length ? i.tags.map(t => `<span class="badge">#${esc(t)}</span>`).join(' ') : '—'}</dd>
         </dl>
         <div class="notas-bloco">
@@ -1012,6 +1068,7 @@ function preencherSheet(key){
         <label class="switch" style="margin-top:18px"><input type="checkbox" role="switch" data-travar${i.travado ? ' checked' : ''}> Bloquear atualizações automáticas deste item</label>
         <div class="keys-actions" style="margin-top:22px"><div class="group">
           <button class="btn" type="button" data-editar>Editar mídia</button>
+          ${i.video ? `<a class="btn" href="${esc(i.video)}" target="_blank" rel="noopener">Ver gameplay</a>` : ''}
           ${i.c === 'jogo' ? `<a class="btn" href="https://howlongtobeat.com/?q=${encodeURIComponent(i.t)}" target="_blank" rel="noopener">Ver no HowLongToBeat</a>` : ''}
           <button class="btn" type="button" data-buscar-capa>Buscar capa</button>
           ${capa ? '<button class="link" type="button" data-remover-capa>Remover capa</button>' : ''}
@@ -1056,6 +1113,7 @@ function abrir(key){
 }
 
 document.getElementById('grid').addEventListener('click', e => {
+  if (st.cat === 'colecoes' && colecoesClique(e)) return;
   if (st.cat === 'perfil' && perfilClique(e)) return;
   if (st.sel) { const o2 = e.target.closest('[data-key]'); if (o2) alternarSel(o2.dataset.key); return; }
   if (e.target.closest('[data-editar-perfil]')) return abrirPerfilDlg();
@@ -1486,6 +1544,8 @@ function abrirForm(key){
         <label>Conclusão<input id="n-k" class="field" type="date" value="${esc(i && i.k ? i.k : '')}"></label>
         <label id="lbl-g" class="full">ID da IGDB (jogos, para buscar a capa)<input id="n-g" class="field" type="number" min="1" value="${i && i.g != null ? i.g : ''}"></label>
         <label class="full">Link da capa (opcional, sobrescreve a busca automática)<input id="n-capa" class="field" type="url" placeholder="https://…" value="${esc(i && i.capa ? i.capa : '')}"></label>
+        <label>Onde (plataforma ou serviço)<input id="n-onde" class="field" type="text" placeholder="ex.: PC, Netflix" value="${esc(i && i.onde ? i.onde : '')}"></label>
+        <label class="full">Link de gameplay ou vídeo (YouTube, Twitch…)<input id="n-video" class="field" type="url" placeholder="https://…" value="${esc(i && i.video ? i.video : '')}"></label>
         <label class="full">Tags (separadas por vírgula)<input id="n-tags" class="field" type="text" placeholder="ex.: favorito, co-op" value="${esc(i && i.tags ? i.tags.join(', ') : '')}"></label>
       </div>
       <p class="erro" id="n-erro" role="alert"></p>
@@ -1557,6 +1617,9 @@ function salvarItem(key){
   if (k && l && k < l) return erro('A conclusão não pode ser antes do lançamento.');
   const capa = document.getElementById('n-capa').value.trim();
   if (capa && !/^https?:\/\//i.test(capa)) return erro('O link da capa precisa começar com http:// ou https://.');
+  const video = document.getElementById('n-video').value.trim();
+  if (video && !/^https?:\/\//i.test(video)) return erro('O link do vídeo precisa começar com https://');
+  const onde = document.getElementById('n-onde').value.trim() || null;
   const tags = [...new Set(document.getElementById('n-tags').value.split(',').map(x => x.trim()).filter(Boolean))];
   const gv = document.getElementById('n-g').value;
   const dados = {
@@ -1567,6 +1630,8 @@ function salvarItem(key){
     g: c === 'jogo' && gv ? parseInt(gv, 10) : null,
     capa: capa || null,
     tags,
+    onde,
+    video: video || null,
     travado: key && edicoes[key] ? !!edicoes[key].travado : false,
     notas: key && edicoes[key] && edicoes[key].notas != null ? edicoes[key].notas : null
   };
@@ -1641,7 +1706,9 @@ function iniciarNotif(){
 /* ---------- sincronização com Firebase ---------- */
 const PERFIL_KEY = 'hub-midias-perfil-v1';
 let perfil = lerJSON(PERFIL_KEY, {});
-SYNC_KEYS_LIST = [EDICOES_KEY, NOVOS_KEY, CAPAS_KEY, FONTES_KEY, PERFIL_KEY];
+const COLECOES_KEY = 'hub-midias-colecoes-v1';
+let colecoes = lerJSON(COLECOES_KEY, []);
+SYNC_KEYS_LIST = [EDICOES_KEY, NOVOS_KEY, CAPAS_KEY, FONTES_KEY, PERFIL_KEY, COLECOES_KEY];
 const FB_CFG_KEY = 'hub-midias-firebase-v1';
 let fbCfg = lerJSON(FB_CFG_KEY, null);
 let fbAuth = null, fbDb = null, fbDocRef = null, fbUnsub = null, fbTimer = null;
@@ -1656,7 +1723,7 @@ function agendarEnvio(){
 }
 function enviarAgora(){
   if (!fbDocRef) return;
-  const dados = JSON.parse(JSON.stringify({edicoes, novos, capas, fontes: configFontes, perfil}));
+  const dados = JSON.parse(JSON.stringify({edicoes, novos, capas, fontes: configFontes, perfil, colecoes}));
   dados.atualizado = firebase.firestore.FieldValue.serverTimestamp();
   fbDocRef.set(dados)
     .then(() => setStatusFb('Sincronizado às ' + new Date().toLocaleTimeString('pt-BR', {timeStyle:'short'})))
@@ -1674,6 +1741,7 @@ function aplicarRemoto(d){
     gravarJSON(CAPAS_KEY, capas);
     gravarFontes();
     if (d.perfil) { perfil = d.perfil; gravarJSON(PERFIL_KEY, perfil); }
+    if (d.colecoes) { colecoes = d.colecoes; gravarJSON(COLECOES_KEY, colecoes); }
   } finally { fbAplicandoRemoto = false; }
   recarregarItens();
   montarFontes();
@@ -1930,7 +1998,7 @@ function perfilClique(e){
   return false;
 }
 function exportarBackup(){
-  const dados = {versao: 1, exportado: new Date().toISOString(), edicoes, novos, capas, fontes: configFontes, perfil};
+  const dados = {versao: 1, exportado: new Date().toISOString(), edicoes, novos, capas, fontes: configFontes, perfil, colecoes};
   const blob = new Blob([JSON.stringify(dados, null, 2)], {type: 'application/json'});
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
@@ -1951,6 +2019,7 @@ function importarBackup(file){
     capas = d.capas || {};
     if (d.fontes) { configFontes = {...configFontes, ...d.fontes}; normalizarFontes(); }
     if (d.perfil) perfil = d.perfil;
+    if (Array.isArray(d.colecoes)) { colecoes = d.colecoes; gravarJSON(COLECOES_KEY, colecoes); }
     gravarEdicoes(); gravarJSON(NOVOS_KEY, novos); gravarJSON(CAPAS_KEY, capas);
     gravarFontes(); gravarJSON(PERFIL_KEY, perfil);
     recarregarItens(); montarFontes(); atualizarAvatar(); render();
@@ -2011,10 +2080,134 @@ function iniciarMassa(){
   document.getElementById('massaCancelar').addEventListener('click', () => { st.sel = false; st.selecionados.clear(); render(); });
 }
 
+/* ---------- coleções ---------- */
+const GRUPOS_COL = [['jogo','Jogos'],['audiovisual','Filmes & Séries'],['livro','Livros & Mangás']];
+let colUI = {aberta: null};
+let colEditando = null, colItensAtual = null;
+function renderColecoes(){
+  const el = document.getElementById('grid');
+  document.querySelectorAll('[data-cat]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.cat === 'colecoes')));
+  const aberta = colecoes.find(c => c.id === colUI.aberta);
+  if (aberta) return renderColecaoAberta(aberta);
+  const grupos = GRUPOS_COL.map(([k, nome]) => {
+    const lista = colecoes.filter(c => c.grupo === k);
+    return `<section class="col-grupo">
+      <h2 class="saude-titulo">${nome} <span>${lista.length}</span></h2>
+      <div class="col-lista">${lista.map(c => `<button type="button" class="col-card" data-col="${esc(c.id)}"><span class="col-ico">${c.imagem ? `<img src="${esc(c.imagem)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">` : esc(c.icone || c.nome.charAt(0).toUpperCase())}</span><span class="col-txt"><b>${esc(c.nome)}</b><small>${c.itens.length} ${c.itens.length === 1 ? 'mídia' : 'mídias'}</small></span></button>`).join('') || '<p class="saude-vazio">Nenhuma coleção aqui ainda.</p>'}</div>
+    </section>`;
+  }).join('');
+  el.innerHTML = `<div class="colecoes">
+    <div class="col-topo"><h2 class="col-titulo">Coleções</h2><button class="btn" type="button" data-col-nova>+ Nova coleção</button></div>
+    ${grupos}
+  </div>`;
+}
+function renderColecaoAberta(c){
+  const itens = c.itens.map(k => ITEMS.find(i => i.key === k)).filter(Boolean);
+  const grupos = GRUPOS_COL.map(([k, nome]) => {
+    const l = itens.filter(i => i.c === k);
+    return l.length ? `<h2 class="saude-titulo">${nome} <span>${l.length}</span></h2><div class="grid">${l.map(card).join('')}</div>` : '';
+  }).join('');
+  document.getElementById('grid').innerHTML = `<div class="colecoes">
+    <div class="col-topo">
+      <button class="btn" type="button" data-col-voltar>← Coleções</button>
+      <h2 class="col-titulo">${esc(c.nome)}</h2>
+      <div class="col-acoes">
+        <button class="btn" type="button" data-col-editar>Gerenciar mídias</button>
+        <button class="link" type="button" data-col-renomear>Renomear</button>
+        <button class="link" type="button" data-col-excluir>Excluir</button>
+      </div>
+    </div>
+    <p class="hint">${itens.length} ${itens.length === 1 ? 'mídia' : 'mídias'}</p>
+    ${grupos || '<p class="saude-vazio">Esta coleção ainda está vazia. Toque em Gerenciar mídias.</p>'}
+  </div>`;
+}
+function colecoesClique(e){
+  const t = e.target;
+  if (t.closest('[data-col-nova]')) { abrirColDlg(null); return true; }
+  if (t.closest('[data-col-voltar]')) { colUI.aberta = null; render(); return true; }
+  if (t.closest('[data-col-editar]')) { abrirColItensDlg(colUI.aberta); return true; }
+  if (t.closest('[data-col-renomear]')) { abrirColDlg(colUI.aberta); return true; }
+  if (t.closest('[data-col-excluir]')) {
+    const c = colecoes.find(x => x.id === colUI.aberta);
+    if (c && confirm(`Excluir a coleção “${c.nome}”? As mídias continuam no catálogo.`)) {
+      colecoes = colecoes.filter(x => x.id !== c.id);
+      gravarJSON(COLECOES_KEY, colecoes);
+      colUI.aberta = null; render(); toast('Coleção excluída.');
+    }
+    return true;
+  }
+  const cc = t.closest('[data-col]');
+  if (cc) { colUI.aberta = cc.dataset.col; render(); return true; }
+  return false;
+}
+function abrirColDlg(id){
+  colEditando = id;
+  const c = id ? colecoes.find(x => x.id === id) : null;
+  document.getElementById('col-titulo-dlg').textContent = c ? 'Renomear coleção' : 'Nova coleção';
+  document.getElementById('col-nome').value = c ? c.nome : '';
+  document.getElementById('col-grupo').value = c ? c.grupo : 'jogo';
+  document.getElementById('col-icone').value = c ? (c.icone || '') : '';
+  document.getElementById('col-imagem').value = c ? (c.imagem || '') : '';
+  document.getElementById('col-erro').textContent = '';
+  document.getElementById('colDlg').showModal();
+}
+function renderColItens(){
+  const q = document.getElementById('colBusca').value.trim().toLowerCase();
+  const c = colecoes.find(x => x.id === colItensAtual);
+  if (!c) return;
+  const no = new Set(c.itens);
+  const itens = ITEMS.filter(i => !q || (q.startsWith('#')
+    ? (i.tags || []).some(t => t.toLowerCase().includes(q.slice(1).trim()))
+    : i.t.toLowerCase().includes(q))).slice(0, 120);
+  document.getElementById('colLista').innerHTML = itens.length
+    ? itens.map(i => `<button type="button" data-col-item="${esc(i.key)}"><span>${no.has(i.key) ? '★' : '☆'} ${esc(i.t)}</span><small>${esc(CATS[i.c].label)}</small></button>`).join('')
+    : '<p class="hint">Nenhuma mídia encontrada.</p>';
+}
+function abrirColItensDlg(id){
+  colItensAtual = id;
+  document.getElementById('colBusca').value = '';
+  renderColItens();
+  document.getElementById('colItensDlg').showModal();
+}
+function iniciarColecoes(){
+  const dlg = document.getElementById('colDlg');
+  dlg.querySelector('[data-fechar-col]').addEventListener('click', () => dlg.close());
+  document.getElementById('col-salvar').addEventListener('click', () => {
+    const nome = document.getElementById('col-nome').value.trim();
+    const grupo = document.getElementById('col-grupo').value;
+    const icone = document.getElementById('col-icone').value.trim().slice(0, 4);
+    const imagem = document.getElementById('col-imagem').value.trim();
+    if (imagem && !/^https?:\/\//i.test(imagem)) return document.getElementById('col-erro').textContent = 'O link precisa começar com https://';
+    if (!nome) return document.getElementById('col-erro').textContent = 'Informe um nome.';
+    if (colEditando) {
+      const c = colecoes.find(x => x.id === colEditando);
+      if (c) { c.nome = nome; c.grupo = grupo; c.icone = icone; c.imagem = imagem; }
+    } else {
+      colecoes.push({id: 'c' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), nome, grupo, icone, imagem, itens: []});
+    }
+    gravarJSON(COLECOES_KEY, colecoes);
+    dlg.close(); render();
+    toast(colEditando ? 'Coleção atualizada.' : 'Coleção criada.');
+  });
+  const itens = document.getElementById('colItensDlg');
+  itens.querySelector('[data-fechar-col-itens]').addEventListener('click', () => itens.close());
+  document.getElementById('colBusca').addEventListener('input', renderColItens);
+  document.getElementById('colLista').addEventListener('click', e => {
+    const b = e.target.closest('[data-col-item]'); if (!b) return;
+    const c = colecoes.find(x => x.id === colItensAtual); if (!c) return;
+    const k = b.dataset.colItem;
+    c.itens = c.itens.includes(k) ? c.itens.filter(x => x !== k) : [...c.itens, k];
+    gravarJSON(COLECOES_KEY, colecoes);
+    renderColItens(); render();
+  });
+}
+
 /* ---------- início ---------- */
 iniciarChaves();
 iniciarNotif();
 iniciarSync();
+iniciarColecoes();
+verificarLancamentos();
 iniciarPerfil();
 iniciarBackup();
 iniciarMassa();
