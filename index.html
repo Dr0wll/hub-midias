@@ -574,9 +574,63 @@ dialog.is-closing .sheet{animation:modalOut var(--dur-modal-close) var(--ease-ou
 }
 .sheet dl{display:grid;grid-template-columns:auto 1fr;gap:0 18px;margin:18px 0 0}
 .sheet dt{color:var(--ink-3);font-size:.84rem;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.06);align-self:center}
+.sheet dt[for="st-sel"]{align-self:start;padding-top:18px}
 .sheet dd{margin:0;font-weight:500;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.06);display:flex;flex-wrap:wrap;gap:5px;align-items:center}
-.sheet dd select{width:100%}
+.sheet dd select,.sheet dd .csel{width:100%}
 .sheet .hint{color:var(--ink-3);font-size:.8rem;margin:12px 0 0;line-height:1.45}
+
+/* seletor accordion liquid glass */
+.csel{position:relative;width:100%}
+.csel.larg{width:162px}
+.perfil-filtros .csel{width:auto;min-width:132px}
+.csel-native{display:none!important}
+.csel-trigger{
+  width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;
+  text-align:left;cursor:pointer;font-weight:500;
+}
+.csel-trigger:disabled{opacity:.45;cursor:default}
+.csel-label{display:inline-flex;align-items:center;gap:8px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.csel-label .dot-chip{margin-right:0}
+.csel-chev{flex-shrink:0;color:var(--ink-2);transition:transform 260ms var(--ease-out),color var(--dur-fast) var(--ease-out)}
+.csel.is-open .csel-chev{transform:rotate(180deg);color:var(--ink)}
+.csel.is-open .csel-trigger{border-color:var(--edge-3);box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 0 0 3px rgba(255,255,255,.05)}
+.csel-drop{
+  position:absolute;left:0;right:0;top:100%;z-index:35;margin-top:0;
+  display:grid;grid-template-rows:0fr;pointer-events:none;
+  transition:grid-template-rows 260ms var(--ease-out),margin-top 260ms var(--ease-out),margin-bottom 260ms var(--ease-out);
+}
+.csel.is-open .csel-drop{grid-template-rows:1fr;margin-top:6px;pointer-events:auto}
+.csel.csel-up .csel-drop{top:auto;bottom:100%;margin-top:0;margin-bottom:0}
+.csel.is-open.csel-up .csel-drop{margin-top:0;margin-bottom:6px}
+.csel.csel-inline .csel-drop{position:static;z-index:auto;min-width:0}
+.csel-drop-inner{overflow:hidden;min-height:0}
+.csel-list{
+  display:grid;gap:2px;padding:4px;border-radius:var(--r);
+  max-height:220px;overflow-y:auto;overscroll-behavior:contain;
+  background:var(--glass-2);border:1px solid var(--edge-2);
+  backdrop-filter:blur(26px) saturate(185%);-webkit-backdrop-filter:blur(26px) saturate(185%);
+  box-shadow:var(--chamfer),var(--drop);
+  opacity:0;transform:translateY(-4px);
+  transition:opacity 200ms var(--ease-out),transform 220ms var(--ease-out);
+}
+.csel.csel-up .csel-list{transform:translateY(4px)}
+.csel.csel-inline .csel-list{
+  background:rgba(10,12,18,.58);border:1px solid rgba(255,255,255,.12);
+  backdrop-filter:none;-webkit-backdrop-filter:none;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.1);
+}
+.csel.is-open .csel-list{opacity:1;transform:none}
+.csel-opt{
+  width:100%;min-height:36px;padding:7px 10px;border:0;border-radius:var(--r-sm);
+  background:transparent;color:var(--ink-2);font:inherit;font-size:.88rem;text-align:left;cursor:pointer;
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  transition:background-color var(--dur-fast) var(--ease-out),color var(--dur-fast) var(--ease-out);
+}
+.csel-opt-txt{display:inline-flex;align-items:center;gap:8px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.csel-opt-txt .dot-chip{margin-right:0}
+.csel-opt.is-selected{color:var(--ink);font-weight:600;background:rgba(255,255,255,.11)}
+.csel-check{flex-shrink:0;color:var(--jogo);opacity:0;transform:scale(.75);transition:opacity 160ms var(--ease-out),transform 200ms var(--ease-spring)}
+.csel-opt.is-selected .csel-check{opacity:1;transform:scale(1)}
 
 /* detalhe da mídia */
 .det{display:flex;gap:22px;align-items:flex-start}
@@ -709,6 +763,9 @@ dialog.is-closing .sheet{animation:modalOut var(--dur-modal-close) var(--ease-ou
   .mes-item:hover,.mes-item:focus-visible{background:rgba(255,255,255,.09);border-color:var(--edge-2)}
   .notif-corpo:not([disabled]):hover{background:rgba(255,255,255,.08);border-color:var(--edge-2)}
   .barra-col:hover .barra{opacity:.88}
+  .csel-trigger:hover:not(:disabled){border-color:var(--edge-3)}
+  .csel-opt:hover{background:rgba(255,255,255,.08);color:var(--ink)}
+  .csel-opt.is-selected:hover{background:rgba(255,255,255,.14)}
 }
 
 /* tablet */
@@ -742,8 +799,10 @@ dialog.is-closing .sheet{animation:modalOut var(--dur-modal-close) var(--ease-ou
   .seg .pill{flex:0 0 auto;min-height:38px;padding:7px 11px;font-size:.84rem}
   .tools{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%}
   .tools .busca-wrap{grid-column:1/-1;min-width:0;max-width:none}
-  .tools .field,.tools .btn{width:100%;min-width:0;min-height:42px}
-  input,select,textarea,.field{font-size:16px}
+  .tools .field,.tools .btn,.tools .csel{width:100%;min-width:0;min-height:42px}
+  input,select,textarea,.field,.csel-trigger{font-size:16px}
+  .csel-trigger{min-height:42px}
+  .csel-opt{min-height:40px;font-size:.94rem}
   #limparFiltros{grid-column:1/-1;justify-self:start;min-height:36px;font-size:.85rem}
   #atualizarDatas{grid-column:1/-1}
   #atualizarDatas:disabled{display:none}
@@ -762,7 +821,7 @@ dialog.is-closing .sheet{animation:modalOut var(--dur-modal-close) var(--ease-ou
   .nota-capa .est{font-size:.62rem}
   .data-lanc{font-size:.72rem}
   .massa{bottom:calc(10px + env(safe-area-inset-bottom,0px));width:calc(100vw - 20px);max-width:none;padding:10px}
-  .massa .field{max-width:none;flex:1 1 130px}
+  .massa .field,.massa .csel{max-width:none;flex:1 1 130px}
   dialog{
     width:calc(100vw - 16px);
     margin:auto auto calc(10px + env(safe-area-inset-bottom,0px));
@@ -1117,7 +1176,9 @@ function aplicarVista(grp){
   const v = vistas[grp] || {ord:'titulo', dir:'asc', tag:'', q:''};
   Object.assign(st, {ord: v.ord, dir: v.dir, tag: v.tag, q: v.q});
   document.getElementById('q').value = st.tag ? '#' + st.tag : st.q;
-  document.getElementById('ord').value = st.ord;
+  const ordSel = document.getElementById('ord');
+  ordSel.value = st.ord;
+  sincronizarSelect(ordSel);
 }
 
 const atual = i => i.s;
@@ -1166,7 +1227,12 @@ function fecharDialogo(dlg){
 function iniciarDialogos(){
   document.querySelectorAll('dialog').forEach(dlg => {
     dlg.addEventListener('click', e => { if (e.target === dlg) fecharDialogo(dlg); });
-    dlg.addEventListener('cancel', e => { e.preventDefault(); fecharDialogo(dlg); });
+    dlg.addEventListener('cancel', e => {
+      e.preventDefault();
+      const aberto = dlg.querySelector('.csel.is-open');
+      if (aberto) { fecharSelects(); return; }
+      fecharDialogo(dlg);
+    });
   });
 }
 
@@ -1178,6 +1244,97 @@ function iniciarAccordions(){
     if (!acc) return;
     const open = acc.classList.toggle('is-open');
     btn.setAttribute('aria-expanded', String(open));
+  });
+}
+
+function fecharSelects(exceto){
+  document.querySelectorAll('.csel.is-open').forEach(c => {
+    if (c === exceto) return;
+    c.classList.remove('is-open');
+    const tr = c.querySelector('.csel-trigger');
+    if (tr) tr.setAttribute('aria-expanded', 'false');
+  });
+}
+
+function sincronizarSelect(sel){
+  if (!sel) return;
+  let wrap = sel.parentElement;
+  if (!wrap || !wrap.classList.contains('csel')) {
+    wrap = document.createElement('div');
+    wrap.className = 'csel' + (sel.classList.contains('larg') ? ' larg' : '') + (sel.closest('.sheet') ? ' csel-inline' : '') + (sel.closest('#massa') ? ' csel-up' : '');
+    sel.parentNode.insertBefore(wrap, sel);
+    wrap.appendChild(sel);
+    sel.classList.add('csel-native');
+    const tr = document.createElement('button');
+    tr.type = 'button';
+    tr.className = 'field csel-trigger';
+    tr.setAttribute('aria-haspopup', 'listbox');
+    tr.setAttribute('aria-expanded', 'false');
+    if (sel.getAttribute('aria-label')) tr.setAttribute('aria-label', sel.getAttribute('aria-label'));
+    tr.innerHTML = '<span class="csel-label"></span><svg class="csel-chev" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
+    const drop = document.createElement('div');
+    drop.className = 'csel-drop';
+    drop.innerHTML = '<div class="csel-drop-inner"><div class="csel-list" role="listbox"></div></div>';
+    wrap.appendChild(tr);
+    wrap.appendChild(drop);
+  }
+  const tr = wrap.querySelector('.csel-trigger');
+  const lbl = wrap.querySelector('.csel-label');
+  const list = wrap.querySelector('.csel-list');
+  const opts = [...sel.options];
+  const idx = sel.selectedIndex >= 0 ? sel.selectedIndex : 0;
+  const atualOpt = opts[idx];
+  const atualTxt = atualOpt ? atualOpt.textContent : '';
+  const corAtual = STATUS_COR[atualTxt];
+  lbl.innerHTML = (corAtual ? `<span class="dot-chip" style="--c:${corAtual}"></span>` : '') + esc(atualTxt);
+  tr.disabled = !!sel.disabled;
+  if (sel.disabled) { wrap.classList.remove('is-open'); tr.setAttribute('aria-expanded', 'false'); }
+  list.innerHTML = opts.map((o, k) => {
+    const t = o.textContent;
+    const cor = STATUS_COR[t];
+    const on = k === idx;
+    return `<button type="button" class="csel-opt${on ? ' is-selected' : ''}" role="option" aria-selected="${on}" data-csel-idx="${k}"><span class="csel-opt-txt">${cor ? `<span class="dot-chip" style="--c:${cor}"></span>` : ''}${esc(t)}</span><svg class="csel-check" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.2 8.4l3 3 6.6-6.8"/></svg></button>`;
+  }).join('');
+}
+
+function melhorarSelects(root = document){
+  if (!root || !root.querySelectorAll) return;
+  root.querySelectorAll('select.field').forEach(sincronizarSelect);
+}
+
+function iniciarSelects(){
+  document.addEventListener('click', e => {
+    const opt = e.target.closest('.csel-opt');
+    if (opt) {
+      const wrap = opt.closest('.csel');
+      const sel = wrap && wrap.querySelector('select.csel-native');
+      if (!sel) return;
+      const idx = Number(opt.dataset.cselIdx);
+      fecharSelects();
+      if (!isNaN(idx) && sel.selectedIndex !== idx) {
+        sel.selectedIndex = idx;
+        sincronizarSelect(sel);
+        sel.dispatchEvent(new Event('change', {bubbles: true}));
+      } else {
+        sincronizarSelect(sel);
+      }
+      wrap.querySelector('.csel-trigger')?.focus();
+      return;
+    }
+    const tr = e.target.closest('.csel-trigger');
+    if (tr) {
+      if (tr.disabled) return;
+      const wrap = tr.closest('.csel');
+      const abrir = !wrap.classList.contains('is-open');
+      fecharSelects(abrir ? wrap : null);
+      wrap.classList.toggle('is-open', abrir);
+      tr.setAttribute('aria-expanded', String(abrir));
+      if (abrir && wrap.classList.contains('csel-inline')) {
+        setTimeout(() => { wrap.scrollIntoView({block: 'nearest', behavior: 'smooth'}); }, 180);
+      }
+      return;
+    }
+    if (!e.target.closest('.csel')) fecharSelects();
   });
 }
 
@@ -1260,7 +1417,9 @@ function montarBusca(){
     Object.assign(st, {cat:'jogo', grp:'todos', q:'', ord:'titulo', dir:'asc', tag:''});
     salvarVista();
     document.getElementById('q').value = '';
-    document.getElementById('ord').value = 'titulo';
+    const ordSel = document.getElementById('ord');
+    ordSel.value = 'titulo';
+    sincronizarSelect(ordSel);
     render();
   });
   document.getElementById('novoBtn').addEventListener('click', abrirNovo);
@@ -1615,6 +1774,7 @@ function preencherSheet(key){
     render();
     toast(`Status atualizado para ${e.target.value.toLowerCase()}.`);
   });
+  melhorarSelects(document.getElementById('sheet'));
 }
 
 function abrir(key){
@@ -2147,6 +2307,7 @@ function atualizarCamposForm(i){
   if (!sOpts.includes(sAtual)) sOpts.unshift(sAtual);
   document.getElementById('n-s').innerHTML = sOpts.map(o => `<option${o === sAtual ? ' selected' : ''}>${esc(o)}</option>`).join('');
   document.getElementById('lbl-g').style.display = c === 'jogo' ? '' : 'none';
+  melhorarSelects(document.getElementById('novo'));
 }
 
 function salvarItem(key){
@@ -2459,6 +2620,7 @@ function renderPerfil(){
       ${ultima ? `<p class="perfil-ultima">Última conclusão: <b>${esc(ultima.t)}</b> · ${esc(fmtData(ultima.k))}</p>` : ''}
     </div>`;
   atualizarAvatar();
+  melhorarSelects(document.getElementById('grid'));
   requestAnimationFrame(atualizarIndicadorCat);
 }
 function atualizarAvatar(){
@@ -2541,6 +2703,7 @@ function iniciarPerfil(){
     if (e.target.id === 'catPerfil') { perfilUI.cat = e.target.value; perfilUI.mes = null; render(); }
   });
   atualizarAvatar();
+  melhorarSelects(document.getElementById('grid'));
   requestAnimationFrame(atualizarIndicadorCat);
 }
 function perfilClique(e){
@@ -2603,6 +2766,7 @@ function atualizarMassa(){
   const todos = [...new Set(Object.values(STATUS_POR_CAT).flat())];
   const atual_ = document.getElementById('massaStatus').value;
   document.getElementById('massaStatus').innerHTML = '<option value="">Mudar status…</option>' + todos.map(x => `<option${x === atual_ ? ' selected' : ''}>${esc(x)}</option>`).join('');
+  melhorarSelects(bar);
 }
 function aplicarMassaStatus(){
   const v = document.getElementById('massaStatus').value;
@@ -2702,6 +2866,7 @@ function abrirColDlg(id){
   document.getElementById('col-titulo-dlg').textContent = c ? 'Renomear coleção' : 'Nova coleção';
   document.getElementById('col-nome').value = c ? c.nome : '';
   document.getElementById('col-grupo').value = c ? c.grupo : 'jogo';
+  sincronizarSelect(document.getElementById('col-grupo'));
   document.getElementById('col-icone').value = c ? (c.icone || '') : '';
   document.getElementById('col-imagem').value = c ? (c.imagem || '') : '';
   document.getElementById('col-erro').textContent = '';
@@ -2761,6 +2926,7 @@ function iniciarColecoes(){
 /* ---------- início ---------- */
 iniciarDialogos();
 iniciarAccordions();
+iniciarSelects();
 iniciarChaves();
 iniciarNotif();
 iniciarSync();
@@ -2773,6 +2939,7 @@ render();
 montarCategorias();
 montarChips();
 montarBusca();
+melhorarSelects(document);
 render();
 window.addEventListener('resize', atualizarIndicadorCat);
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(atualizarIndicadorCat);
