@@ -21,10 +21,10 @@
   --bg:#07090d;
   --surface:#10131b;
   --surface-2:#171b26;
-  --ink:#eef0f6;
-  --ink-2:#a2a9b8;
-  --ink-3:#6b7385;
-  --glass:linear-gradient(155deg,rgba(255,255,255,.11) 0%,rgba(255,255,255,.04) 38%,rgba(12,16,26,.56) 100%);
+  --ink:#f7f9fc;
+  --ink-2:rgba(246,248,255,.84);
+  --ink-3:rgba(238,242,255,.66);
+  --glass:linear-gradient(155deg,rgba(255,255,255,.1) 0%,rgba(16,20,32,.46) 38%,rgba(10,13,22,.68) 100%);
   --glass-2:linear-gradient(160deg,rgba(28,33,48,.92) 0%,rgba(16,20,31,.95) 45%,rgba(10,13,21,.98) 100%);
   --glass-btn:linear-gradient(180deg,rgba(255,255,255,.17) 0%,rgba(255,255,255,.07) 52%,rgba(255,255,255,.03) 100%);
   --edge:rgba(255,255,255,.15);
@@ -56,16 +56,15 @@ body{
   -webkit-font-smoothing:antialiased;
 }
 button,a,input,select,textarea{touch-action:manipulation}
-/* particles + aurora */
-.aura{
-  position:fixed;inset:-20%;z-index:-1;pointer-events:none;
-  background:
-    radial-gradient(42% 36% at 14% 8%,rgba(111,208,176,.19),transparent 70%),
-    radial-gradient(38% 34% at 86% 14%,rgba(161,150,234,.2),transparent 70%),
-    radial-gradient(44% 38% at 58% 92%,rgba(232,178,90,.15),transparent 70%),
-    radial-gradient(50% 45% at 50% 42%,rgba(90,126,185,.09),transparent 75%);
+/* fundo gradient blinds (reactbits webgl2) */
+#bgBlinds{
+  position:fixed;inset:0;width:100%;height:100%;z-index:-2;pointer-events:none;display:block;
+  background:radial-gradient(60% 60% at 25% 30%,rgba(16,185,129,.22),transparent 70%),radial-gradient(60% 60% at 75% 70%,rgba(124,58,237,.22),transparent 70%),var(--bg);
 }
-#bgParticles{position:fixed;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none}
+.bg-scrim{
+  position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(85% 80% at 50% 35%,rgba(7,9,13,.74) 0%,rgba(7,9,13,.88) 100%);
+}
 .wrap{max-width:1180px;margin:0 auto;padding:24px 20px 72px}
 .glass{
   position:relative;background:var(--glass);border:1px solid var(--edge);border-radius:var(--r);
@@ -238,18 +237,20 @@ h1{
   display:grid;grid-template-columns:auto 186px minmax(0,1fr);column-gap:10px;row-gap:0;align-items:center;
 }
 .bar-top,.tools{display:contents}
+.tools[hidden]{display:none!important}
 #cats{grid-column:1;grid-row:1}
 .bar-top>.csel{grid-column:2;grid-row:1;width:100%;min-width:0}
 .bar-top-right{grid-column:3;grid-row:1;display:flex;align-items:center;justify-content:flex-end;gap:8px;min-width:0}
 #atualizarDatas{margin-left:0;min-width:148px}
-#atualizarDatas[hidden],#dueloBtn[hidden]{display:none}
+#atualizarDatas[hidden],#dueloBtn[hidden],#colNovaBtn[hidden]{display:none}
+#colNovaBtn{white-space:nowrap}
 #dueloBtn{flex-shrink:0;border-radius:50%}
 #dueloBtn svg{display:block;transition:transform var(--dur-fast) var(--ease-out)}
 .bar-sep{grid-column:1/-1;grid-row:2;height:1px;background:rgba(255,255,255,.08);margin:10px 0}
 .tools>.busca-wrap{grid-column:1;grid-row:3;width:100%;min-width:0}
 .tools>.csel{grid-column:2;grid-row:3;width:100%;min-width:0}
 .tools-right{grid-column:3;grid-row:3;display:flex;align-items:center;justify-content:flex-end;gap:8px;min-width:0}
-#ordemDir{min-width:132px;white-space:nowrap}
+#ordemDir,#colListaDir{min-width:132px;white-space:nowrap}
 .seg{
   position:relative;display:inline-flex;align-self:flex-start;gap:3px;padding:4px;border-radius:999px;
   background:rgba(8,11,18,.42);border:1px solid rgba(255,255,255,.14);
@@ -293,13 +294,13 @@ h1{
 .busca-wrap .busca{width:100%}
 .field{
   font:inherit;font-size:.9rem;color:var(--ink);
-  background:linear-gradient(180deg,rgba(255,255,255,.09),rgba(255,255,255,.035));
+  background:linear-gradient(180deg,rgba(12,15,24,.46),rgba(10,13,20,.34));
   border:1px solid var(--edge);border-radius:999px;padding:8px 15px;min-width:0;min-height:40px;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.18),inset 0 -1px 0 rgba(0,0,0,.18);
   transition:border-color var(--dur-fast) var(--ease-out),background-color var(--dur-fast) var(--ease-out),box-shadow var(--dur-fast) var(--ease-out);
 }
 .field:focus{outline:none;border-color:var(--edge-3);box-shadow:inset 0 1px 0 rgba(255,255,255,.24),0 0 0 3px rgba(255,255,255,.07)}
-.field::placeholder{color:var(--ink-3)}
+.field::placeholder{color:rgba(240,244,255,.64)}
 .field option{background:#141822;color:var(--ink)}
 select.field{cursor:pointer}
 textarea.field{min-height:84px;line-height:1.45;border-radius:14px;padding:10px 14px}
@@ -344,12 +345,12 @@ textarea.field{min-height:84px;line-height:1.45;border-radius:14px;padding:10px 
 .sug .vazio{margin:0;padding:9px 12px;color:var(--ink-3);font-size:.86rem}
 
 /* grid + cards (sem backdrop-filter individual para manter 60fps no mobile) */
-.count{color:var(--ink-3);font-size:.85rem;margin:16px 4px 0;font-variant-numeric:tabular-nums}
+.count{color:var(--ink-2);font-size:.85rem;margin:16px 4px 0;font-variant-numeric:tabular-nums;text-shadow:0 1px 6px rgba(0,0,0,.68)}
 .grid{position:relative;z-index:1;display:grid;grid-template-columns:repeat(auto-fill,minmax(188px,1fr));gap:16px;margin-top:12px}
 .grid.view-in{animation:viewIn 200ms var(--ease-out)}
 .card{
   position:relative;
-  background:linear-gradient(160deg,rgba(255,255,255,.095) 0%,rgba(255,255,255,.035) 36%,rgba(12,16,26,.68) 100%);
+  background:linear-gradient(160deg,rgba(255,255,255,.09) 0%,rgba(14,18,28,.62) 36%,rgba(10,13,22,.82) 100%);
   border:1px solid rgba(255,255,255,.14);border-radius:var(--r);overflow:hidden;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.24),inset 1px 0 0 rgba(255,255,255,.08),0 16px 32px -18px rgba(0,0,0,.85);
   transition:transform var(--dur-med) var(--ease-out),border-color var(--dur-fast) var(--ease-out),box-shadow var(--dur-med) var(--ease-out);
@@ -526,19 +527,20 @@ textarea.field{min-height:84px;line-height:1.45;border-radius:14px;padding:10px 
 .col-filtros .col-busca{flex:1 1 180px;min-width:150px}
 .col-ord-lista{margin-top:4px}
 .col-ord-thumb{width:32px;height:42px;border-radius:4px;object-fit:cover;flex-shrink:0;background:rgba(255,255,255,.07)}
+.col-ord-mosaic{width:36px;height:46px;border-radius:6px;flex-shrink:0}
 .col-ord-info{display:grid;gap:2px;flex:1;min-width:0}
 .col-ord-info b{font-size:.9rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .saude-titulo{
   grid-column:1/-1;display:flex;gap:8px;align-items:center;
   margin:14px 2px 0;padding-top:12px;border-top:1px solid var(--edge);
-  font-size:.92rem;font-weight:600;color:var(--ink-2);
+  font-size:.92rem;font-weight:600;color:var(--ink-2);text-shadow:0 1px 6px rgba(0,0,0,.68);
 }
 .saude-titulo:first-child{margin-top:4px;padding-top:0;border-top:0}
 .saude-titulo span{
-  color:var(--ink-3);font-size:.78rem;font-weight:600;padding:1px 7px;
-  border-radius:99px;background:rgba(255,255,255,.08);font-variant-numeric:tabular-nums;
+  color:var(--ink-2);font-size:.78rem;font-weight:600;padding:1px 7px;
+  border-radius:99px;background:rgba(12,15,24,.55);border:1px solid rgba(255,255,255,.12);font-variant-numeric:tabular-nums;
 }
-.saude-vazio{margin:0;color:var(--ink-3);font-size:.88rem;padding:4px 2px}
+.saude-vazio{margin:0;color:var(--ink-2);font-size:.88rem;padding:4px 2px;text-shadow:0 1px 6px rgba(0,0,0,.68)}
 
 .acc-stack{display:grid;gap:10px;margin-top:16px}
 .acc{
@@ -938,7 +940,7 @@ dialog#modal.morph-open .sheet,dialog#modal.morph-close .sheet{animation:none!im
 }
 .to-top.on{opacity:1;pointer-events:auto;transform:translateY(0) scale(1)}
 #massa:not([hidden]) ~ #voltarTopo{bottom:calc(86px + env(safe-area-inset-bottom,0px))}
-.foot-note{margin-top:36px;color:var(--ink-3);font-size:.84rem;text-align:center}
+.foot-note{margin-top:36px;color:var(--ink-3);font-size:.84rem;text-align:center;text-shadow:0 1px 6px rgba(0,0,0,.68)}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 :focus-visible{outline:2px solid var(--jogo);outline-offset:2px}
 
@@ -1017,6 +1019,8 @@ dialog#modal.morph-open .sheet,dialog#modal.morph-close .sheet{animation:none!im
   .bar-top-right{display:contents}
   #dueloBtn{grid-column:2;grid-row:2;justify-self:end;width:36px;height:36px;border-radius:50%}
   #dueloBtn svg{width:15px;height:15px}
+  #colNovaBtn{grid-column:2;grid-row:2;justify-self:end;width:36px;height:36px;padding:0;border-radius:50%}
+  .col-nova-lbl{display:none}
   #atualizarDatas{grid-column:1/-1;grid-row:3;margin-left:0;width:100%;min-width:0;min-height:36px;padding:6px 12px;font-size:.82rem}
   .cat-full{display:none}
   .cat-short{display:inline}
@@ -1028,15 +1032,15 @@ dialog#modal.morph-open .sheet,dialog#modal.morph-close .sheet{animation:none!im
   .tools>.busca-wrap{grid-column:1/-1;grid-row:auto;width:100%;min-width:0;max-width:none}
   .tools>.csel{grid-column:auto;grid-row:auto;width:100%;min-width:0}
   .tools .field,.tools .btn,.tools .csel{width:100%;min-width:0;min-height:36px}
-  #ordemDir{min-width:0}
+  #ordemDir,#colListaDir{min-width:0}
   .tools .csel:not(.csel-inline) .csel-drop{left:0;right:0;width:auto;max-width:none}
   dialog input,dialog select,dialog textarea{font-size:16px}
   #barra .field,#barra .csel-trigger,#barra .btn{min-height:36px;padding:6px 12px;font-size:.82rem}
   #barra .busca{padding:6px 13px;font-size:.83rem}
   .csel-trigger{min-height:36px;padding:6px 12px;font-size:.82rem}
   .csel-opt{min-height:36px;padding:6px 10px;font-size:.84rem}
-  #limparFiltros{grid-column:1;justify-self:start;align-self:center;min-height:32px;font-size:.8rem}
-  #selecionarBtn{grid-column:2}
+  #limparFiltros,#colListaLimpar{grid-column:1;justify-self:start;align-self:center;min-height:32px;font-size:.8rem}
+  #selecionarBtn,#colListaReordBtn{grid-column:2}
   .count{margin:12px 2px 0;font-size:.82rem}
   .grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}
   .cover{margin:5px}
@@ -1103,8 +1107,8 @@ dialog#modal.morph-open .sheet,dialog#modal.morph-close .sheet{animation:none!im
 </style>
 </head>
 <body>
-<div class="aura" aria-hidden="true"></div>
-<canvas id="bgParticles" aria-hidden="true"></canvas>
+<canvas id="bgBlinds" aria-hidden="true"></canvas>
+<div class="bg-scrim" aria-hidden="true"></div>
 
 <main class="wrap">
   <header class="topbar">
@@ -1132,13 +1136,16 @@ dialog#modal.morph-open .sheet,dialog#modal.morph-close .sheet{animation:none!im
       <div class="seg" id="cats" role="group" aria-label="Categoria"></div>
       <label class="sr" for="statusSel">Filtrar por status</label>
       <select id="statusSel" class="field larg" aria-label="Status"></select>
+      <label class="sr" for="colGrupoSel">Filtrar coleções por categoria</label>
+      <select id="colGrupoSel" class="field larg" aria-label="Categoria das coleções"></select>
       <div class="bar-top-right">
         <button id="atualizarDatas" class="btn" type="button" hidden>Atualizar datas</button>
         <button id="dueloBtn" class="btn quadrado" type="button" aria-label="Duelo 1v1" title="Duelo 1v1 (Na fila)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"/><line x1="13" y1="19" x2="19" y2="13"/><line x1="16" y1="16" x2="20" y2="20"/><line x1="19" y1="21" x2="21" y2="19"/><polyline points="14.5 6.5 18 3 21 3 21 6 17.5 9.5"/><line x1="5" y1="14" x2="9" y2="18"/><line x1="7" y1="17" x2="4" y2="20"/><line x1="3" y1="19" x2="5" y2="21"/></svg></button>
+        <button id="colNovaBtn" class="btn" type="button" aria-label="Nova coleção" title="Nova coleção" hidden><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span class="col-nova-lbl">Nova coleção</span></button>
       </div>
     </div>
     <div class="bar-sep" aria-hidden="true"></div>
-    <div class="tools">
+    <div class="tools" id="catTools">
       <label class="sr" for="q">Buscar por título, tag, onde ou nota</label>
       <div class="busca-wrap">
         <input id="q" class="field busca" type="search" placeholder="Buscar título, #tag, @onde ou *nota…" autocomplete="off" aria-controls="tagsSug" aria-autocomplete="list">
@@ -1157,6 +1164,25 @@ dialog#modal.morph-open .sheet,dialog#modal.morph-close .sheet{animation:none!im
         <button id="ordemDir" class="btn" type="button">↑ Crescente</button>
         <button id="limparFiltros" class="link" type="button">Limpar filtros</button>
         <button id="selecionarBtn" class="btn" type="button" aria-pressed="false">Selecionar</button>
+      </div>
+    </div>
+    <div class="tools" id="colTools" hidden>
+      <label class="sr" for="colListaBusca">Buscar coleção ou mídia</label>
+      <div class="busca-wrap">
+        <input id="colListaBusca" class="field busca" type="search" placeholder="Buscar coleção ou mídia…" autocomplete="off">
+      </div>
+      <label class="sr" for="colListaOrd">Ordenar coleções por</label>
+      <select id="colListaOrd" class="field larg">
+        <option value="manual">Ordem manual</option>
+        <option value="nome">Nome</option>
+        <option value="nota">Nota média</option>
+        <option value="progresso">Progresso</option>
+        <option value="quantidade">Quantidade</option>
+      </select>
+      <div class="tools-right">
+        <button id="colListaDir" class="btn" type="button">↑ Crescente</button>
+        <button id="colListaLimpar" class="link" type="button">Limpar filtros</button>
+        <button id="colListaReordBtn" class="btn" type="button" aria-pressed="false">Reordenar</button>
       </div>
     </div>
   </section>
@@ -1449,7 +1475,16 @@ function salvarVista(){
     };
   }
   if (typeof colUI !== 'undefined') {
-    vistas.col = {aberta: colUI.aberta || null, filtro: colUI.filtro || 'todas', ord: colUI.ord || 'manual', q: colUI.q || ''};
+    vistas.col = {
+      aberta: colUI.aberta || null,
+      filtro: colUI.filtro || 'todas',
+      ord: colUI.ord || 'manual',
+      q: colUI.q || '',
+      listaGrupo: colUI.listaGrupo || 'todos',
+      listaQ: colUI.listaQ || '',
+      listaOrd: colUI.listaOrd || 'manual',
+      listaDir: colUI.listaDir === 'desc' ? 'desc' : 'asc'
+    };
   }
   if (typeof conclUI !== 'undefined') {
     vistas.concl = {ano: conclUI.ano || null, cat: conclUI.cat || 'todos', mes: conclUI.mes ?? null};
@@ -1491,7 +1526,12 @@ function restaurarEstadoInicial(){
       filtro: ['todas','faltam','andamento','concluido'].includes(vistas.col.filtro) ? vistas.col.filtro : 'todas',
       ord: ['manual','nota','lancamento','titulo'].includes(vistas.col.ord) ? vistas.col.ord : 'manual',
       q: typeof vistas.col.q === 'string' ? vistas.col.q : '',
-      reordenar: false
+      reordenar: false,
+      listaGrupo: ['todos','jogo','audiovisual','livro','misto'].includes(vistas.col.listaGrupo) ? vistas.col.listaGrupo : 'todos',
+      listaQ: typeof vistas.col.listaQ === 'string' ? vistas.col.listaQ : '',
+      listaOrd: ['manual','nome','nota','progresso','quantidade'].includes(vistas.col.listaOrd) ? vistas.col.listaOrd : 'manual',
+      listaDir: vistas.col.listaDir === 'desc' ? 'desc' : 'asc',
+      listaReordenar: false
     });
   }
   if (vistas.concl && typeof vistas.concl === 'object') {
@@ -1791,63 +1831,290 @@ function iniciarSelects(){
   });
 }
 
-function iniciarParticulas(){
-  const cv = document.getElementById('bgParticles');
+function iniciarGradientBlinds(){
+  const cv = document.getElementById('bgBlinds');
   if (!cv) return;
-  const ctx = cv.getContext('2d');
-  if (!ctx) return;
-  const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const cores = ['rgba(238,240,246,', 'rgba(111,208,176,', 'rgba(161,150,234,', 'rgba(232,178,90,'];
-  let w = 0, h = 0, dpr = 1, pts = [], raf = 0;
-  const ptr = {x: -9999, y: -9999, on: false};
-  const criar = () => {
-    dpr = Math.min(window.devicePixelRatio || 1, window.innerWidth <= 640 ? 1 : 1.5);
-    w = window.innerWidth; h = window.innerHeight;
-    cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    const n = window.innerWidth <= 640 ? 45 : 95;
-    pts = Array.from({length: n}, () => ({
-      x: Math.random() * w, y: Math.random() * h,
-      vx: (Math.random() - 0.5) * 0.28, vy: (Math.random() - 0.5) * 0.24 - 0.05,
-      r: 0.9 + Math.random() * 1.5, a: 0.14 + Math.random() * 0.32,
-      c: cores[Math.floor(Math.random() * cores.length)]
-    }));
+  const gl = cv.getContext('webgl2', {alpha: false, antialias: false, depth: false, stencil: false, premultipliedAlpha: false});
+  if (!gl) return;
+  const VERTEX = `#version 300 es
+void main() {
+  vec2 p = vec2(float((gl_VertexID << 1) & 2), float(gl_VertexID & 2));
+  gl_Position = vec4(p * 2.0 - 1.0, 0.0, 1.0);
+}`;
+  const FRAGMENT = `#version 300 es
+precision highp float;
+precision highp int;
+uniform vec2 uResolution;
+uniform float uTime;
+uniform vec2 uMouse;
+uniform float uAngle;
+uniform float uNoise;
+uniform float uBlindCount;
+uniform float uSpotlightRadius;
+uniform float uSpotlightSoftness;
+uniform float uSpotlightOpacity;
+uniform float uMirror;
+uniform float uDistort;
+uniform float uShineFlip;
+uniform vec3 uColors[8];
+uniform int uColorCount;
+uniform float uLightMode;
+uniform float uShine;
+uniform float uRelief;
+uniform float uGlow;
+uniform float uSway;
+uniform float uSwayTime;
+uniform float uHover;
+uniform vec4 uWaves[4];
+uniform float uIntro;
+uniform float uGrainTime;
+uniform vec3 uLightColor;
+uniform float uPerspective;
+uniform float uGradientShift;
+out vec4 outColor;
+float hash(vec2 p) {
+  vec3 q = fract(vec3(p.xyx) * 0.1031);
+  q += dot(q, q.yzx + 33.33);
+  return fract((q.x + q.y) * q.z);
+}
+vec2 rotate2D(vec2 p, float a) {
+  float c = cos(a);
+  float s = sin(a);
+  return mat2(c, -s, s, c) * p;
+}
+vec2 blindSpace(vec2 uv0) {
+  float aspect = uResolution.x / uResolution.y;
+  vec2 p = uv0 * 2.0 - 1.0;
+  p.x *= aspect;
+  vec2 pr = rotate2D(p, uAngle);
+  pr.x /= aspect;
+  vec2 uv = pr * 0.5 + 0.5;
+  if (abs(uPerspective) > 0.001) {
+    float k = uPerspective * 2.2;
+    uv.x = (exp(k * uv.x) - 1.0) / (exp(k) - 1.0);
+  }
+  if (uDistort > 0.0) {
+    float a = uv.y * 6.0;
+    float b = uv.x * 6.0;
+    float w = 0.01 * uDistort;
+    uv.x += sin(a) * w;
+    uv.y += cos(b) * w;
+  }
+  return uv;
+}
+vec3 gradientColor(float t) {
+  float tt = clamp(t, 0.0, 1.0);
+  int count = max(uColorCount, 2);
+  float scaled = tt * float(count - 1);
+  int seg = min(int(floor(scaled)), count - 2);
+  float f = scaled - float(seg);
+  if (tt >= 1.0) return uColors[count - 1];
+  return mix(uColors[seg], uColors[seg + 1], f);
+}
+void main() {
+  vec2 frag = gl_FragCoord.xy;
+  vec2 uv0 = frag / uResolution;
+  vec2 uvMod = blindSpace(uv0);
+  float count = max(uBlindCount, 1.0);
+  float stripePhase = uvMod.x * count;
+  float pixel = max(fwidth(stripePhase), 1e-5);
+  float t = uvMod.x;
+  if (uGradientShift != 0.0) {
+    t = 1.0 - abs(1.0 - fract((t + uGradientShift) * 0.5) * 2.0);
+  }
+  if (uMirror > 0.5) {
+    t = 1.0 - abs(1.0 - 2.0 * fract(t));
+  }
+  vec3 base = gradientColor(t);
+  vec2 offset = uMouse / uResolution;
+  float d = length(uv0 - offset);
+  float r = max(uSpotlightRadius, 1e-4);
+  float spot = (1.0 - 2.0 * pow(d / r, uSpotlightSoftness)) * uSpotlightOpacity;
+  float slat = floor(stripePhase);
+  float s = stripePhase - slat;
+  float stripeAA = clamp(count * 1.25 / min(uResolution.x, uResolution.y), 0.001, 0.12);
+  float edgeBlend = 1.0 - smoothstep(0.0, stripeAA, min(s, 1.0 - s));
+  float across = mix(s, 0.5, edgeBlend);
+  float ramp = uShineFlip > 0.5 ? 1.0 - across : across;
+  float unit = min(uResolution.x, uResolution.y);
+  float reach = max(uSpotlightRadius, 0.05) * unit;
+  vec2 toLight = uMouse - frag;
+  float nearLight = exp(-dot(toLight, toLight) / (reach * reach));
+  float tilt = 0.0;
+  if (uSway > 0.0) {
+    tilt += uSway * 0.5 * sin(uSwayTime * 0.9 + slat * 0.55) * (0.6 + 0.4 * sin(uSwayTime * 0.37 + slat * 0.21));
+  }
+  tilt += uHover * nearLight * 0.7;
+  if (uIntro < 1.0) {
+    float settle = smoothstep(0.0, 1.0, clamp(uIntro * 1.5 - uv0.x * 0.5, 0.0, 1.0));
+    tilt -= (1.0 - settle) * 1.2;
+  }
+  float edge = ramp;
+  float calm = 1.0 - 0.6 * clamp(spot, 0.0, 1.0);
+  ramp = pow(clamp(ramp, 0.0, 1.0), exp(tilt * 0.9));
+  float crease = uRelief * 0.38 * smoothstep(0.62, 1.0, ramp);
+  float sheen = uShine * exp(-pow((edge - 0.035) / 0.07, 2.0)) * (0.3 + 0.7 * nearLight) * (1.0 - edgeBlend);
+  vec3 lit = spot > 0.0 ? uLightColor * spot : vec3(spot);
+  vec3 revealSignal = lit + base - vec3(ramp + crease);
+  vec3 haze = base * uGlow * 0.4 * smoothstep(0.0, 1.0, spot) * (0.4 + 0.6 * ramp);
+  vec3 col = revealSignal + haze + mix(base, uLightColor, 0.45) * sheen * 0.7;
+  vec3 over = max(col - 0.8, 0.0);
+  col = min(col, vec3(0.8)) + 0.2 * (1.0 - exp(-over / 0.2));
+  float luma = dot(clamp(col, 0.0, 1.0), vec3(0.2126, 0.7152, 0.0722));
+  float grain = 0.5 * (hash(frag + uGrainTime) + hash(frag.yx + uGrainTime * 1.7)) - 0.5;
+  col += grain * uNoise * (0.45 + 0.55 * smoothstep(0.0, 0.5, luma));
+  float presence = smoothstep(0.0, 0.65, uIntro);
+  col = col * presence;
+  outColor = vec4(clamp(col, 0.0, 1.0), 1.0);
+}`;
+  const compile = (type, src) => {
+    const sh = gl.createShader(type);
+    if (!sh) return null;
+    gl.shaderSource(sh, src);
+    gl.compileShader(sh);
+    if (gl.getShaderParameter(sh, gl.COMPILE_STATUS)) return sh;
+    gl.deleteShader(sh);
+    return null;
   };
-  const desenhar = () => {
-    ctx.clearRect(0, 0, w, h);
-    for (const p of pts) {
-      if (!reduced) {
-        if (ptr.on) {
-          const dx = p.x - ptr.x, dy = p.y - ptr.y, d2 = dx * dx + dy * dy;
-          if (d2 > 1 && d2 < 14400) {
-            const f = (120 - Math.sqrt(d2)) / 120 * 0.035;
-            p.vx += dx / Math.sqrt(d2) * f;
-            p.vy += dy / Math.sqrt(d2) * f;
-          }
-        }
-        p.vx *= 0.992; p.vy *= 0.992;
-        p.x += p.vx; p.y += p.vy;
-        if (p.x < -10) p.x = w + 10; else if (p.x > w + 10) p.x = -10;
-        if (p.y < -10) p.y = h + 10; else if (p.y > h + 10) p.y = -10;
-      }
-      ctx.fillStyle = p.c + p.a + ')';
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fill();
+  const vs = compile(gl.VERTEX_SHADER, VERTEX);
+  const fs = compile(gl.FRAGMENT_SHADER, FRAGMENT);
+  const prog = gl.createProgram();
+  if (!vs || !fs || !prog) return;
+  gl.attachShader(prog, vs); gl.attachShader(prog, fs);
+  gl.linkProgram(prog);
+  gl.deleteShader(vs); gl.deleteShader(fs);
+  if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) { gl.deleteProgram(prog); return; }
+  const u = {};
+  const uCount = gl.getProgramParameter(prog, gl.ACTIVE_UNIFORMS);
+  for (let i = 0; i < uCount; i++) {
+    const info = gl.getActiveUniform(prog, i);
+    if (info) { const n = info.name.replace(/\[0\]$/, ''); u[n] = gl.getUniformLocation(prog, n); }
+  }
+  const vao = gl.createVertexArray();
+  const hexToRGB = hex => {
+    const c = String(hex || '').replace('#', '').padEnd(6, '0');
+    return [parseInt(c.slice(0, 2), 16) / 255 || 0, parseInt(c.slice(2, 4), 16) / 255 || 0, parseInt(c.slice(4, 6), 16) / 255 || 0];
+  };
+  const cfg = {
+    gradientColors: ['#10b981', '#7c3aed', '#f97316'],
+    angle: 31, noise: 0.36, blindCount: 15, blindMinWidth: 10,
+    mouseDampening: 1, mirrorGradient: false,
+    spotlightRadius: 1.5, spotlightSoftness: 1.2, spotlightOpacity: 0,
+    distortAmount: 3, shineDirection: 'left', lightColor: '#ffffff',
+    perspective: 0, gradientSpeed: 4, shine: 1, relief: 0.63, glow: 0,
+    sway: 0, speed: 3, hoverTilt: 0, clickEffect: 'none', idle: 'drift', intro: true
+  };
+  const stops = [...cfg.gradientColors];
+  while (stops.length < 8) stops.push(stops[stops.length - 1]);
+  const colorFlat = new Float32Array(24);
+  for (let i = 0; i < 8; i++) colorFlat.set(hexToRGB(stops[i]), i * 3);
+  const lightRGB = hexToRGB(cfg.lightColor);
+  const waves = new Float32Array(16);
+  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const view = {width: 1, height: 1, ratio: 1};
+  const ptr = {x: 0, y: 0, inside: false};
+  const light = {x: 0, y: 0, vx: 0, vy: 0, tx: 0, ty: 0, ready: false};
+  let hover = 0, time = 0, swayTime = 0, shift = 0, grainTime = 0, introClock = (cfg.intro && !reduce) ? 0 : 1;
+  let raf = 0, last = 0;
+  const blindTotal = () => {
+    const byW = Math.max(1, Math.floor(view.width / cfg.blindMinWidth));
+    return Math.max(1, Math.min(cfg.blindCount, byW));
+  };
+  const draw = () => {
+    gl.viewport(0, 0, cv.width, cv.height);
+    gl.useProgram(prog);
+    gl.bindVertexArray(vao);
+    gl.uniform2f(u.uResolution, cv.width, cv.height);
+    gl.uniform1f(u.uTime, time);
+    gl.uniform2f(u.uMouse, light.x * view.ratio, (view.height - light.y) * view.ratio);
+    gl.uniform1f(u.uAngle, (cfg.angle * Math.PI) / 180);
+    gl.uniform1f(u.uNoise, reduce ? 0 : cfg.noise);
+    gl.uniform1f(u.uBlindCount, blindTotal());
+    gl.uniform1f(u.uSpotlightRadius, cfg.spotlightRadius);
+    gl.uniform1f(u.uSpotlightSoftness, cfg.spotlightSoftness);
+    gl.uniform1f(u.uSpotlightOpacity, cfg.spotlightOpacity);
+    gl.uniform1f(u.uMirror, cfg.mirrorGradient ? 1 : 0);
+    gl.uniform1f(u.uDistort, cfg.distortAmount);
+    gl.uniform1f(u.uShineFlip, cfg.shineDirection === 'right' ? 1 : 0);
+    gl.uniform3fv(u.uColors, colorFlat);
+    gl.uniform1i(u.uColorCount, cfg.gradientColors.length);
+    gl.uniform1f(u.uLightMode, 0);
+    gl.uniform1f(u.uShine, cfg.shine);
+    gl.uniform1f(u.uRelief, cfg.relief);
+    gl.uniform1f(u.uGlow, cfg.glow);
+    gl.uniform1f(u.uSway, reduce ? 0 : cfg.sway);
+    gl.uniform1f(u.uSwayTime, swayTime);
+    gl.uniform1f(u.uHover, hover * cfg.hoverTilt);
+    gl.uniform4fv(u.uWaves, waves);
+    gl.uniform1f(u.uIntro, introClock);
+    gl.uniform1f(u.uGrainTime, grainTime);
+    gl.uniform3fv(u.uLightColor, lightRGB);
+    gl.uniform1f(u.uPerspective, cfg.perspective);
+    gl.uniform1f(u.uGradientShift, shift);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    gl.bindVertexArray(null);
+  };
+  const aim = () => {
+    if (ptr.inside) { light.tx = ptr.x; light.ty = ptr.y; }
+    else if (cfg.idle === 'drift' && !reduce) {
+      light.tx = view.width * (0.5 + 0.22 * Math.sin(swayTime * 0.23) + 0.05 * Math.sin(swayTime * 0.61 + 1.3));
+      light.ty = view.height * (0.5 + 0.16 * Math.sin(swayTime * 0.31 + 0.7) + 0.04 * Math.sin(swayTime * 0.83));
+    } else {
+      light.tx = view.width / 2; light.ty = view.height / 2;
     }
-    if (!reduced && !document.hidden) raf = requestAnimationFrame(desenhar);
   };
-  criar();
-  desenhar();
-  window.addEventListener('resize', () => { criar(); if (reduced) desenhar(); });
+  const follow = dt => {
+    const tau = cfg.mouseDampening;
+    if (tau <= 0) { light.x = light.tx; light.y = light.ty; light.vx = 0; light.vy = 0; return; }
+    const omega = 2.4 / tau, k = omega * omega, c = 2 * omega;
+    const steps = Math.max(1, Math.ceil(dt / 0.008)), h = dt / steps;
+    for (let i = 0; i < steps; i++) {
+      light.vx += (k * (light.tx - light.x) - c * light.vx) * h;
+      light.vy += (k * (light.ty - light.y) - c * light.vy) * h;
+      light.x += light.vx * h;
+      light.y += light.vy * h;
+    }
+  };
+  const wake = () => { if (!raf && !document.hidden) { last = 0; raf = requestAnimationFrame(frame); } };
+  const resize = () => {
+    view.width = Math.max(1, window.innerWidth);
+    view.height = Math.max(1, window.innerHeight);
+    view.ratio = Math.min(window.devicePixelRatio || 1, view.width <= 640 ? 1.25 : 1.75);
+    cv.width = Math.max(1, Math.round(view.width * view.ratio));
+    cv.height = Math.max(1, Math.round(view.height * view.ratio));
+    if (!light.ready) { light.ready = true; light.x = light.tx = view.width / 2; light.y = light.ty = view.height / 2; }
+    draw();
+    if (!reduce) wake();
+  };
+  const frame = now => {
+    raf = 0;
+    if (document.hidden) return;
+    const dt = last ? Math.min(1 / 20, Math.max(0.001, (now - last) / 1000)) : 1 / 60;
+    last = now;
+    time += dt;
+    if (!reduce) {
+      swayTime += dt * cfg.speed;
+      shift = (shift + dt * cfg.gradientSpeed * 0.06) % 2;
+    }
+    grainTime = Math.floor(time * 24) * 17.13;
+    if (introClock < 1) introClock = Math.min(1, introClock + dt / 1.8);
+    hover += ((ptr.inside ? 1 : 0) - hover) * (1 - Math.exp(-dt / 0.35));
+    aim();
+    follow(dt);
+    draw();
+    if (!reduce || introClock < 1) raf = requestAnimationFrame(frame);
+  };
+  resize();
+  window.addEventListener('resize', resize);
   window.addEventListener('pointermove', e => {
     if (e.pointerType === 'touch') return;
-    ptr.x = e.clientX; ptr.y = e.clientY; ptr.on = true;
+    ptr.x = e.clientX; ptr.y = e.clientY; ptr.inside = true;
+    wake();
   }, {passive: true});
-  window.addEventListener('pointerleave', () => { ptr.on = false; });
+  document.documentElement.addEventListener('pointerleave', () => { ptr.inside = false; });
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) { cancelAnimationFrame(raf); raf = 0; }
-    else if (!reduced && !raf) raf = requestAnimationFrame(desenhar);
+    else wake();
   });
 }
 
@@ -2322,23 +2589,40 @@ function render(){
   const colecoesOn = st.cat === 'colecoes';
   const conclOn = st.cat === 'concluidas';
   if (!conclOn) ultimoGraficoId = '';
-  const vistaId = st.cat + '|' + (colecoesOn ? (colUI.aberta || '') : '');
+  const colAbertaObj = colecoesOn ? colecoes.find(c => c.id === colUI.aberta) : null;
+  const colOverviewOn = colecoesOn && !colAbertaObj;
+  const vistaId = st.cat + '|' + (colAbertaObj ? colAbertaObj.id : '');
   document.getElementById('hero').style.display = '';
   document.getElementById('barra').style.display = '';
-  const ferr = document.querySelector('#barra .tools');
+  const catTools = document.getElementById('catTools');
+  const colTools = document.getElementById('colTools');
   const sep = document.querySelector('#barra .bar-sep');
   const stSel = document.getElementById('statusSel');
   const stWrap = stSel.closest('.csel') || stSel;
+  const colGrpSel = document.getElementById('colGrupoSel');
+  const colGrpWrap = colGrpSel.closest('.csel') || colGrpSel;
   const ad = document.getElementById('atualizarDatas');
   const dlBtn = document.getElementById('dueloBtn');
-  ferr.style.display = (colecoesOn || conclOn) ? 'none' : '';
-  if (sep) sep.style.display = (colecoesOn || conclOn) ? 'none' : '';
+  const colNovaBtn = document.getElementById('colNovaBtn');
+  catTools.hidden = colecoesOn || conclOn;
+  colTools.hidden = !colOverviewOn;
+  if (sep) sep.style.display = (conclOn || (colecoesOn && !colOverviewOn)) ? 'none' : '';
   if (colecoesOn) {
     stWrap.style.display = 'none';
     ad.hidden = true;
-    if (dlBtn) dlBtn.hidden = !colUI.aberta;
     document.getElementById('massa').hidden = true;
-    document.getElementById('count').style.display = 'none';
+    if (colOverviewOn) {
+      colGrpWrap.style.display = '';
+      if (dlBtn) dlBtn.hidden = true;
+      if (colNovaBtn) colNovaBtn.hidden = false;
+      document.getElementById('count').style.display = '';
+      renderControlesColecoes();
+    } else {
+      colGrpWrap.style.display = 'none';
+      if (dlBtn) dlBtn.hidden = false;
+      if (colNovaBtn) colNovaBtn.hidden = true;
+      document.getElementById('count').style.display = 'none';
+    }
     renderStats();
     renderColecoes();
     animarVista(vistaId);
@@ -2346,8 +2630,10 @@ function render(){
   }
   if (conclOn) {
     stWrap.style.display = 'none';
+    colGrpWrap.style.display = 'none';
     ad.hidden = true;
     if (dlBtn) dlBtn.hidden = true;
+    if (colNovaBtn) colNovaBtn.hidden = true;
     document.getElementById('massa').hidden = true;
     document.getElementById('count').style.display = 'none';
     document.querySelectorAll('[data-cat]').forEach(b => b.setAttribute('aria-pressed', 'false'));
@@ -2358,6 +2644,8 @@ function render(){
     return;
   }
   stWrap.style.display = '';
+  colGrpWrap.style.display = 'none';
+  if (colNovaBtn) colNovaBtn.hidden = true;
   if (dlBtn) dlBtn.hidden = st.cat === 'saude';
   document.getElementById('count').style.display = '';
   renderControles();
@@ -3940,7 +4228,7 @@ function iniciarMassa(){
 
 /* ---------- coleções ---------- */
 const GRUPOS_COL = [['jogo','Jogos'],['audiovisual','Filmes & Séries'],['livro','Livros & Mangás'],['misto','Mistas']];
-let colUI = {aberta: null, filtro: 'todas', ord: 'manual', q: '', reordenar: false};
+let colUI = {aberta: null, filtro: 'todas', ord: 'manual', q: '', reordenar: false, listaGrupo: 'todos', listaQ: '', listaOrd: 'manual', listaDir: 'asc', listaReordenar: false};
 let colEditando = null, colItensAtual = null;
 function statsColecao(c){
   const itens = c.itens.map(k => ITEMS.find(i => i.key === k)).filter(Boolean);
@@ -3948,14 +4236,168 @@ function statsColecao(c){
   const concl = itens.filter(i => grupo(i) === 'concluido').length;
   const pct = total ? Math.round(concl / total * 100) : 0;
   const notas = itens.map(i => i.n).filter(n => n != null);
-  const media = notas.length ? (notas.reduce((a, b) => a + b, 0) / notas.length).toFixed(1).replace('.', ',') : '';
+  const mediaNum = notas.length ? (notas.reduce((a, b) => a + b, 0) / notas.length) : null;
+  const media = mediaNum != null ? mediaNum.toFixed(1).replace('.', ',') : '';
   const capasCol = itens.map(capaDe).filter(Boolean).slice(0, 4);
-  return {itens, total, concl, pct, media, capas: capasCol};
+  return {itens, total, concl, pct, mediaNum, media, capas: capasCol};
 }
 function mosaicColecaoHTML(c, s){
   if (c.imagem) return `<span class="col-mosaic col-m1"><img src="${esc(c.imagem)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()"></span>`;
   if (s.capas.length) return `<span class="col-mosaic col-m${s.capas.length}">${s.capas.map(u => `<img src="${esc(u)}" alt="" loading="lazy" referrerpolicy="no-referrer">`).join('')}</span>`;
   return `<span class="col-mosaic col-empty">${esc(c.icone || c.nome.charAt(0).toUpperCase())}</span>`;
+}
+function renderControlesColecoes(){
+  document.querySelectorAll('[data-cat]').forEach(b => {
+    const k = b.dataset.cat;
+    b.setAttribute('aria-pressed', String(k === st.cat));
+    const cnt = (k === 'saude' || k === 'colecoes' || k === 'concluidas') ? '' : ITEMS.filter(i => i.c === k).length;
+    b.querySelector('.n').textContent = cnt;
+    const nh = b.querySelector('.n-h');
+    if (nh) nh.textContent = cnt;
+  });
+  const grpCor = {jogo:'var(--jogo)', audiovisual:'var(--av)', livro:'var(--livro)', misto:'#9aa1ae'};
+  const gruposVisiveis = GRUPOS_COL.filter(([k]) => k !== 'misto' || colecoes.some(c => c.grupo === 'misto'));
+  const grpSel = document.getElementById('colGrupoSel');
+  if (grpSel) {
+    const opts = [['todos', 'Todos', null, colecoes.length], ...gruposVisiveis.map(([k, l]) => [k, l, grpCor[k], colecoes.filter(c => c.grupo === k).length])];
+    if (colUI.listaGrupo !== 'todos' && !gruposVisiveis.some(([k]) => k === colUI.listaGrupo)) colUI.listaGrupo = 'todos';
+    grpSel.innerHTML = opts.map(([k, l, cor, n]) =>
+      `<option value="${esc(k)}" data-cnt="${n}"${cor ? ` data-cor="${esc(cor)}"` : ''}${k === colUI.listaGrupo ? ' selected' : ''}>${esc(l)}</option>`
+    ).join('');
+    grpSel.value = colUI.listaGrupo;
+    sincronizarSelect(grpSel);
+  }
+  const busca = document.getElementById('colListaBusca');
+  if (busca && busca.value !== colUI.listaQ) busca.value = colUI.listaQ;
+  const ordSel = document.getElementById('colListaOrd');
+  if (ordSel) {
+    ordSel.value = colUI.listaOrd;
+    sincronizarSelect(ordSel);
+  }
+  const dirBtn = document.getElementById('colListaDir');
+  if (dirBtn) {
+    dirBtn.textContent = colUI.listaDir === 'asc' ? '↑ Crescente' : '↓ Decrescente';
+    dirBtn.disabled = colUI.listaOrd === 'manual';
+  }
+  const limparBtn = document.getElementById('colListaLimpar');
+  if (limparBtn) {
+    limparBtn.disabled = !(colUI.listaGrupo !== 'todos' || colUI.listaQ || colUI.listaOrd !== 'manual' || colUI.listaDir !== 'asc');
+  }
+  const reordBtn = document.getElementById('colListaReordBtn');
+  if (reordBtn) {
+    reordBtn.textContent = colUI.listaReordenar ? 'Concluir ordem' : 'Reordenar';
+    reordBtn.setAttribute('aria-pressed', String(colUI.listaReordenar));
+    reordBtn.disabled = colecoes.length < 2;
+  }
+  requestAnimationFrame(atualizarIndicadores);
+}
+function renderColecoesLista(){
+  const body = document.getElementById('colListaBody');
+  const cont = document.getElementById('count');
+  if (!body) return;
+  const q = colUI.listaQ.trim();
+  const dir = colUI.listaDir === 'desc' ? -1 : 1;
+  const gruposBase = GRUPOS_COL.filter(([k]) => (k !== 'misto' || colecoes.some(c => c.grupo === 'misto')) && (colUI.listaGrupo === 'todos' || colUI.listaGrupo === k));
+  let visiveis = 0;
+  const blocos = [];
+  for (const [k, nome] of gruposBase) {
+    let entries = colecoes.filter(c => c.grupo === k).map(c => ({c, s: statsColecao(c)}));
+    if (q) entries = entries.filter(({c, s}) => casaTexto(c.nome, q) || s.itens.some(i => casaTexto(i.t, q)));
+    visiveis += entries.length;
+    if (q && !entries.length) continue;
+    if (colUI.listaOrd === 'nome') {
+      entries.sort((a, b) => dir * a.c.nome.localeCompare(b.c.nome, 'pt-BR'));
+    } else if (colUI.listaOrd === 'nota') {
+      entries.sort((a, b) => {
+        if (a.s.mediaNum == null && b.s.mediaNum == null) return a.c.nome.localeCompare(b.c.nome, 'pt-BR');
+        if (a.s.mediaNum == null) return 1;
+        if (b.s.mediaNum == null) return -1;
+        return dir * (a.s.mediaNum - b.s.mediaNum) || a.c.nome.localeCompare(b.c.nome, 'pt-BR');
+      });
+    } else if (colUI.listaOrd === 'progresso') {
+      entries.sort((a, b) => dir * (a.s.pct - b.s.pct) || dir * (a.s.concl - b.s.concl) || a.c.nome.localeCompare(b.c.nome, 'pt-BR'));
+    } else if (colUI.listaOrd === 'quantidade') {
+      entries.sort((a, b) => dir * (a.s.total - b.s.total) || a.c.nome.localeCompare(b.c.nome, 'pt-BR'));
+    }
+    blocos.push(`<section class="col-grupo">
+      <h2 class="saude-titulo">${nome} <span>${entries.length}</span></h2>
+      <div class="col-lista">${entries.map(({c, s}) => {
+        const sub = `${s.concl}/${s.total} concl.${s.media ? ' · ★ ' + s.media : ''}`;
+        return `<button type="button" class="col-card" data-col="${esc(c.id)}">${mosaicColecaoHTML(c, s)}<span class="col-txt"><b>${esc(c.nome)}</b><small>${esc(sub)}</small><span class="col-prog"><span style="width:${s.pct}%"></span></span></span></button>`;
+      }).join('') || '<p class="saude-vazio">Nenhuma coleção aqui ainda.</p>'}</div>
+    </section>`);
+  }
+  if (cont) {
+    const base = `${colecoes.length} ${colecoes.length === 1 ? 'coleção' : 'coleções'}`;
+    const grpNome = colUI.listaGrupo !== 'todos' ? (GRUPOS_COL.find(x => x[0] === colUI.listaGrupo)?.[1] || '') : '';
+    cont.textContent = (q || colUI.listaGrupo !== 'todos')
+      ? `${visiveis} de ${base}${grpNome ? ' em ' + grpNome : ''}`
+      : base;
+  }
+  body.innerHTML = blocos.length
+    ? blocos.join('')
+    : `<p class="saude-vazio">Nenhuma coleção encontrada${q ? ` para “${esc(q)}”` : ''}.</p>`;
+}
+function iniciarOrdemListaColecoes(root){
+  if (!root) return;
+  const ols = [...root.querySelectorAll('ol[data-col-ord-grupo]')];
+  if (!ols.length) return;
+  const salvarOrdemGlobal = () => {
+    const porId = new Map(colecoes.map(c => [c.id, c]));
+    const vistasIds = new Set();
+    const novas = [];
+    for (const ol of ols) {
+      for (const li of ol.querySelectorAll('li.fonte')) {
+        const col = porId.get(li.dataset.colId);
+        if (col) { novas.push(col); vistasIds.add(col.id); }
+      }
+    }
+    for (const c of colecoes) if (!vistasIds.has(c.id)) novas.push(c);
+    colecoes = novas;
+    colUI.listaOrd = 'manual';
+    colUI.listaDir = 'asc';
+    gravarJSON(COLECOES_KEY, colecoes);
+    salvarVista();
+  };
+  for (const ol of ols) {
+    let arrastando = null;
+    ol.addEventListener('pointerdown', e => {
+      const g = e.target.closest('.grip'); if (!g) return;
+      e.preventDefault();
+      arrastando = g.closest('li');
+      arrastando.classList.add('drag');
+      try { g.setPointerCapture(e.pointerId); } catch(err){}
+    });
+    ol.addEventListener('pointermove', e => {
+      if (!arrastando) return;
+      const outros = [...ol.querySelectorAll('li.fonte')].filter(li => li !== arrastando);
+      const antes = outros.find(li => { const r = li.getBoundingClientRect(); return e.clientY < r.top + r.height / 2; });
+      const mudou = antes ? (antes !== arrastando.nextElementSibling) : (arrastando !== ol.lastElementChild);
+      if (!mudou) return;
+      animarFlipFontes(ol, () => {
+        if (antes) ol.insertBefore(arrastando, antes); else ol.appendChild(arrastando);
+      }, arrastando);
+    });
+    const fimArrasto = () => {
+      if (!arrastando) return;
+      arrastando.classList.remove('drag'); arrastando = null;
+      salvarOrdemGlobal();
+    };
+    ol.addEventListener('pointerup', fimArrasto);
+    ol.addEventListener('pointercancel', fimArrasto);
+    ol.addEventListener('click', e => {
+      const b = e.target.closest('[data-up],[data-down]'); if (!b) return;
+      const li = b.closest('li');
+      if (b.hasAttribute('data-up')) {
+        const p = li.previousElementSibling;
+        if (p) animarFlipFontes(ol, () => ol.insertBefore(li, p));
+      } else {
+        const n = li.nextElementSibling;
+        if (n) animarFlipFontes(ol, () => ol.insertBefore(n, li));
+      }
+      salvarOrdemGlobal();
+    });
+  }
 }
 function renderColecoes(){
   const el = document.getElementById('grid');
@@ -3963,22 +4405,35 @@ function renderColecoes(){
   requestAnimationFrame(atualizarIndicadores);
   const aberta = colecoes.find(c => c.id === colUI.aberta);
   if (aberta) return renderColecaoAberta(aberta);
-  const gruposVisiveis = GRUPOS_COL.filter(([k]) => k !== 'misto' || colecoes.some(c => c.grupo === 'misto'));
-  const grupos = gruposVisiveis.map(([k, nome]) => {
-    const lista = colecoes.filter(c => c.grupo === k);
-    return `<section class="col-grupo">
-      <h2 class="saude-titulo">${nome} <span>${lista.length}</span></h2>
-      <div class="col-lista">${lista.map(c => {
-        const s = statsColecao(c);
-        const sub = `${s.concl}/${s.total} concl.${s.media ? ' · ★ ' + s.media : ''}`;
-        return `<button type="button" class="col-card" data-col="${esc(c.id)}">${mosaicColecaoHTML(c, s)}<span class="col-txt"><b>${esc(c.nome)}</b><small>${esc(sub)}</small><span class="col-prog"><span style="width:${s.pct}%"></span></span></span></button>`;
-      }).join('') || '<p class="saude-vazio">Nenhuma coleção aqui ainda.</p>'}</div>
-    </section>`;
-  }).join('');
-  el.innerHTML = `<div class="colecoes">
-    <div class="col-topo"><span class="col-sub">${colecoes.length} ${colecoes.length === 1 ? 'coleção' : 'coleções'}</span><button class="btn" type="button" data-col-nova>+ Nova coleção</button></div>
-    ${grupos}
-  </div>`;
+  const gruposVisiveis = GRUPOS_COL.filter(([k]) => (k !== 'misto' || colecoes.some(c => c.grupo === 'misto')) && (colUI.listaGrupo === 'todos' || colUI.listaGrupo === k));
+  if (colUI.listaReordenar) {
+    const listas = gruposVisiveis.map(([k, nome]) => {
+      const lista = colecoes.filter(c => c.grupo === k);
+      if (!lista.length) return '';
+      return `<section class="col-grupo">
+        <h2 class="saude-titulo">${nome} <span>${lista.length}</span></h2>
+        <ol class="fontes col-ord-lista" data-col-ord-grupo="${esc(k)}">${lista.map(c => {
+          const s = statsColecao(c);
+          const sub = `${s.concl}/${s.total} concl.${s.media ? ' · ★ ' + s.media : ''}`;
+          return `<li class="fonte" data-col-id="${esc(c.id)}">
+            <button class="grip" type="button" aria-label="Arrastar ${esc(c.nome)}" title="Arrastar">⋮⋮</button>
+            ${mosaicColecaoHTML(c, s).replace('col-mosaic ', 'col-mosaic col-ord-mosaic ')}
+            <span class="col-ord-info"><b>${esc(c.nome)}</b><small>${esc(sub)}</small></span>
+            <span class="setas">
+              <button type="button" class="pill" data-up aria-label="Subir">▲</button>
+              <button type="button" class="pill" data-down aria-label="Descer">▼</button>
+            </span>
+          </li>`;
+        }).join('')}</ol>
+      </section>`;
+    }).join('');
+    document.getElementById('count').textContent = 'Arraste ou use as setas para definir a ordem manual das coleções';
+    el.innerHTML = `<div class="colecoes">${listas || '<p class="saude-vazio">Nenhuma coleção para reordenar.</p>'}</div>`;
+    iniciarOrdemListaColecoes(el);
+    return;
+  }
+  el.innerHTML = '<div class="colecoes" id="colListaBody"></div>';
+  renderColecoesLista();
 }
 function renderColBody(c){
   const body = document.getElementById('colBody');
@@ -4120,7 +4575,7 @@ function renderColecaoAberta(c){
 function colecoesClique(e){
   const t = e.target;
   if (t.closest('[data-col-nova]')) { abrirColDlg(null); return true; }
-  if (t.closest('[data-col-voltar]')) { Object.assign(colUI, {aberta: null, filtro: 'todas', ord: 'manual', q: '', reordenar: false}); render(); return true; }
+  if (t.closest('[data-col-voltar]')) { Object.assign(colUI, {aberta: null, filtro: 'todas', ord: 'manual', q: '', reordenar: false, listaReordenar: false}); render(); return true; }
   if (t.closest('[data-col-editar]')) { abrirColItensDlg(colUI.aberta); return true; }
   if (t.closest('[data-col-reordenar]')) { colUI.reordenar = !colUI.reordenar; render(); return true; }
   const fp = t.closest('[data-col-filtro]');
@@ -4138,13 +4593,13 @@ function colecoesClique(e){
     if (c && confirm(`Excluir a coleção “${c.nome}”? As mídias continuam no catálogo.`)) {
       colecoes = colecoes.filter(x => x.id !== c.id);
       gravarJSON(COLECOES_KEY, colecoes);
-      Object.assign(colUI, {aberta: null, filtro: 'todas', ord: 'manual', q: '', reordenar: false});
+      Object.assign(colUI, {aberta: null, filtro: 'todas', ord: 'manual', q: '', reordenar: false, listaReordenar: false});
       render(); toast('Coleção excluída.');
     }
     return true;
   }
   const cc = t.closest('[data-col]');
-  if (cc) { Object.assign(colUI, {aberta: cc.dataset.col, filtro: 'todas', ord: 'manual', q: '', reordenar: false}); render(); return true; }
+  if (cc) { Object.assign(colUI, {aberta: cc.dataset.col, filtro: 'todas', ord: 'manual', q: '', reordenar: false, listaReordenar: false}); render(); return true; }
   return false;
 }
 function abrirColDlg(id){
@@ -4200,6 +4655,40 @@ function iniciarColecoes(){
   const itens = document.getElementById('colItensDlg');
   itens.querySelector('[data-fechar-col-itens]').addEventListener('click', () => fecharDialogo(itens));
   document.getElementById('colBusca').addEventListener('input', renderColItens);
+  document.getElementById('colNovaBtn').addEventListener('click', () => abrirColDlg(null));
+  document.getElementById('colGrupoSel').addEventListener('change', e => {
+    colUI.listaGrupo = e.target.value;
+    salvarVista();
+    render();
+  });
+  document.getElementById('colListaBusca').addEventListener('input', e => {
+    colUI.listaQ = e.target.value;
+    salvarVista();
+    renderControlesColecoes();
+    if (!colUI.listaReordenar) renderColecoesLista();
+  });
+  document.getElementById('colListaOrd').addEventListener('change', e => {
+    colUI.listaOrd = e.target.value;
+    colUI.listaDir = (colUI.listaOrd === 'nota' || colUI.listaOrd === 'progresso' || colUI.listaOrd === 'quantidade') ? 'desc' : 'asc';
+    salvarVista();
+    renderControlesColecoes();
+    if (!colUI.listaReordenar) renderColecoesLista();
+  });
+  document.getElementById('colListaDir').addEventListener('click', () => {
+    colUI.listaDir = colUI.listaDir === 'asc' ? 'desc' : 'asc';
+    salvarVista();
+    renderControlesColecoes();
+    if (!colUI.listaReordenar) renderColecoesLista();
+  });
+  document.getElementById('colListaLimpar').addEventListener('click', () => {
+    Object.assign(colUI, {listaGrupo: 'todos', listaQ: '', listaOrd: 'manual', listaDir: 'asc'});
+    salvarVista();
+    render();
+  });
+  document.getElementById('colListaReordBtn').addEventListener('click', () => {
+    colUI.listaReordenar = !colUI.listaReordenar;
+    render();
+  });
   const grid = document.getElementById('grid');
   grid.addEventListener('input', e => {
     if (e.target.id === 'colFiltroBusca') {
@@ -4246,7 +4735,7 @@ function iniciarVoltarTopo(){
 iniciarDialogos();
 iniciarAccordions();
 iniciarSelects();
-iniciarParticulas();
+iniciarGradientBlinds();
 iniciarChaves();
 iniciarNotif();
 iniciarSync();
