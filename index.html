@@ -1018,7 +1018,6 @@ dialog#modal.morph-open .sheet,dialog#modal.morph-close .sheet{animation:none!im
 }
 .to-top.on{opacity:1;pointer-events:auto;transform:translateY(0) scale(1)}
 #massa:not([hidden]) ~ #voltarTopo{bottom:calc(86px + env(safe-area-inset-bottom,0px))}
-.foot-note{margin-top:36px;color:var(--ink-3);font-size:.84rem;text-align:center;text-shadow:0 1px 6px rgba(0,0,0,.68)}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 :focus-visible{outline:2px solid var(--jogo);outline-offset:2px}
 
@@ -1267,11 +1266,6 @@ dialog#modal.morph-open .sheet,dialog#modal.morph-close .sheet{animation:none!im
 
   <p class="count" id="count" aria-live="polite"></p>
   <section class="grid" id="grid"></section>
-
-  <footer class="foot-note">
-    Edições ficam salvas neste navegador.
-    <button id="limpar" class="link" type="button">Desfazer edições locais</button>
-  </footer>
 </main>
 
 <div id="massa" class="massa glass" role="region" aria-label="Ações em massa" hidden>
@@ -2450,9 +2444,6 @@ function montarBusca(){
   document.getElementById('atualizarDatas').addEventListener('click', atualizarDatas);
   document.getElementById('dueloBtn').addEventListener('click', abrirDuelo);
   document.getElementById('abrirConfig').addEventListener('click', () => document.getElementById('config').showModal());
-  document.getElementById('limpar').addEventListener('click', () => {
-    edicoes = {}; gravarEdicoes(); recarregarItens(); render(); toast('Edições locais desfeitas. As mídias que você adicionou continuam.');
-  });
 }
 
 /* ---------- lista ---------- */
@@ -3252,7 +3243,6 @@ function preencherSheet(key){
           <button class="hold-button" type="button" data-remover></button>
         </div></div>
         <div id="det-capas" class="capa-picker" hidden></div>
-        <p class="hint">As alterações ficam salvas neste navegador.</p>
       </div>
     </div>`;
   document.querySelector('[data-fechar]').addEventListener('click', () => fecharDialogo(document.getElementById('modal')));
