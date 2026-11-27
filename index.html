@@ -24,20 +24,21 @@
   --ink:#eef0f6;
   --ink-2:#a2a9b8;
   --ink-3:#6b7385;
-  --glass:linear-gradient(155deg,rgba(255,255,255,.08) 0%,rgba(18,21,30,.66) 45%,rgba(11,13,19,.8) 100%);
-  --glass-2:linear-gradient(160deg,rgba(255,255,255,.09) 0%,rgba(20,23,33,.88) 42%,rgba(12,14,20,.95) 100%);
-  --edge:rgba(255,255,255,.12);
-  --edge-2:rgba(255,255,255,.18);
-  --edge-3:rgba(255,255,255,.28);
-  --chamfer:inset 0 1px 0 rgba(255,255,255,.22),inset 1px 0 0 rgba(255,255,255,.08),inset 0 -1px 0 rgba(255,255,255,.04);
-  --drop:0 22px 48px -22px rgba(0,0,0,.88);
+  --glass:linear-gradient(155deg,rgba(255,255,255,.11) 0%,rgba(255,255,255,.04) 38%,rgba(12,16,26,.56) 100%);
+  --glass-2:linear-gradient(160deg,rgba(255,255,255,.13) 0%,rgba(22,27,40,.74) 44%,rgba(10,13,21,.86) 100%);
+  --glass-btn:linear-gradient(180deg,rgba(255,255,255,.17) 0%,rgba(255,255,255,.07) 52%,rgba(255,255,255,.03) 100%);
+  --edge:rgba(255,255,255,.15);
+  --edge-2:rgba(255,255,255,.24);
+  --edge-3:rgba(255,255,255,.36);
+  --chamfer:inset 0 1px 0 rgba(255,255,255,.32),inset 1px 0 0 rgba(255,255,255,.12),inset -1px 0 0 rgba(255,255,255,.07),inset 0 -1px 0 rgba(255,255,255,.06);
+  --drop:0 24px 54px -20px rgba(0,0,0,.86),0 4px 16px -6px rgba(0,0,0,.45);
   --jogo:#6fd0b0;
   --av:#e8b25a;
   --livro:#a196ea;
   --danger:#d96b6b;
-  --r:10px;
-  --r-sm:6px;
-  --r-img:3px;
+  --r:16px;
+  --r-sm:10px;
+  --r-img:10px;
   --ease-out:cubic-bezier(0.22, 1, 0.36, 1);
   --ease-spring:cubic-bezier(0.34, 1.35, 0.64, 1);
   --dur-fast:140ms;
@@ -59,22 +60,22 @@ button,a,input,select,textarea{touch-action:manipulation}
 .aura{
   position:fixed;inset:-20%;z-index:-1;pointer-events:none;
   background:
-    radial-gradient(42% 36% at 14% 8%,rgba(111,208,176,.14),transparent 70%),
-    radial-gradient(38% 34% at 86% 14%,rgba(161,150,234,.16),transparent 70%),
-    radial-gradient(44% 38% at 58% 92%,rgba(232,178,90,.11),transparent 70%),
-    radial-gradient(50% 45% at 50% 42%,rgba(90,126,185,.07),transparent 75%);
+    radial-gradient(42% 36% at 14% 8%,rgba(111,208,176,.19),transparent 70%),
+    radial-gradient(38% 34% at 86% 14%,rgba(161,150,234,.2),transparent 70%),
+    radial-gradient(44% 38% at 58% 92%,rgba(232,178,90,.15),transparent 70%),
+    radial-gradient(50% 45% at 50% 42%,rgba(90,126,185,.09),transparent 75%);
 }
 #bgParticles{position:fixed;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none}
 .wrap{max-width:1180px;margin:0 auto;padding:24px 20px 72px}
 .glass{
   position:relative;background:var(--glass);border:1px solid var(--edge);border-radius:var(--r);
-  backdrop-filter:blur(26px) saturate(185%) brightness(1.06);
-  -webkit-backdrop-filter:blur(26px) saturate(185%) brightness(1.06);
+  backdrop-filter:blur(28px) saturate(195%) brightness(1.08);
+  -webkit-backdrop-filter:blur(28px) saturate(195%) brightness(1.08);
   box-shadow:var(--chamfer),var(--drop);
 }
 .facet::before{
   content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
-  background:linear-gradient(165deg,rgba(255,255,255,.09) 0%,rgba(255,255,255,.015) 28%,transparent 52%);
+  background:linear-gradient(175deg,rgba(255,255,255,.14) 0%,rgba(255,255,255,.03) 24%,transparent 48%);
 }
 
 /* keyframes (transitions.dev + split-flap motion primitives) */
@@ -167,12 +168,12 @@ button,a,input,select,textarea{touch-action:manipulation}
 .hero{
   --cat-tint:var(--jogo);
   display:grid;grid-template-columns:1fr auto;gap:22px;align-items:center;
-  padding:20px 24px;border-radius:16px;overflow:hidden;
+  padding:20px 24px;border-radius:22px;overflow:hidden;
   background:
     radial-gradient(62% 145% at 96% 42%,color-mix(in srgb,var(--cat-tint) 16%,transparent),transparent 72%),
-    radial-gradient(40% 100% at 8% 0%,rgba(255,255,255,.07),transparent 65%),
+    radial-gradient(40% 100% at 8% 0%,rgba(255,255,255,.09),transparent 65%),
     var(--glass);
-  border-color:color-mix(in srgb,var(--cat-tint) 20%,var(--edge));
+  border-color:color-mix(in srgb,var(--cat-tint) 20%,var(--edge-2));
   transition:border-color var(--dur-med) var(--ease-out);
 }
 .hero-main{display:flex;flex-direction:column;justify-content:center;min-width:0}
@@ -215,8 +216,9 @@ h1{
 .tile span{color:var(--ink-3);font-size:.8rem}
 .ring{
   position:relative;width:116px;height:116px;flex-shrink:0;padding:6px;border-radius:50%;
-  background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.11);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.16);
+  background:linear-gradient(160deg,rgba(255,255,255,.09),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.18);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 10px 24px -14px rgba(0,0,0,.8);
 }
 .ring svg{width:100%;height:100%;overflow:visible}
 .ring .trk{fill:none;stroke:rgba(255,255,255,.08);stroke-width:8}
@@ -232,7 +234,7 @@ h1{
 
 /* toolbar + pill-nav (reactbits) */
 .toolbar{
-  position:relative;z-index:25;margin-top:14px;padding:12px 14px;
+  position:relative;z-index:25;margin-top:14px;padding:12px 14px;border-radius:20px;
   display:grid;grid-template-columns:auto 186px minmax(0,1fr);column-gap:10px;row-gap:0;align-items:center;
 }
 .bar-top,.tools{display:contents}
@@ -241,7 +243,7 @@ h1{
 .bar-top-right{grid-column:3;grid-row:1;display:flex;align-items:center;justify-content:flex-end;gap:8px;min-width:0}
 #atualizarDatas{margin-left:0;min-width:148px}
 #atualizarDatas[hidden],#dueloBtn[hidden]{display:none}
-#dueloBtn{flex-shrink:0;border-radius:11px}
+#dueloBtn{flex-shrink:0;border-radius:50%}
 #dueloBtn svg{display:block;transition:transform var(--dur-fast) var(--ease-out)}
 .bar-sep{grid-column:1/-1;grid-row:2;height:1px;background:rgba(255,255,255,.08);margin:10px 0}
 .tools>.busca-wrap{grid-column:1;grid-row:3;width:100%;min-width:0}
@@ -250,18 +252,20 @@ h1{
 #ordemDir{min-width:132px;white-space:nowrap}
 .seg{
   position:relative;display:inline-flex;align-self:flex-start;gap:3px;padding:4px;border-radius:999px;
-  background:rgba(8,10,15,.48);border:1px solid var(--edge);
-  box-shadow:inset 0 1px 2px rgba(0,0,0,.45),inset 0 -1px 0 rgba(255,255,255,.06);
+  background:rgba(8,11,18,.42);border:1px solid rgba(255,255,255,.14);
+  box-shadow:inset 0 1px 3px rgba(0,0,0,.42),inset 0 -1px 0 rgba(255,255,255,.1);
   flex-wrap:wrap;max-width:100%;
 }
 .seg-ind{
   position:absolute;top:4px;bottom:4px;left:0;z-index:0;border-radius:999px;
-  background:linear-gradient(180deg,rgba(255,255,255,.22),rgba(255,255,255,.08));
-  border:1px solid rgba(255,255,255,.26);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 6px 16px -6px rgba(0,0,0,.6);
+  background:linear-gradient(180deg,rgba(255,255,255,.26),rgba(255,255,255,.1));
+  border:1px solid rgba(255,255,255,.32);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 8px 18px -8px rgba(0,0,0,.65);
   pointer-events:none;opacity:0;
   transition:transform var(--dur-med) var(--ease-out),width var(--dur-med) var(--ease-out),opacity var(--dur-fast) ease;
 }
+.cat-short{display:none}
+.cat-full{display:inline}
 .pill{
   position:relative;z-index:1;overflow:hidden;font:inherit;font-size:.86rem;font-weight:500;color:var(--ink-2);
   background:transparent;border:1px solid transparent;border-radius:999px;
@@ -289,30 +293,31 @@ h1{
 .busca-wrap .busca{width:100%}
 .field{
   font:inherit;font-size:.9rem;color:var(--ink);
-  background:linear-gradient(180deg,rgba(255,255,255,.065),rgba(255,255,255,.03));
-  border:1px solid var(--edge);border-radius:var(--r);padding:8px 12px;min-width:0;min-height:40px;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.1);
+  background:linear-gradient(180deg,rgba(255,255,255,.09),rgba(255,255,255,.035));
+  border:1px solid var(--edge);border-radius:999px;padding:8px 15px;min-width:0;min-height:40px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.18),inset 0 -1px 0 rgba(0,0,0,.18);
   transition:border-color var(--dur-fast) var(--ease-out),background-color var(--dur-fast) var(--ease-out),box-shadow var(--dur-fast) var(--ease-out);
 }
-.field:focus{outline:none;border-color:var(--edge-3);box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 0 0 3px rgba(255,255,255,.06)}
+.field:focus{outline:none;border-color:var(--edge-3);box-shadow:inset 0 1px 0 rgba(255,255,255,.24),0 0 0 3px rgba(255,255,255,.07)}
 .field::placeholder{color:var(--ink-3)}
 .field option{background:#141822;color:var(--ink)}
 select.field{cursor:pointer}
-textarea.field{min-height:84px;line-height:1.45}
+textarea.field{min-height:84px;line-height:1.45;border-radius:14px;padding:10px 14px}
 .larg{width:186px}
 .btn{
   font:inherit;font-size:.88rem;font-weight:600;color:var(--ink);
-  background:linear-gradient(180deg,rgba(255,255,255,.14),rgba(255,255,255,.05));
-  border:1px solid var(--edge-2);border-radius:var(--r);
-  padding:8px 14px;min-height:40px;cursor:pointer;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.24),0 8px 18px -12px rgba(0,0,0,.75);
+  background:var(--glass-btn);
+  border:1px solid var(--edge-2);border-radius:999px;
+  padding:8px 15px;min-height:40px;cursor:pointer;
+  backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.34),inset 0 -1px 0 rgba(255,255,255,.06),0 10px 22px -12px rgba(0,0,0,.8);
   text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:6px;
   transition:background var(--dur-fast) var(--ease-out),border-color var(--dur-fast) var(--ease-out),transform var(--dur-fast) var(--ease-out),opacity var(--dur-fast) ease,box-shadow var(--dur-fast) var(--ease-out);
 }
 .btn:active:not(:disabled){transform:scale(.97)}
 .btn.quadrado:active:not(:disabled),.btn.redondo:active:not(:disabled),.x:active:not(:disabled){transform:scale(.92)}
 .btn:disabled{opacity:.42;cursor:default}
-.btn[aria-pressed="true"]{background:linear-gradient(180deg,rgba(255,255,255,.24),rgba(255,255,255,.11));border-color:var(--edge-3)}
+.btn[aria-pressed="true"]{background:linear-gradient(180deg,rgba(255,255,255,.28),rgba(255,255,255,.12));border-color:var(--edge-3)}
 .link{
   font:inherit;font-size:.88rem;background:none;border:0;color:var(--ink-2);
   text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:4px 6px;white-space:nowrap;
@@ -324,8 +329,8 @@ textarea.field{min-height:84px;line-height:1.45}
 /* dropdown tags / onde / nota */
 .sug{
   position:absolute;top:100%;left:0;right:0;z-index:65;margin-top:6px;max-height:260px;overflow:auto;
-  background:linear-gradient(160deg,rgba(24,28,40,.96),rgba(12,15,22,.98));border:1px solid var(--edge-2);border-radius:var(--r);
-  backdrop-filter:blur(26px) saturate(185%);-webkit-backdrop-filter:blur(26px) saturate(185%);
+  background:var(--glass-2);border:1px solid var(--edge-2);border-radius:16px;
+  backdrop-filter:blur(28px) saturate(195%);-webkit-backdrop-filter:blur(28px) saturate(195%);
   box-shadow:var(--chamfer),var(--drop);padding:4px;transform-origin:top center;animation:popIn 180ms var(--ease-out);
 }
 .sug-head{padding:5px 10px 3px;font-size:.7rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-3)}
@@ -343,76 +348,13 @@ textarea.field{min-height:84px;line-height:1.45}
 .grid.view-in{animation:viewIn 200ms var(--ease-out)}
 .card{
   position:relative;
-  background:linear-gradient(160deg,rgba(255,255,255,.065),rgba(16,19,27,.78));
-  border:1px solid rgba(255,255,255,.1);border-radius:var(--r);overflow:hidden;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 14px 28px -18px rgba(0,0,0,.85);
+  background:linear-gradient(160deg,rgba(255,255,255,.095) 0%,rgba(255,255,255,.035) 36%,rgba(12,16,26,.68) 100%);
+  border:1px solid rgba(255,255,255,.14);border-radius:var(--r);overflow:hidden;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.24),inset 1px 0 0 rgba(255,255,255,.08),0 16px 32px -18px rgba(0,0,0,.85);
   transition:transform var(--dur-med) var(--ease-out),border-color var(--dur-fast) var(--ease-out),box-shadow var(--dur-med) var(--ease-out);
 }
 .card:focus-within{border-color:var(--edge-2)}
 .card.selecionado{border-color:var(--jogo);box-shadow:inset 0 0 0 2px var(--jogo),0 14px 28px -18px rgba(0,0,0,.85)}
-@keyframes shinySweep{
-  0%{opacity:0;background-position:135% 135%}
-  22%{opacity:.6}
-  100%{opacity:0;background-position:-35% -35%}
-}
-.card[class*="shiny-"],.flip-card[class*="shiny-"]{--rx:0deg;--ry:0deg;--gx:50%;--gy:50%;--sh-op:.09}
-.flip-card[class*="shiny-"]{--sh-op:.12}
-.card.shiny-reflective{border-color:rgba(226,234,255,.26);box-shadow:inset 0 1px 0 rgba(255,255,255,.26),0 14px 28px -18px rgba(0,0,0,.85)}
-.card.shiny-holo-rainbow{border-color:rgba(161,150,234,.38);box-shadow:inset 0 1px 0 rgba(255,255,255,.24),0 14px 30px -16px rgba(130,118,220,.28)}
-.card.shiny-holo-gold{border-color:rgba(232,196,106,.44);box-shadow:inset 0 1px 0 rgba(255,242,200,.3),0 14px 30px -16px rgba(232,178,90,.28)}
-.card.shiny-holo-prism{border-color:rgba(255,234,176,.52);box-shadow:inset 0 1px 0 rgba(255,250,230,.36),0 16px 34px -16px rgba(232,190,115,.36)}
-.card.is-tilting{
-  transition:transform 70ms linear,border-color var(--dur-fast) ease,box-shadow var(--dur-fast) ease;
-  transform:perspective(760px) rotateX(var(--rx)) rotateY(var(--ry)) translateY(-2px);
-  --sh-op:.32;
-}
-.flip-card.is-tilting:not(.is-flipped) .flip-inner{transition:transform 75ms linear;transform:rotateX(var(--rx)) rotateY(var(--ry))}
-.flip-card.is-tilting{--sh-op:.38}
-[class*="shiny-"] .cover::before,[class*="shiny-"] .cover::after{
-  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:2;
-}
-[class*="shiny-"] .cover::before{opacity:var(--sh-op);transition:opacity 220ms ease}
-[class*="shiny-"] .cover::after{
-  opacity:0;transition:opacity 220ms ease;mix-blend-mode:screen;
-  background:radial-gradient(circle at var(--gx) var(--gy),rgba(255,255,255,.24) 0%,rgba(255,255,255,.07) 24%,transparent 54%);
-}
-[class*="shiny-"].is-tilting .cover::after{opacity:.55}
-.shiny-reflective .cover::before{
-  background:linear-gradient(118deg,transparent 26%,rgba(255,255,255,.05) 40%,rgba(242,247,255,.32) 48%,rgba(190,214,255,.14) 54%,transparent 66%);
-  background-size:240% 240%;background-position:var(--gx) var(--gy);
-  mix-blend-mode:screen;box-shadow:inset 0 0 0 1px rgba(255,255,255,.22);
-}
-.shiny-holo-rainbow .cover::before{
-  background-image:
-    repeating-linear-gradient(125deg,rgba(255,255,255,0) 0%,rgba(255,255,255,.07) 4%,rgba(255,255,255,0) 8%),
-    linear-gradient(115deg,transparent 14%,rgba(111,208,176,.28) 30%,rgba(120,175,255,.32) 46%,rgba(192,146,255,.34) 60%,rgba(255,196,112,.26) 76%,transparent 90%);
-  background-size:200% 200%,260% 260%;
-  background-position:var(--gx) var(--gy),var(--gx) var(--gy);
-  mix-blend-mode:color-dodge;
-}
-.shiny-holo-gold .cover::before{
-  background-image:
-    repeating-linear-gradient(135deg,rgba(255,244,207,0) 0%,rgba(255,244,207,.09) 3%,rgba(255,244,207,0) 7%),
-    linear-gradient(120deg,transparent 18%,rgba(217,155,56,.24) 34%,rgba(255,244,207,.36) 49%,rgba(242,198,109,.28) 64%,rgba(230,239,255,.2) 78%,transparent 90%);
-  background-size:200% 200%,260% 260%;
-  background-position:var(--gx) var(--gy),var(--gx) var(--gy);
-  mix-blend-mode:color-dodge;
-}
-.shiny-holo-prism .cover::before{
-  background-image:
-    repeating-linear-gradient(128deg,rgba(255,255,255,0) 0%,rgba(255,255,255,.1) 3.5%,rgba(255,255,255,0) 7%),
-    linear-gradient(116deg,transparent 12%,rgba(255,244,200,.34) 26%,rgba(111,225,195,.3) 42%,rgba(168,148,255,.34) 58%,rgba(255,196,98,.34) 74%,transparent 90%);
-  background-size:210% 210%,270% 270%;
-  background-position:var(--gx) var(--gy),var(--gx) var(--gy);
-  mix-blend-mode:color-dodge;
-  box-shadow:inset 0 0 0 1px rgba(255,242,200,.26);
-}
-.shiny-intro .cover::after{
-  opacity:1;
-  background:linear-gradient(115deg,transparent 28%,rgba(255,255,255,.38) 49%,rgba(255,255,255,.12) 55%,transparent 74%);
-  background-size:240% 240%;
-  animation:shinySweep 820ms var(--ease-out) forwards;
-}
 .open{all:unset;display:block;width:100%;cursor:pointer;border-radius:var(--r)}
 .cover{
   margin:8px;aspect-ratio:3/4;border-radius:var(--r-img);position:relative;
@@ -441,9 +383,10 @@ textarea.field{min-height:84px;line-height:1.45}
 .nota-capa{
   position:absolute;right:7px;bottom:7px;z-index:3;
   display:inline-flex;align-items:center;justify-content:center;gap:3px;
-  height:20px;padding:0 7px;border-radius:99px;
-  background:rgba(11,12,15,.82);border:1px solid rgba(255,255,255,.16);
-  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  height:20px;padding:0 8px;border-radius:99px;
+  background:rgba(14,18,28,.62);border:1px solid rgba(255,255,255,.22);
+  backdrop-filter:blur(14px) saturate(180%);-webkit-backdrop-filter:blur(14px) saturate(180%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.22);
   color:var(--ink);font-size:.68rem;font-weight:600;font-variant-numeric:tabular-nums;line-height:1;white-space:nowrap;
 }
 .nota-capa .est{display:block;font-size:.7rem;line-height:1;color:var(--av);transform:translateY(-.5px)}
@@ -467,9 +410,9 @@ textarea.field{min-height:84px;line-height:1.45}
 /* ações em massa */
 .massa{
   position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));
-  transform:translateX(-50%);z-index:30;
+  transform:translateX(-50%);z-index:30;border-radius:999px;
   display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;
-  padding:10px 14px;max-width:calc(100vw - 24px);
+  padding:10px 16px;max-width:calc(100vw - 24px);
   background:var(--glass-2);border-color:var(--edge-2);box-shadow:var(--chamfer),var(--drop);
   animation:sheetUp 220ms var(--ease-out);
 }
@@ -540,9 +483,9 @@ textarea.field{min-height:84px;line-height:1.45}
 .col-lista{display:grid;grid-template-columns:repeat(auto-fill,minmax(236px,1fr));gap:12px}
 .col-card{
   display:flex;align-items:center;gap:12px;text-align:left;
-  background:linear-gradient(160deg,rgba(255,255,255,.07),rgba(16,19,27,.76));
+  background:linear-gradient(160deg,rgba(255,255,255,.1),rgba(255,255,255,.03) 40%,rgba(12,16,26,.68));
   border:1px solid var(--edge);border-radius:var(--r);padding:10px 12px;color:var(--ink);font:inherit;cursor:pointer;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 10px 22px -14px rgba(0,0,0,.78);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 12px 24px -14px rgba(0,0,0,.78);
   transition:transform var(--dur-fast) var(--ease-out),border-color var(--dur-fast) var(--ease-out),background-color var(--dur-fast) var(--ease-out);
 }
 .col-card:active{transform:scale(.98)}
@@ -598,9 +541,9 @@ textarea.field{min-height:84px;line-height:1.45}
 
 .acc-stack{display:grid;gap:10px;margin-top:16px}
 .acc{
-  border-radius:var(--r);border:1px solid rgba(255,255,255,.11);
-  background:linear-gradient(160deg,rgba(255,255,255,.055),rgba(14,17,24,.72));
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.12);
+  border-radius:var(--r);border:1px solid var(--edge);
+  background:linear-gradient(160deg,rgba(255,255,255,.08),rgba(255,255,255,.025) 40%,rgba(12,16,26,.64));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.2);
   overflow:hidden;transition:border-color var(--dur-fast) var(--ease-out);
 }
 .acc.is-open{border-color:rgba(255,255,255,.18)}
@@ -675,9 +618,9 @@ dialog#dueloDlg .sheet{background:radial-gradient(58% 68% at 50% 0%,color-mix(in
 .duelo-prog i{display:block;height:100%;border-radius:999px;background:var(--cat-tint,var(--jogo));transition:width 280ms var(--ease-out)}
 .duelo-arena{display:grid;grid-template-columns:1fr auto 1fr;gap:14px;align-items:center;margin-top:16px}
 .duelo-card{
-  display:flex;flex-direction:column;text-align:left;padding:10px;border-radius:16px;
-  background:linear-gradient(180deg,rgba(255,255,255,.09),rgba(14,17,24,.78));
-  border:1px solid var(--edge);box-shadow:var(--chamfer);cursor:pointer;color:var(--ink);font:inherit;
+  display:flex;flex-direction:column;text-align:left;padding:10px;border-radius:18px;
+  background:linear-gradient(160deg,rgba(255,255,255,.11),rgba(255,255,255,.035) 42%,rgba(12,16,26,.72));
+  border:1px solid var(--edge-2);box-shadow:var(--chamfer),0 14px 30px -18px rgba(0,0,0,.85);cursor:pointer;color:var(--ink);font:inherit;
   transition:transform 220ms var(--ease-spring),border-color 180ms ease,box-shadow 220ms ease,opacity 220ms ease;
 }
 .duelo-card .cover{margin:0;width:100%;aspect-ratio:2/3;border-radius:11px}
@@ -712,15 +655,15 @@ dialog::backdrop{background:rgba(3,5,10,.64);backdrop-filter:blur(10px);-webkit-
 dialog[open]::backdrop{animation:backdropIn var(--dur-modal-open) var(--ease-out) forwards}
 dialog.is-closing::backdrop{animation:backdropOut var(--dur-modal-close) var(--ease-out) forwards}
 .sheet{
-  background:var(--glass-2);padding:24px;border-radius:var(--r);
+  background:var(--glass-2);padding:24px;border-radius:24px;
   border:1px solid var(--edge-2);
-  backdrop-filter:blur(28px) saturate(185%) brightness(1.06);
-  -webkit-backdrop-filter:blur(28px) saturate(185%) brightness(1.06);
+  backdrop-filter:blur(32px) saturate(195%) brightness(1.08);
+  -webkit-backdrop-filter:blur(32px) saturate(195%) brightness(1.08);
   box-shadow:var(--chamfer),var(--drop);
   max-height:90vh;max-height:90dvh;overflow:auto;overscroll-behavior:contain;
 }
 dialog#modal .sheet{
-  border-radius:18px;
+  border-radius:24px;
   background:radial-gradient(56% 70% at 14% 18%,color-mix(in srgb,var(--modal-tint,var(--jogo)) 14%,transparent),transparent 68%),var(--glass-2);
 }
 dialog[open] .sheet{animation:modalIn var(--dur-modal-open) var(--ease-out) both}
@@ -734,9 +677,9 @@ dialog#modal.morph-open .sheet,dialog#modal.morph-close .sheet{animation:none!im
 .sheet .head{display:flex;gap:14px;align-items:flex-start;justify-content:space-between}
 .sheet h2{font-family:"Unbounded",sans-serif;font-size:1.25rem;font-weight:500;line-height:1.22;margin:6px 0 0}
 .sheet .x{
-  flex-shrink:0;width:38px;height:38px;border-radius:var(--r);cursor:pointer;font:inherit;font-size:1rem;
-  color:var(--ink-2);background:rgba(255,255,255,.08);border:1px solid var(--edge);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.16);
+  flex-shrink:0;width:38px;height:38px;border-radius:50%;cursor:pointer;font:inherit;font-size:1rem;
+  color:var(--ink-2);background:var(--glass-btn);border:1px solid var(--edge-2);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.28);
   display:grid;place-items:center;
   transition:background-color var(--dur-fast) var(--ease-out),color var(--dur-fast) var(--ease-out),transform var(--dur-fast) var(--ease-out);
 }
@@ -774,10 +717,10 @@ dialog#modal.morph-open .sheet,dialog#modal.morph-close .sheet{animation:none!im
 .csel.csel-inline .csel-drop{position:static;z-index:auto;min-width:0;width:100%;max-width:none}
 .csel-drop-inner{overflow:hidden;min-height:0}
 .csel-list{
-  display:grid;gap:2px;padding:4px;border-radius:var(--r);
+  display:grid;gap:2px;padding:4px;border-radius:16px;
   max-height:280px;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;
-  background:linear-gradient(160deg,rgba(24,28,40,.96),rgba(12,15,22,.98));border:1px solid var(--edge-2);
-  backdrop-filter:blur(26px) saturate(185%);-webkit-backdrop-filter:blur(26px) saturate(185%);
+  background:var(--glass-2);border:1px solid var(--edge-2);
+  backdrop-filter:blur(28px) saturate(195%);-webkit-backdrop-filter:blur(28px) saturate(195%);
   box-shadow:var(--chamfer),var(--drop);
   opacity:0;transform:translateY(-4px);
   transition:opacity 200ms var(--ease-out),transform 220ms var(--ease-out);
@@ -884,17 +827,17 @@ dialog#modal.morph-open .sheet,dialog#modal.morph-close .sheet{animation:none!im
 /* switch */
 .switch{display:flex;align-items:center;gap:10px;cursor:pointer;color:var(--ink-2);font-size:.88rem}
 .switch input{
-  appearance:none;width:42px;height:24px;border-radius:var(--r);
+  appearance:none;width:44px;height:24px;border-radius:999px;
   background:rgba(255,255,255,.11);border:1px solid var(--edge-2);
   position:relative;cursor:pointer;flex-shrink:0;margin:0;
   transition:background-color var(--dur-fast) ease,border-color var(--dur-fast) ease;
 }
 .switch input::after{
-  content:"";position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:calc(var(--r) - 3px);
+  content:"";position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;
   background:var(--ink);transition:transform var(--dur-med) var(--ease-spring),background-color var(--dur-fast) ease;
 }
 .switch input:checked{background:var(--jogo);border-color:var(--jogo)}
-.switch input:checked::after{transform:translateX(18px);background:#07080e}
+.switch input:checked::after{transform:translateX(20px);background:#07080e}
 
 /* formulário adicionar/editar + listas em modais */
 .novo-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 14px;margin-top:18px}
@@ -974,9 +917,9 @@ dialog#modal.morph-open .sheet,dialog#modal.morph-close .sheet{animation:none!im
 #toast{
   position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));
   transform:translate(-50%,14px) scale(.96);opacity:0;pointer-events:none;z-index:40;
-  background:var(--glass-2);border:1px solid var(--edge-2);border-radius:var(--r);
-  backdrop-filter:blur(26px) saturate(185%);-webkit-backdrop-filter:blur(26px) saturate(185%);
-  padding:10px 16px;font-size:.88rem;box-shadow:var(--chamfer),var(--drop);
+  background:var(--glass-2);border:1px solid var(--edge-2);border-radius:999px;
+  backdrop-filter:blur(28px) saturate(195%);-webkit-backdrop-filter:blur(28px) saturate(195%);
+  padding:10px 18px;font-size:.88rem;box-shadow:var(--chamfer),var(--drop);
   max-width:calc(100vw - 28px);text-align:center;
   transition:opacity var(--dur-med) var(--ease-out),transform var(--dur-med) var(--ease-out);
 }
@@ -984,7 +927,9 @@ dialog#modal.morph-open .sheet,dialog#modal.morph-close .sheet{animation:none!im
 .to-top{
   position:fixed;right:22px;bottom:calc(22px + env(safe-area-inset-bottom,0px));
   width:44px;height:44px;z-index:28;
-  backdrop-filter:blur(22px) saturate(175%);-webkit-backdrop-filter:blur(22px) saturate(175%);
+  background:linear-gradient(180deg,rgba(255,255,255,.22),rgba(255,255,255,.08));
+  border:1px solid rgba(255,255,255,.28);
+  backdrop-filter:blur(26px) saturate(195%);-webkit-backdrop-filter:blur(26px) saturate(195%);
   box-shadow:var(--chamfer),var(--drop);
   opacity:0;pointer-events:none;transform:translateY(14px) scale(.88);
   transition:opacity var(--dur-med) var(--ease-out),transform var(--dur-med) var(--ease-spring),background var(--dur-fast),border-color var(--dur-fast);
@@ -1068,11 +1013,14 @@ dialog#modal.morph-open .sheet,dialog#modal.morph-close .sheet{animation:none!im
   .bar-top>.csel{grid-column:1;grid-row:2;width:100%;min-width:0}
   .bar-top>.csel:not(.csel-inline) .csel-drop{left:0;right:0;width:auto;max-width:none}
   .bar-top-right{display:contents}
-  #dueloBtn{grid-column:2;grid-row:2;justify-self:end;width:42px;height:42px}
+  #dueloBtn{grid-column:2;grid-row:2;justify-self:end;width:42px;height:42px;border-radius:50%}
   #atualizarDatas{grid-column:1/-1;grid-row:3;margin-left:0;width:100%;min-width:0;min-height:40px}
-  .seg{display:flex;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;width:100%;max-width:100%;min-width:0}
-  .seg::-webkit-scrollbar{display:none}
-  .seg .pill{flex:0 0 auto;min-height:38px;padding:7px 12px;font-size:.84rem}
+  .cat-full{display:none}
+  .cat-short{display:inline}
+  #cats .pill .n,#cats .pill .n-h{display:none}
+  .seg{display:flex;flex-wrap:nowrap;overflow:visible;justify-content:space-between;gap:2px;padding:3px;width:100%;max-width:100%;min-width:0}
+  .seg-ind{top:3px;bottom:3px}
+  .seg .pill{flex:1 1 auto;min-width:0;min-height:36px;padding:6px 6px;font-size:.79rem;display:inline-flex;align-items:center;justify-content:center;text-align:center}
   .tools{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;width:100%;min-width:0;padding-top:8px;border-top:1px solid rgba(255,255,255,.08)}
   .tools>.busca-wrap{grid-column:1/-1;grid-row:auto;width:100%;min-width:0;max-width:none}
   .tools>.csel{grid-column:auto;grid-row:auto;width:100%;min-width:0}
@@ -1095,7 +1043,7 @@ dialog#modal.morph-open .sheet,dialog#modal.morph-close .sheet{animation:none!im
   .nota-capa{font-size:.6rem;right:5px;bottom:5px;height:18px;padding:0 5px}
   .nota-capa .est{font-size:.62rem}
   .data-lanc{font-size:.72rem}
-  .massa{bottom:calc(10px + env(safe-area-inset-bottom,0px));width:calc(100vw - 20px);max-width:none;padding:10px}
+  .massa{bottom:calc(10px + env(safe-area-inset-bottom,0px));width:calc(100vw - 20px);max-width:none;padding:10px;border-radius:20px}
   .massa .field,.massa .csel{max-width:none;flex:1 1 130px}
   dialog,dialog#modal{
     width:calc(100vw - 16px);
@@ -1137,6 +1085,7 @@ dialog#modal.morph-open .sheet,dialog#modal.morph-close .sheet{animation:none!im
 }
 @media (max-width:380px){
   .wrap{padding:10px 10px calc(60px + env(safe-area-inset-bottom,0px))}
+  .seg .pill{padding:6px 4px;font-size:.74rem}
   .sf-tile{font-size:.86rem}
   .grid{gap:6px}
   .body{padding:2px 6px 8px}
@@ -1323,7 +1272,6 @@ dialog#modal.morph-open .sheet,dialog#modal.morph-close .sheet{animation:none!im
         <div class="acc-panel"><div class="acc-inner"><div class="acc-body">
           <label class="switch" style="margin-top:4px"><input type="checkbox" role="switch" id="pref-meta"> Mostrar tipo e ano nos cards</label>
           <p class="hint">Fora da aba Todos, os cards mostram só o nome, a nota e a bolinha de status.</p>
-          <label class="switch" style="margin-top:10px"><input type="checkbox" role="switch" id="pref-shiny"> Efeito shiny em notas 9–10 e Platinados</label>
           <div class="keys-actions" style="margin-top:12px"><div class="group">
             <button class="btn" id="abrirSaude" type="button">Ver saúde da biblioteca</button>
             <button class="btn" id="abrirConcluidas" type="button">Concluídas por mês</button>
@@ -1464,7 +1412,7 @@ const FILTROS_POR_CAT = {
 };
 const VISTAS_KEY = 'hub-midias-vistas-v1';
 const PREFS_KEY = 'hub-midias-prefs-v1';
-let prefs = {mostrarMeta: false, shiny: true, ...lerJSON(PREFS_KEY, {})};
+let prefs = {mostrarMeta: false, ...lerJSON(PREFS_KEY, {})};
 let vistas = lerJSON(VISTAS_KEY, {});
 function salvarVista(){
   vistas[st.grp] = {ord: st.ord, dir: st.dir, tag: st.tag, onde: st.onde, notaFiltro: st.notaFiltro, q: st.q};
@@ -1940,9 +1888,9 @@ function definirStatus(key, valor){
 
 /* ---------- construção dos controles ---------- */
 function montarCategorias(){
-  const ordem = [['jogo','Jogos'],['audiovisual','Filmes & Séries'],['livro','Livros & Mangás'],['colecoes','Coleções']];
-  document.getElementById('cats').innerHTML = '<span class="seg-ind" aria-hidden="true"></span>' + ordem.map(([k, l]) =>
-    `<button class="pill" type="button" data-cat="${k}" aria-pressed="false"><span class="pill-roll"><span class="pill-lbl">${esc(l)}<span class="n"></span></span><span class="pill-lbl-h" aria-hidden="true">${esc(l)}<span class="n-h"></span></span></span><span class="pill-dot" aria-hidden="true"></span></button>`
+  const ordem = [['jogo','Jogos','Jogos'],['audiovisual','Filmes & Séries','Filmes'],['livro','Livros & Mangás','Livros'],['colecoes','Coleções','Coleções']];
+  document.getElementById('cats').innerHTML = '<span class="seg-ind" aria-hidden="true"></span>' + ordem.map(([k, l, s]) =>
+    `<button class="pill" type="button" data-cat="${k}" aria-pressed="false"><span class="pill-roll"><span class="pill-lbl"><span class="cat-full">${esc(l)}</span><span class="cat-short">${esc(s)}</span><span class="n"></span></span><span class="pill-lbl-h" aria-hidden="true"><span class="cat-full">${esc(l)}</span><span class="cat-short">${esc(s)}</span><span class="n-h"></span></span></span><span class="pill-dot" aria-hidden="true"></span></button>`
   ).join('');
   document.getElementById('cats').addEventListener('click', e => {
     const b = e.target.closest('[data-cat]'); if (!b) return;
@@ -2106,82 +2054,17 @@ function verificarLancamentos(){
   novos.forEach(i => { notificar(`“${i.t}” já saiu. Atualize o status se já jogou ou assistiu.`, i.key); jaAvisados.push(i.key); });
   if (novos.length) { gravarJSON(SAIU_KEY, jaAvisados); render(); }
 }
-function tipoShiny(i){
-  if (!i || prefs.shiny === false) return '';
-  const plat = atual(i) === 'Platinado';
-  const n = i.n != null ? Number(i.n) : null;
-  if (plat && n === 10) return 'holo-prism';
-  if (plat) return 'holo-gold';
-  if (n === 10) return 'holo-rainbow';
-  if (n === 9) return 'reflective';
-  return '';
-}
-function aplicarClasseShiny(el, tipo, animIntro){
-  if (!el) return;
-  el.classList.remove('shiny-reflective', 'shiny-holo-rainbow', 'shiny-holo-gold', 'shiny-holo-prism', 'shiny-intro');
-  if (tipo) {
-    el.classList.add('shiny-' + tipo);
-    if (animIntro) {
-      void el.offsetWidth;
-      el.classList.add('shiny-intro');
-      clearTimeout(el._shIntroT);
-      el._shIntroT = setTimeout(() => el.classList.remove('shiny-intro'), 860);
-    }
-  }
-}
-function iniciarShiny(){
-  const grid = document.getElementById('grid');
-  if (!grid) return;
-  const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (reduced) return;
-  let ativo = null, raf = 0, px = 0, py = 0;
-  const reset = el => {
-    if (!el) return;
-    el.classList.remove('is-tilting');
-    el.style.removeProperty('--rx');
-    el.style.removeProperty('--ry');
-    el.style.removeProperty('--gx');
-    el.style.removeProperty('--gy');
-  };
-  grid.addEventListener('pointermove', e => {
-    if (e.pointerType === 'touch' || prefs.shiny === false) return;
-    const c = e.target.closest('.card[class*="shiny-"]');
-    if (ativo && ativo !== c) { reset(ativo); ativo = null; }
-    if (!c) return;
-    ativo = c; px = e.clientX; py = e.clientY;
-    if (raf) return;
-    raf = requestAnimationFrame(() => {
-      raf = 0;
-      if (!ativo || !ativo.isConnected) return;
-      const r = ativo.getBoundingClientRect();
-      if (!r.width || !r.height) return;
-      const nx = Math.max(0, Math.min(1, (px - r.left) / r.width));
-      const ny = Math.max(0, Math.min(1, (py - r.top) / r.height));
-      ativo.style.setProperty('--rx', ((0.5 - ny) * 18).toFixed(2) + 'deg');
-      ativo.style.setProperty('--ry', ((nx - 0.5) * 18).toFixed(2) + 'deg');
-      ativo.style.setProperty('--gx', (nx * 100).toFixed(1) + '%');
-      ativo.style.setProperty('--gy', (ny * 100).toFixed(1) + '%');
-      ativo.classList.add('is-tilting');
-    });
-  }, {passive: true});
-  grid.addEventListener('pointerout', e => {
-    if (!ativo) return;
-    if (!e.relatedTarget || !ativo.contains(e.relatedTarget)) { reset(ativo); ativo = null; }
-  });
-  grid.addEventListener('pointerleave', () => { reset(ativo); ativo = null; });
-}
 
 function card(i){
   const c = CATS[i.c], s2 = atual(i);
   const capa = capaDe(i);
-  const sh = tipoShiny(i);
   const cadeado = i.travado ? '<span class="lock" title="Bloqueado contra atualizações automáticas">🔒</span>' : '';
   const dataLanc = st.grp === 'No aguardo' ? `<div class="data-lanc">${i.l ? esc(fmtData(i.l)) : 'Data a confirmar'}</div>` : '';
   const mostraMeta = st.cat === 'todos' || prefs.mostrarMeta;
   const badges = mostraMeta ? `<span class="badge">${esc(tipoOf(i))}</span>${i.l ? `<span class="badge ghost">${esc(i.l.slice(0,4))}</span>` : ''}` : '';
   const meta = (badges || cadeado) ? `<div class="meta">${badges}${cadeado}</div>` : '';
   const nota = i.n != null ? `<div class="nota-linha">${estrelas(i.n)}<span class="nota-num">${fmtNota(i.n)}</span></div>` : '<div class="nota-linha"></div>';
-  return `<article class="card${st.selecionados.has(i.key) ? ' selecionado' : ''}${sh ? ' shiny-' + sh : ''}" style="--tint:${c.tint}">
+  return `<article class="card${st.selecionados.has(i.key) ? ' selecionado' : ''}" style="--tint:${c.tint}">
     <button class="open" type="button" data-key="${esc(i.key)}" aria-label="Abrir ${esc(i.t)}">
       <div class="cover${capa ? ' has-img' : ''}">${capa ? '' : `<span class="cat-pad">${esc(c.label)}</span>`}${capaHTML(capa)}<span class="ini" aria-hidden="true">${esc(i.t.charAt(0).toUpperCase())}</span><span class="dot-status${s2 === 'Platinado' ? ' brilho' : ''}${jaSaiu(i) ? ' saiu' : ''}" style="--c:${jaSaiu(i) ? '#ffc93c' : (STATUS_COR[s2] || '#7b8190')}" title="${jaSaiu(i) ? 'Já saiu: atualize o status' : esc(s2)}" role="img" aria-label="${jaSaiu(i) ? 'Já saiu' : 'Status: ' + esc(s2)}"></span>${i.n != null ? `<span class="nota-capa"><span class="est">★</span>${fmtNota(i.n)}</span>` : ''}</div>
       <div class="body">
@@ -2724,13 +2607,12 @@ function preencherSheet(key){
   const c = CATS[i.c];
   const opts = [...new Set([...c.opts, atual(i)])];
   const capa = capaDe(i);
-  const sh = tipoShiny(i);
   const sheet = document.getElementById('sheet');
   sheet.className = 'sheet';
   sheet.style.setProperty('--modal-tint', c.tint);
   sheet.innerHTML = `
     <div class="det">
-      <div class="flip-card${sh ? ' shiny-' + sh : ''}" id="det-flip">
+      <div class="flip-card" id="det-flip">
         <div class="flip-inner">
           <div class="flip-face flip-front">
             <div class="cover${capa ? ' has-img' : ''}">${capaHTML(capa, true)}<span class="ini" aria-hidden="true">${esc(i.t.charAt(0).toUpperCase())}</span></div>
@@ -2777,16 +2659,8 @@ function preencherSheet(key){
   const flipCard = document.getElementById('det-flip');
   const flipFront = flipCard.querySelector('.flip-front');
   const ta = document.getElementById('notas-item');
-  const resetFlipTilt = () => {
-    flipCard.classList.remove('is-tilting');
-    flipCard.style.removeProperty('--rx');
-    flipCard.style.removeProperty('--ry');
-    flipCard.style.removeProperty('--gx');
-    flipCard.style.removeProperty('--gy');
-  };
   const toggleFlip = (forcar) => {
     const on = typeof forcar === 'boolean' ? forcar : !flipCard.classList.contains('is-flipped');
-    if (on) resetFlipTilt();
     flipCard.classList.toggle('is-flipped', on);
     if (on) setTimeout(() => ta.focus(), 260);
     else ta.blur();
@@ -2802,22 +2676,6 @@ function preencherSheet(key){
     flipStartX = null;
     if (Math.abs(dx) >= 40) toggleFlip();
   });
-  flipFront.addEventListener('pointermove', e => {
-    if (prefs.shiny === false || flipCard.classList.contains('is-flipped')) return;
-    if (![...flipCard.classList].some(cl => cl.startsWith('shiny-'))) return;
-    const r = flipFront.getBoundingClientRect();
-    if (!r.width || !r.height) return;
-    const nx = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
-    const ny = Math.max(0, Math.min(1, (e.clientY - r.top) / r.height));
-    flipCard.style.setProperty('--rx', ((0.5 - ny) * 22).toFixed(2) + 'deg');
-    flipCard.style.setProperty('--ry', ((nx - 0.5) * 22).toFixed(2) + 'deg');
-    flipCard.style.setProperty('--gx', (nx * 100).toFixed(1) + '%');
-    flipCard.style.setProperty('--gy', (ny * 100).toFixed(1) + '%');
-    flipCard.classList.add('is-tilting');
-  }, {passive: true});
-  flipFront.addEventListener('pointerleave', resetFlipTilt);
-  flipFront.addEventListener('pointercancel', resetFlipTilt);
-  flipFront.addEventListener('pointerup', resetFlipTilt);
   flipFront.addEventListener('click', () => {
     if (!flipCard.classList.contains('is-flipped')) toggleFlip(true);
   });
@@ -2837,8 +2695,6 @@ function preencherSheet(key){
   criarPeekRating(document.getElementById('det-rating'), i.n, v => {
     edicoes[key] = {...(edicoes[key] || {}), n: v};
     gravarEdicoes(); recarregarItens(); render();
-    const novoTipo = tipoShiny(ITEMS.find(x => x.key === key));
-    aplicarClasseShiny(flipCard, novoTipo, !!novoTipo);
     toast(v != null ? `Nota: ${NOTA_TXT(v)}` : 'Nota removida.');
   });
   const tr = document.querySelector('[data-travar]');
@@ -2855,8 +2711,6 @@ function preencherSheet(key){
   document.getElementById('st-sel').addEventListener('change', e => {
     definirStatus(key, e.target.value);
     render();
-    const novoTipo = tipoShiny(ITEMS.find(x => x.key === key));
-    aplicarClasseShiny(flipCard, novoTipo, !!novoTipo);
     toast(`Status atualizado para ${e.target.value.toLowerCase()}.`);
   });
   melhorarSelects(sheet);
@@ -2915,8 +2769,6 @@ function abrir(key, origemEl){
         sheet.style.opacity = '';
         sheet.style.transform = '';
         m.classList.remove('morph-open');
-        const shT = tipoShiny(ITEMS.find(x => x.key === key));
-        if (shT) aplicarClasseShiny(flipCard, shT, true);
       };
       const onEnd = e => { if (e.target === ghost && e.propertyName === 'transform') finalizar(); };
       ghost.addEventListener('transitionend', onEnd);
@@ -2931,8 +2783,6 @@ function abrir(key, origemEl){
       return;
     }
   }
-  const shT = tipoShiny(ITEMS.find(x => x.key === key));
-  if (shT && flipCard) aplicarClasseShiny(flipCard, shT, true);
 }
 
 document.getElementById('grid').addEventListener('click', e => {
@@ -3700,15 +3550,6 @@ function lerConfigFirebase(txt){
 function iniciarPrefs(){
   const pm = document.getElementById('pref-meta');
   pm.checked = !!prefs.mostrarMeta;
-  const ps = document.getElementById('pref-shiny');
-  if (ps) {
-    ps.checked = prefs.shiny !== false;
-    ps.addEventListener('change', e => {
-      prefs.shiny = e.target.checked;
-      gravarJSON(PREFS_KEY, prefs);
-      render();
-    });
-  }
   document.getElementById('abrirSaude').addEventListener('click', () => {
     fecharDialogo(document.getElementById('config'));
     st.cat = 'saude'; st.grp = 'todos';
@@ -4332,7 +4173,6 @@ verificarLancamentos();
 iniciarConcluidas();
 iniciarBackup();
 iniciarMassa();
-iniciarShiny();
 iniciarVoltarTopo();
 iniciarDuelo();
 render();
