@@ -320,11 +320,21 @@ textarea.field{min-height:84px;line-height:1.45;border-radius:14px;padding:10px 
 .btn:disabled{opacity:.42;cursor:default}
 .btn[aria-pressed="true"]{background:linear-gradient(180deg,rgba(255,255,255,.28),rgba(255,255,255,.12));border-color:var(--edge-3)}
 .link{
-  font:inherit;font-size:.88rem;background:none;border:0;color:var(--ink-2);
-  text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:4px 6px;white-space:nowrap;
-  transition:color var(--dur-fast) var(--ease-out),opacity var(--dur-fast) ease;
+  font:inherit;font-size:.84rem;font-weight:500;color:var(--ink-2);
+  background:rgba(255,255,255,.05);
+  border:1px solid var(--edge);border-radius:999px;
+  padding:7px 14px;min-height:38px;cursor:pointer;white-space:nowrap;
+  text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.14);
+  transition:background-color var(--dur-fast) var(--ease-out),border-color var(--dur-fast) var(--ease-out),color var(--dur-fast) var(--ease-out),transform var(--dur-fast) var(--ease-out),opacity var(--dur-fast) ease;
 }
-.link:disabled{opacity:.38;cursor:default;text-decoration:none}
+.link:active:not(:disabled){transform:scale(.97)}
+.link:disabled{opacity:.38;cursor:default}
+.link[aria-pressed="true"]{background:rgba(255,255,255,.14);border-color:var(--edge-3);color:var(--ink)}
+.link.link-danger,
+#apagarChaves,#fb-sair,#notif-limpar,[data-remover-capa],[data-col-excluir]{
+  color:#ff9c9c;background:rgba(217,107,107,.1);border-color:rgba(217,107,107,.32);
+}
 .dot-chip{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--c);margin-right:6px;flex-shrink:0}
 
 /* dropdown tags / onde / nota */
@@ -904,7 +914,7 @@ dialog#modal.morph-open .sheet,dialog#modal.morph-close .sheet{animation:none!im
 .pr-star.is-pop{animation:prPop 280ms var(--ease-spring)}
 .pr-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:20px;font-size:.8rem;color:var(--ink-2)}
 .pr-txt{font-variant-numeric:tabular-nums}
-.pr-clear{font-size:.76rem;color:var(--ink-3);padding:0}
+.pr-clear{font-size:.74rem;min-height:26px;padding:2px 10px;color:var(--ink-2)}
 
 /* switch */
 .switch{display:flex;align-items:center;gap:10px;cursor:pointer;color:var(--ink-2);font-size:.88rem}
@@ -942,13 +952,35 @@ dialog#modal.morph-open .sheet,dialog#modal.morph-close .sheet{animation:none!im
 .sug-item b{font-size:.78rem;font-weight:600;line-height:1.25;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .sug-item small{color:var(--ink-3);font-size:.7rem}
 
-.fav-lista{display:grid;gap:4px;max-height:50vh;overflow:auto;margin-top:12px}
+.fav-lista{display:grid;gap:6px;max-height:52vh;overflow:auto;margin-top:12px;padding-right:2px}
 .fav-lista button{
-  display:flex;justify-content:space-between;gap:12px;width:100%;text-align:left;
-  padding:9px 10px;background:none;border:0;border-radius:var(--r-sm);color:var(--ink);font:inherit;cursor:pointer;
-  transition:background-color var(--dur-fast) var(--ease-out);
+  display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;text-align:left;
+  padding:9px 12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.09);
+  border-radius:12px;color:var(--ink-2);font:inherit;cursor:pointer;
+  transition:background-color var(--dur-fast) var(--ease-out),border-color var(--dur-fast) var(--ease-out),color var(--dur-fast) var(--ease-out),transform var(--dur-fast) var(--ease-out);
 }
-.fav-lista small{color:var(--ink-3);white-space:nowrap}
+.fav-lista button:active{transform:scale(.99)}
+.fav-lista button.is-on{
+  background:rgba(111,208,176,.14);border-color:rgba(111,208,176,.55);color:var(--ink);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.16);
+}
+.col-pick-main{display:flex;align-items:center;gap:10px;min-width:0;flex:1 1 auto}
+.col-pick-chk{
+  width:20px;height:20px;border-radius:999px;flex:none;display:grid;place-items:center;
+  border:1.5px solid var(--edge-2);background:rgba(255,255,255,.04);color:transparent;
+  transition:background-color var(--dur-fast) var(--ease-out),border-color var(--dur-fast) var(--ease-out),color var(--dur-fast) var(--ease-out),transform var(--dur-fast) var(--ease-spring);
+}
+.fav-lista button.is-on .col-pick-chk{
+  background:var(--jogo);border-color:var(--jogo);color:#06130e;transform:scale(1.04);
+}
+.col-pick-tit{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500}
+.fav-lista button.is-on .col-pick-tit{font-weight:600;color:var(--ink)}
+.col-pick-meta{display:inline-flex;align-items:center;gap:8px;flex:none}
+.col-pick-tag{
+  font-size:.7rem;font-weight:600;padding:2px 8px;border-radius:999px;
+  background:rgba(111,208,176,.22);border:1px solid rgba(111,208,176,.45);color:#aef2d8;white-space:nowrap;
+}
+.fav-lista small{color:var(--ink-3);white-space:nowrap;font-size:.76rem}
 
 /* notificações */
 .notif-lista{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:8px;max-height:60vh;overflow:auto}
@@ -1031,7 +1063,12 @@ dialog#modal.morph-open .sheet,dialog#modal.morph-close .sheet{animation:none!im
   #dueloBtn:hover:not(:disabled) svg{transform:scale(1.08)}
   .duelo-card:hover:not(:disabled){transform:translateY(-3px);border-color:var(--edge-3)}
   .to-top.on:hover{transform:translateY(-2px) scale(1.04)}
-  .link:hover:not(:disabled){color:var(--ink)}
+  .link:hover:not(:disabled){color:var(--ink);background:rgba(255,255,255,.12);border-color:var(--edge-2)}
+  .link.link-danger:hover:not(:disabled),
+  #apagarChaves:hover:not(:disabled),#fb-sair:hover:not(:disabled),#notif-limpar:hover:not(:disabled),
+  [data-remover-capa]:hover:not(:disabled),[data-col-excluir]:hover:not(:disabled){
+    color:#ffd0d0;background:rgba(217,107,107,.2);border-color:rgba(217,107,107,.52);
+  }
   .sug button:hover,.sug button:focus-visible{background:rgba(255,255,255,.09)}
   .card:hover{transform:translateY(-2px);border-color:var(--edge-2);box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 18px 34px -18px rgba(0,0,0,.92)}
   .card:hover .cover .fg{transform:scale(1.025)}
@@ -1039,7 +1076,8 @@ dialog#modal.morph-open .sheet,dialog#modal.morph-close .sheet{animation:none!im
   .acc-head:hover{background:rgba(255,255,255,.04)}
   .sheet .x:hover{background:rgba(255,255,255,.15);color:var(--ink)}
   .sug-item:hover,.sug-item:focus-visible{border-color:var(--edge-2);background:rgba(255,255,255,.09)}
-  .fav-lista button:hover,.fav-lista button:focus-visible{background:rgba(255,255,255,.09)}
+  .fav-lista button:hover,.fav-lista button:focus-visible{background:rgba(255,255,255,.09);border-color:var(--edge-2);color:var(--ink)}
+  .fav-lista button.is-on:hover,.fav-lista button.is-on:focus-visible{background:rgba(111,208,176,.22);border-color:rgba(111,208,176,.75)}
   .notif-corpo:not([disabled]):hover{background:rgba(255,255,255,.08);border-color:var(--edge-2)}
   .csel-trigger:hover:not(:disabled){border-color:var(--edge-3)}
   .csel-opt:hover{background:rgba(255,255,255,.08);color:var(--ink)}
@@ -1116,7 +1154,7 @@ dialog#modal.morph-open .sheet,dialog#modal.morph-close .sheet{animation:none!im
   #barra .busca{padding:6px 13px;font-size:.83rem}
   .csel-trigger{min-height:36px;padding:6px 12px;font-size:.82rem}
   .csel-opt{min-height:36px;padding:6px 10px;font-size:.84rem}
-  #limparFiltros,#colListaLimpar{grid-column:1;justify-self:start;align-self:center;min-height:32px;font-size:.8rem}
+  #limparFiltros,#colListaLimpar{grid-column:1;justify-self:start;align-self:center;min-height:36px;padding:6px 12px;font-size:.8rem}
   #selecionarBtn,#colListaReordBtn{grid-column:2}
   .count{margin:12px 2px 0;font-size:.82rem}
   .grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}
@@ -4931,13 +4969,22 @@ function renderColItens(){
   const q = document.getElementById('colBusca').value.trim();
   const c = colecoes.find(x => x.id === colItensAtual);
   if (!c) return;
+  const titEl = document.getElementById('col-itens-titulo');
+  if (titEl) titEl.textContent = `Mídias da coleção (${c.itens.length})`;
   const no = new Set(c.itens);
   const itens = ITEMS.filter(i => !q || (q.startsWith('#')
     ? (i.tags || []).some(t => casaTexto(t, q.slice(1)))
     : casaTexto(i.t, q))).slice(0, 120);
-  document.getElementById('colLista').innerHTML = itens.length
-    ? itens.map(i => `<button type="button" data-col-item="${esc(i.key)}"><span>${no.has(i.key) ? '★' : '☆'} ${esc(i.t)}</span><small>${esc(CATS[i.c].label)}</small></button>`).join('')
+  const listaEl = document.getElementById('colLista');
+  const scrollTop = listaEl.scrollTop;
+  const chkSvg = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>';
+  listaEl.innerHTML = itens.length
+    ? itens.map(i => {
+        const em = no.has(i.key);
+        return `<button type="button" class="${em ? 'is-on' : ''}" aria-pressed="${em ? 'true' : 'false'}" data-col-item="${esc(i.key)}"><span class="col-pick-main"><span class="col-pick-chk" aria-hidden="true">${em ? chkSvg : ''}</span><span class="col-pick-tit">${esc(i.t)}</span></span><span class="col-pick-meta">${em ? '<span class="col-pick-tag">Na coleção</span>' : ''}<small>${esc(CATS[i.c].label)}</small></span></button>`;
+      }).join('')
     : '<p class="hint">Nenhuma mídia encontrada.</p>';
+  listaEl.scrollTop = scrollTop;
 }
 function abrirColItensDlg(id){
   colItensAtual = id;
