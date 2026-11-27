@@ -3596,20 +3596,25 @@ function abrirNovo(){ abrirForm(null); }
 
 function abrirForm(key){
   const i = key ? ITEMS.find(x => x.key === key) : null;
+  const colAlvo = (!i && st.cat === 'colecoes' && colUI.aberta) ? (colecoes.find(x => x.id === colUI.aberta) || null) : null;
+  const catPadrao = i ? i.c : (colAlvo && CATS[colAlvo.grupo] ? colAlvo.grupo : (['jogo','audiovisual','livro'].includes(st.cat) ? st.cat : 'jogo'));
   const modal = document.getElementById('modal');
   if (modal.open) modal.close();
   const d = document.getElementById('novo');
   d.innerHTML = `
     <div class="sheet">
       <div class="head">
-        <h2 id="n-title">${i ? 'Editar mídia' : 'Adicionar mídia'}</h2>
+        <div>
+          <h2 id="n-title">${i ? 'Editar mídia' : 'Adicionar mídia'}</h2>
+          ${colAlvo ? `<p class="hint" style="margin:4px 0 0">Será adicionada à coleção “${esc(colAlvo.nome)}”.</p>` : ''}
+        </div>
         <button class="x" type="button" data-fechar-novo aria-label="Fechar">✕</button>
       </div>
       <div class="novo-grid">
         <label class="full">Título<input id="n-t" class="field" type="text" autocomplete="off" value="${esc(i ? i.t : '')}"></label>
         <div id="n-sug" class="sugestoes full" hidden></div>
         <label>Categoria<select id="n-c" class="field">
-          ${Object.entries(CATS).filter(([k]) => k !== 'todos').map(([k, c]) => `<option value="${k}"${(i ? i.c : 'jogo') === k ? ' selected' : ''}>${esc(c.label)}</option>`).join('')}
+          ${Object.entries(CATS).filter(([k]) => k !== 'todos').map(([k, c]) => `<option value="${k}"${catPadrao === k ? ' selected' : ''}>${esc(c.label)}</option>`).join('')}
         </select></label>
         <label>Tipo<select id="n-tipo" class="field"></select></label>
         <label>Status<select id="n-s" class="field"></select></label>
@@ -3642,7 +3647,7 @@ function abrirForm(key){
     if (r.data && /^\d{4}-\d{2}-\d{2}$/.test(r.data) && !document.getElementById('n-l').value) document.getElementById('n-l').value = r.data;
     document.getElementById('n-sug').hidden = true;
   });
-  document.getElementById('n-salvar').addEventListener('click', () => salvarItem(key));
+  document.getElementById('n-salvar').addEventListener('click', () => salvarItem(key, colAlvo ? colAlvo.id : null));
   atualizarCamposForm(i);
   criarPeekRating(document.getElementById('n-rating'), i && i.n != null ? i.n : null, v => {
     document.getElementById('n-n').value = v == null ? '' : String(v);
@@ -3685,7 +3690,7 @@ function atualizarCamposForm(i){
   melhorarSelects(document.getElementById('novo'));
 }
 
-function salvarItem(key){
+function salvarItem(key, colDestinoId = null){
   const erro = msg => { document.getElementById('n-erro').textContent = msg; };
   const t = document.getElementById('n-t').value.trim();
   const c = document.getElementById('n-c').value;
@@ -3717,18 +3722,27 @@ function salvarItem(key){
     travado: key && edicoes[key] ? !!edicoes[key].travado : false,
     notas: key && edicoes[key] && edicoes[key].notas != null ? edicoes[key].notas : null
   };
+  let colAdicionada = null;
   if (key) {
     edicoes[key] = dados;
   } else {
     const nk = 'n' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
     novos.push({key: nk, ...dados, adicionadoEm: Date.now()});
     gravarJSON(NOVOS_KEY, novos);
+    if (colDestinoId) {
+      const col = colecoes.find(x => x.id === colDestinoId);
+      if (col && !col.itens.includes(nk)) {
+        col.itens.push(nk);
+        gravarJSON(COLECOES_KEY, colecoes);
+        colAdicionada = col.nome;
+      }
+    }
   }
   gravarEdicoes();
   recarregarItens();
   fecharDialogo(document.getElementById('novo'));
   render();
-  toast(key ? 'Mídia atualizada.' : `“${t}” adicionado. Busque a capa em Configurações.`);
+  toast(key ? 'Mídia atualizada.' : (colAdicionada ? `“${t}” adicionado à coleção “${colAdicionada}”.` : `“${t}” adicionado.`));
 }
 
 function removerItem(key){
