@@ -841,12 +841,23 @@ dialog#modal.morph-open .sheet,dialog#modal.morph-close .sheet{animation:none!im
   touch-action:manipulation;
   transition:transform 160ms var(--hb-ease-out),background-color 160ms ease,border-color 160ms ease,box-shadow var(--hb-release) var(--hb-ease-out);
 }
+.hold-button[hidden]{display:none}
+.hold-button--warn{
+  --hb-bg:rgba(232,178,90,.16);
+  --hb-fill:#d97706;
+  --hb-text:#fbd38d;
+  --hb-fill-text:#ffffff;
+  border-color:rgba(232,178,90,.42);
+}
 @media (hover:hover) and (pointer:fine){
   .hold-button:not(:disabled):hover{background:color-mix(in srgb,var(--hb-bg) 82%,#fff);border-color:rgba(220,38,38,.55)}
+  .hold-button--warn:not(:disabled):hover{border-color:rgba(217,119,6,.62)}
 }
 .hold-button[data-phase='holding'][data-input='pointer']{transform:scale(var(--hb-press))}
 .hold-button[data-glow='true'][data-phase='holding'],
 .hold-button[data-glow='true'][data-phase='done']{border-color:rgba(220,38,38,.75);box-shadow:var(--hb-glow)}
+.hold-button--warn[data-glow='true'][data-phase='holding'],
+.hold-button--warn[data-glow='true'][data-phase='done']{border-color:rgba(217,119,6,.82)}
 .hold-button[data-glow='true'][data-phase='holding']{
   transition:transform 160ms var(--hb-ease-out),background-color 160ms ease,border-color 160ms ease,box-shadow var(--hb-hold) linear;
 }
@@ -1187,7 +1198,7 @@ dialog#modal.morph-open .sheet,dialog#modal.morph-close .sheet{animation:none!im
   .keys-grid{grid-template-columns:1fr}
   .keys-actions{flex-direction:column;align-items:stretch}
   .keys-actions .group{width:100%}
-  .keys-actions .group .btn,.keys-actions .group .link{flex:1 1 auto;min-height:42px}
+  .keys-actions .group .btn,.keys-actions .group .link,.keys-actions .group .hold-button{flex:1 1 auto;min-height:42px}
   .fonte{gap:6px 10px}
   .fonte .setas .pill{min-width:40px;min-height:38px}
   .fonte .on{min-width:0}
@@ -3101,9 +3112,11 @@ function inicializarHoldButton(btn, opts = {}){
   const EASE_OUT = t => 1 - Math.pow(1 - t, 3);
   const trashSvg = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>';
   const checkSvg = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>';
+  const idleIcon = opts.icon !== undefined ? opts.icon : trashSvg;
+  const doneIcon = opts.doneIcon !== undefined ? opts.doneIcon : checkSvg;
   const labelsHtml = `
-    <span class="hold-button__idle"><span class="hold-button__icon">${trashSvg}</span><span>${esc(label)}</span></span>
-    <span class="hold-button__done"><span class="hold-button__icon">${checkSvg}</span><span>${esc(doneLabel)}</span></span>`;
+    <span class="hold-button__idle"><span class="hold-button__icon">${idleIcon}</span><span>${esc(label)}</span></span>
+    <span class="hold-button__done"><span class="hold-button__icon">${doneIcon}</span><span>${esc(doneLabel)}</span></span>`;
   btn.innerHTML = `
     <span class="hold-button__pulse" aria-hidden="true"></span>
     <span class="hold-button__label">${labelsHtml}</span>
@@ -3956,12 +3969,50 @@ function abrirForm(key){
         <label class="full">Tags (separadas por vírgula)<input id="n-tags" class="field" type="text" placeholder="ex.: favorito, co-op" value="${esc(i && i.tags ? i.tags.join(', ') : '')}"></label>
       </div>
       <p class="erro" id="n-erro" role="alert"></p>
-      <div class="keys-actions"><div class="group"><button class="btn" id="n-salvar" type="button">${i ? 'Salvar alterações' : 'Adicionar'}</button></div></div>
+      <div class="keys-actions"><div class="group">
+        <button class="btn" id="n-salvar" type="button">${i ? 'Salvar alterações' : 'Adicionar'}</button>
+        <button class="hold-button hold-button--warn" id="n-forcar" type="button" hidden></button>
+      </div></div>
     </div>`;
+  const msgDup = 'Já existe uma mídia com esse título nesta categoria.';
+  const plusSvg = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>';
+  const montarForcar = () => {
+    const atualBtn = document.getElementById('n-forcar');
+    if (!atualBtn) return;
+    const novoBtn = atualBtn.cloneNode(false);
+    atualBtn.replaceWith(novoBtn);
+    novoBtn.hidden = false;
+    inicializarHoldButton(novoBtn, {
+      label: i ? 'Salvar mesmo assim' : 'Adicionar mesmo assim',
+      doneLabel: i ? 'Salvo' : 'Adicionado',
+      icon: plusSvg,
+      holdTime: 1600,
+      releaseTime: 200,
+      onTap: () => toast('Segure o botão para confirmar.'),
+      onHold: () => setTimeout(() => { if (!salvarItem(key, colAlvo ? colAlvo.id : null, true)) montarForcar(); }, 320)
+    });
+  };
+  let dupAtiva = false;
+  const atualizarDuplicada = () => {
+    const t = document.getElementById('n-t').value.trim();
+    const c = document.getElementById('n-c').value;
+    const dup = !!t && ITEMS.some(o => o.key !== key && o.c === c && o.t.trim().toLowerCase() === t.toLowerCase());
+    const errEl = document.getElementById('n-erro');
+    const forcarBtn = document.getElementById('n-forcar');
+    if (dup) {
+      if (!errEl.textContent || errEl.textContent === msgDup) errEl.textContent = msgDup;
+      if (!dupAtiva || forcarBtn.hidden) montarForcar();
+      dupAtiva = true;
+    } else {
+      if (errEl.textContent === msgDup) errEl.textContent = '';
+      forcarBtn.hidden = true;
+      dupAtiva = false;
+    }
+  };
   d.querySelector('[data-fechar-novo]').addEventListener('click', () => fecharDialogo(d));
-  document.getElementById('n-c').addEventListener('change', () => { atualizarCamposForm(i); buscarSugestoes(); });
+  document.getElementById('n-c').addEventListener('change', () => { atualizarCamposForm(i); buscarSugestoes(); atualizarDuplicada(); });
   document.getElementById('n-tipo').addEventListener('change', buscarSugestoes);
-  document.getElementById('n-t').addEventListener('input', buscarSugestoes);
+  document.getElementById('n-t').addEventListener('input', () => { buscarSugestoes(); atualizarDuplicada(); });
   document.getElementById('n-sug').addEventListener('click', e => {
     const b = e.target.closest('[data-sug]'); if (!b) return;
     const r = ultimasSugestoes[Number(b.dataset.sug)]; if (!r) return;
@@ -3970,12 +4021,14 @@ function abrirForm(key){
     if (r.g != null) document.getElementById('n-g').value = r.g;
     if (r.data && /^\d{4}-\d{2}-\d{2}$/.test(r.data) && !document.getElementById('n-l').value) document.getElementById('n-l').value = r.data;
     document.getElementById('n-sug').hidden = true;
+    atualizarDuplicada();
   });
   document.getElementById('n-salvar').addEventListener('click', () => salvarItem(key, colAlvo ? colAlvo.id : null));
   atualizarCamposForm(i);
   criarPeekRating(document.getElementById('n-rating'), i && i.n != null ? i.n : null, v => {
     document.getElementById('n-n').value = v == null ? '' : String(v);
   });
+  atualizarDuplicada();
   if (!d.open) d.showModal();
   document.getElementById('n-t').focus();
 }
@@ -4014,12 +4067,12 @@ function atualizarCamposForm(i){
   melhorarSelects(document.getElementById('novo'));
 }
 
-function salvarItem(key, colDestinoId = null){
-  const erro = msg => { document.getElementById('n-erro').textContent = msg; };
+function salvarItem(key, colDestinoId = null, forcarDuplicada = false){
+  const erro = msg => { document.getElementById('n-erro').textContent = msg; return false; };
   const t = document.getElementById('n-t').value.trim();
   const c = document.getElementById('n-c').value;
   if (!t) return erro('Informe o título.');
-  if (ITEMS.some(o => o.key !== key && o.c === c && o.t.toLowerCase() === t.toLowerCase())) return erro('Já existe uma mídia com esse título nesta categoria.');
+  if (!forcarDuplicada && ITEMS.some(o => o.key !== key && o.c === c && o.t.trim().toLowerCase() === t.toLowerCase())) return erro('Já existe uma mídia com esse título nesta categoria.');
   const nv = document.getElementById('n-n').value;
   const n = nv === '' ? null : parseFloat(nv);
   if (n !== null && (isNaN(n) || n < 1 || n > 10)) return erro('A nota precisa estar entre 1 e 10.');
@@ -4067,6 +4120,7 @@ function salvarItem(key, colDestinoId = null){
   fecharDialogo(document.getElementById('novo'));
   render();
   toast(key ? 'Mídia atualizada.' : (colAdicionada ? `“${t}” adicionado à coleção “${colAdicionada}”.` : `“${t}” adicionado.`));
+  return true;
 }
 
 function removerItem(key){
