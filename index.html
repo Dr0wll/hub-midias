@@ -48,7 +48,7 @@
   color-scheme:dark;
 }
 *,*::before,*::after{box-sizing:border-box}
-html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px);-webkit-tap-highlight-color:transparent}
+html{height:100%;overflow-x:clip;scroll-padding-top:env(safe-area-inset-top,0px);-webkit-tap-highlight-color:transparent}
 body{
   margin:0;min-height:100%;background:var(--bg);color:var(--ink);
   font-family:"Onest",system-ui,-apple-system,"Segoe UI",sans-serif;
@@ -433,12 +433,12 @@ textarea.field{min-height:84px;line-height:1.45;border-radius:14px;padding:10px 
 #massaCont{font-size:.84rem;font-weight:600;color:var(--ink-2);margin-right:2px;font-variant-numeric:tabular-nums}
 
 /* concluídas por mês */
-.concl-view{grid-column:1/-1;display:grid;gap:14px}
-.concl-bloco{padding:20px 22px;overflow:visible;position:relative;z-index:2}
+.concl-view{grid-column:1/-1;display:grid;gap:14px;min-width:0}
+.concl-bloco{padding:20px 22px;overflow:visible;position:relative;z-index:2;min-width:0}
 .concl-bloco h3{margin:0;font-size:1rem;font-weight:600;color:var(--ink)}
 .concl-cab{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
 .concl-filtros{display:flex;gap:8px;flex-wrap:wrap}
-.concl-ultima{margin:12px 0 0;color:var(--ink-2);font-size:.88rem}
+.concl-ultima{margin:12px 0 0;color:var(--ink-2);font-size:.88rem;overflow-wrap:anywhere}
 @keyframes sgDraw{to{stroke-dashoffset:0}}
 @keyframes sgFade{from{opacity:0}to{opacity:1}}
 .sg-wrap{position:relative;margin-top:14px;--sg-color:var(--jogo)}
@@ -474,12 +474,12 @@ textarea.field{min-height:84px;line-height:1.45;border-radius:14px;padding:10px 
   pointer-events:none;z-index:5;padding:6px 11px;border-radius:999px;
   background:linear-gradient(160deg,rgba(24,28,40,.96),rgba(12,15,22,.98));
   border:1px solid var(--edge-2);box-shadow:var(--chamfer),0 10px 24px -10px rgba(0,0,0,.85);
-  font-size:.78rem;white-space:nowrap;color:var(--ink);opacity:0;
+  font-size:.78rem;white-space:nowrap;max-width:calc(100% - 8px);color:var(--ink);opacity:0;
   transition:opacity 160ms ease,left 180ms var(--ease-out),top 180ms var(--ease-out);
 }
 .sg-tip.on{opacity:1}
 .sg-tip small{color:var(--ink-3);margin-left:6px;font-variant-numeric:tabular-nums}
-.concl-mes-wrap{display:grid;gap:10px;animation:popIn 200ms var(--ease-out)}
+.concl-mes-wrap{display:grid;gap:10px;min-width:0;animation:popIn 200ms var(--ease-out)}
 .concl-mes-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 2px}
 .concl-mes-head h4{margin:0;font-size:.96rem;font-weight:600;color:var(--ink);display:inline-flex;align-items:center;gap:8px}
 .concl-mes-head h4 span{color:var(--ink-3);font-size:.78rem;padding:1px 8px;border-radius:99px;background:rgba(255,255,255,.08);font-variant-numeric:tabular-nums}
@@ -4374,7 +4374,16 @@ function iniciarGraficoConcl(meses, pts, animar){
     const p = pts[idx];
     if (!p || !tip || !guide) return;
     tip.innerHTML = `<b>${esc(MESES_NOME[idx])}</b><small>${meses[idx]} ${meses[idx] === 1 ? 'item' : 'itens'}</small>`;
-    tip.style.left = (p.x / 720 * 100).toFixed(2) + '%';
+    const wrapW = wrap.clientWidth || 0;
+    const tipW = tip.offsetWidth || 0;
+    if (wrapW > 0 && tipW > 0) {
+      const half = tipW / 2, pad = 4;
+      const rawX = (p.x / 720) * wrapW;
+      const clampedX = Math.max(half + pad, Math.min(wrapW - half - pad, rawX));
+      tip.style.left = clampedX.toFixed(1) + 'px';
+    } else {
+      tip.style.left = (p.x / 720 * 100).toFixed(2) + '%';
+    }
     tip.style.top = (p.y / 220 * 100).toFixed(2) + '%';
     tip.classList.add('on');
     guide.setAttribute('x1', p.x.toFixed(1));
