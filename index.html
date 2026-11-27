@@ -35,6 +35,7 @@
   --jogo:#6fd0b0;
   --av:#e8b25a;
   --livro:#a196ea;
+  --col:#5cc8f2;
   --danger:#d96b6b;
   --r:16px;
   --r-sm:10px;
@@ -283,9 +284,14 @@ h1{
 .pill-lbl-h{position:absolute;left:0;top:100%;color:var(--ink)}
 .pill-dot{
   position:absolute;left:50%;bottom:3px;width:4px;height:4px;border-radius:50%;
-  background:var(--pill-dot-c,var(--jogo));opacity:0;transform:translateX(-50%) scale(0);
+  background:var(--pill-dot-c,var(--jogo));box-shadow:0 0 8px color-mix(in srgb,var(--pill-dot-c,var(--jogo)) 75%,transparent);
+  opacity:0;transform:translateX(-50%) scale(0);
   transition:opacity 200ms ease,transform 240ms var(--ease-spring);pointer-events:none;
 }
+.pill[data-cat="jogo"]{--pill-dot-c:var(--jogo)}
+.pill[data-cat="audiovisual"]{--pill-dot-c:var(--av)}
+.pill[data-cat="livro"]{--pill-dot-c:var(--livro)}
+.pill[data-cat="colecoes"]{--pill-dot-c:var(--col)}
 .pill[aria-pressed="true"]{color:var(--ink);font-weight:600}
 .pill[aria-pressed="true"] .pill-dot{opacity:1;transform:translateX(-50%) scale(1)}
 .pill:active:not(:disabled){transform:scale(.97)}
@@ -367,7 +373,7 @@ textarea.field{min-height:84px;line-height:1.45;border-radius:14px;padding:10px 
 }
 .card:focus-within{border-color:var(--edge-2)}
 .card.selecionado{border-color:var(--jogo);box-shadow:inset 0 0 0 2px var(--jogo),0 14px 28px -18px rgba(0,0,0,.85)}
-.open{all:unset;display:block;width:100%;cursor:pointer;border-radius:var(--r)}
+.open{all:unset;display:block;width:100%;cursor:pointer;border-radius:var(--r);user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 .cover{
   margin:8px;aspect-ratio:3/4;border-radius:var(--r-img);position:relative;
   display:grid;place-items:center;overflow:hidden;border:0;
@@ -411,12 +417,15 @@ textarea.field{min-height:84px;line-height:1.45;border-radius:14px;padding:10px 
   box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 6px 14px -6px rgba(0,0,0,.85);
   color:var(--ink-2);font:inherit;font-size:.68rem;font-weight:700;font-variant-numeric:tabular-nums;
   cursor:pointer;line-height:1;
+  opacity:0;pointer-events:none;transform:scale(.86);
   transition:opacity var(--dur-fast) var(--ease-out),background-color var(--dur-fast) var(--ease-out),border-color var(--dur-fast) var(--ease-out),color var(--dur-fast) var(--ease-out),transform var(--dur-fast) var(--ease-out);
 }
 .card-col-btn svg{display:block;flex:none}
 .card-col-btn:active{transform:scale(.92)}
+.card.is-peek .card-col-btn{opacity:1;pointer-events:auto;transform:scale(1)}
 .card-col-btn.is-in{
-  background:rgba(16,42,34,.84);border-color:rgba(111,208,176,.65);color:var(--jogo);
+  background:color-mix(in srgb,var(--col) 24%,rgba(10,14,24,.88));
+  border-color:color-mix(in srgb,var(--col) 70%,transparent);color:var(--col);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 6px 14px -6px rgba(0,0,0,.85);
 }
 .body{padding:4px 12px 12px}
@@ -532,7 +541,7 @@ textarea.field{min-height:84px;line-height:1.45;border-radius:14px;padding:10px 
 .col-txt b{overflow-wrap:anywhere;font-size:.94rem;line-height:1.25}
 .col-card small{color:var(--ink-3);font-size:.78rem;font-variant-numeric:tabular-nums}
 .col-prog{height:4px;border-radius:99px;background:rgba(255,255,255,.09);overflow:hidden;margin-top:4px}
-.col-prog span{display:block;height:100%;border-radius:inherit;background:var(--jogo);transition:width 360ms var(--ease-out)}
+.col-prog span{display:block;height:100%;border-radius:inherit;background:var(--col);transition:width 360ms var(--ease-out)}
 .col-stats{display:grid;gap:10px;padding:12px 14px;border-radius:var(--r)}
 .col-stat-pills{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .col-stat-pill{
@@ -1101,7 +1110,7 @@ dialog#modal.morph-open .sheet,dialog#modal.morph-close .sheet{animation:none!im
   .card:hover{transform:translateY(-2px);border-color:var(--edge-2);box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 18px 34px -18px rgba(0,0,0,.92)}
   .card:hover .cover .fg{transform:scale(1.025)}
   .card-col-btn:hover{background:rgba(24,30,46,.92);border-color:var(--edge-3);color:var(--ink)}
-  .card-col-btn.is-in:hover{background:rgba(20,56,44,.94);border-color:var(--jogo);color:var(--jogo)}
+  .card-col-btn.is-in:hover{background:color-mix(in srgb,var(--col) 34%,rgba(10,14,24,.94));border-color:var(--col);color:var(--col)}
   .col-card:hover,.col-card:focus-visible{border-color:var(--edge-2);background:linear-gradient(160deg,rgba(255,255,255,.1),rgba(20,23,33,.82))}
   .acc-head:hover{background:rgba(255,255,255,.04)}
   .sheet .x:hover{background:rgba(255,255,255,.15);color:var(--ink)}
@@ -1116,8 +1125,7 @@ dialog#modal.morph-open .sheet,dialog#modal.morph-close .sheet{animation:none!im
   .col-fpill:hover:not([aria-pressed="true"]){border-color:var(--edge-2);color:var(--ink)}
 }
 @media (hover:hover) and (pointer:fine){
-  .card-col-btn:not(.is-in){opacity:0}
-  .card:hover .card-col-btn,.card:focus-within .card-col-btn{opacity:1}
+  .card:hover .card-col-btn,.card:focus-within .card-col-btn{opacity:1;pointer-events:auto;transform:scale(1)}
 }
 
 /* tablet */
@@ -1200,7 +1208,7 @@ dialog#modal.morph-open .sheet,dialog#modal.morph-close .sheet{animation:none!im
   .dot-status{width:8px;height:8px;left:5px;bottom:5px}
   .nota-capa{font-size:.6rem;right:5px;bottom:5px;height:18px;padding:0 5px}
   .nota-capa .est{font-size:.62rem}
-  .card-col-btn{top:9px;right:9px;min-width:24px;height:24px;padding:0 5px;font-size:.62rem;opacity:.92}
+  .card-col-btn{top:9px;right:9px;min-width:24px;height:24px;padding:0 5px;font-size:.62rem}
   .card-col-btn svg{width:12px;height:12px}
   .data-lanc{font-size:.72rem}
   .massa{bottom:calc(10px + env(safe-area-inset-bottom,0px));width:calc(100vw - 20px);max-width:none;padding:10px;border-radius:20px}
@@ -2681,7 +2689,7 @@ function renderStats(){
     if (colAberta) {
       const s = statsColecao(colAberta);
       titulo = colAberta.nome;
-      corCat = {jogo:'var(--jogo)', audiovisual:'var(--av)', livro:'var(--livro)', misto:'var(--jogo)'}[colAberta.grupo] || 'var(--jogo)';
+      corCat = {jogo:'var(--jogo)', audiovisual:'var(--av)', livro:'var(--livro)', misto:'var(--col)'}[colAberta.grupo] || 'var(--col)';
       pct = s.pct;
       media = s.media || '—';
     } else {
@@ -2691,7 +2699,7 @@ function renderStats(){
       const conclCol = baseCol.filter(i => grupo(i) === 'concluido').length;
       const notasCol = baseCol.map(i => i.n).filter(n => n != null);
       titulo = 'Coleções';
-      corCat = 'var(--jogo)';
+      corCat = 'var(--col)';
       pct = totalCol ? Math.round(conclCol / totalCol * 100) : 0;
       media = notasCol.length ? (notasCol.reduce((a, b) => a + b, 0) / notasCol.length).toFixed(1).replace('.', ',') : '—';
     }
@@ -3481,9 +3489,47 @@ function abrir(key, origemEl){
   }
 }
 
-document.getElementById('grid').addEventListener('click', e => {
+let cardPeekTimer = 0, cardPeekStart = null, cardPeekSuppressClick = 0;
+function limparCardPeek(exceto){
+  document.querySelectorAll('#grid .card.is-peek').forEach(el => {
+    if (el !== exceto) el.classList.remove('is-peek');
+  });
+}
+const gridEl = document.getElementById('grid');
+gridEl.addEventListener('pointerdown', e => {
+  if (e.pointerType !== 'touch' || st.sel || e.target.closest('[data-card-col]')) return;
+  const cardEl = e.target.closest('.card');
+  if (!cardEl || !cardEl.querySelector('[data-card-col]')) return;
+  clearTimeout(cardPeekTimer);
+  cardPeekStart = {x: e.clientX, y: e.clientY, el: cardEl};
+  cardPeekTimer = setTimeout(() => {
+    cardPeekTimer = 0;
+    limparCardPeek(cardEl);
+    cardEl.classList.add('is-peek');
+    cardPeekSuppressClick = Date.now() + 700;
+    if (navigator.vibrate) try { navigator.vibrate(12); } catch {}
+  }, 400);
+});
+gridEl.addEventListener('pointermove', e => {
+  if (!cardPeekTimer || !cardPeekStart) return;
+  if (Math.hypot(e.clientX - cardPeekStart.x, e.clientY - cardPeekStart.y) > 10) {
+    clearTimeout(cardPeekTimer); cardPeekTimer = 0; cardPeekStart = null;
+  }
+});
+const cancelarCardPeekTouch = () => { clearTimeout(cardPeekTimer); cardPeekTimer = 0; cardPeekStart = null; };
+gridEl.addEventListener('pointerup', cancelarCardPeekTouch);
+gridEl.addEventListener('pointercancel', cancelarCardPeekTouch);
+gridEl.addEventListener('contextmenu', e => {
+  if (e.target.closest('#grid .card .open') && (cardPeekTimer || Date.now() < cardPeekSuppressClick || e.target.closest('.card.is-peek'))) e.preventDefault();
+});
+document.addEventListener('pointerdown', e => {
+  if (!e.target.closest('#grid .card.is-peek')) limparCardPeek();
+});
+gridEl.addEventListener('click', e => {
   const cb = e.target.closest('[data-card-col]');
-  if (cb) { e.stopPropagation(); abrirMidiaColDlg(cb.dataset.cardCol); return; }
+  if (cb) { limparCardPeek(); e.stopPropagation(); abrirMidiaColDlg(cb.dataset.cardCol); return; }
+  if (Date.now() < cardPeekSuppressClick) { e.preventDefault(); e.stopPropagation(); return; }
+  limparCardPeek();
   if (st.cat === 'colecoes' && colecoesClique(e)) return;
   if (st.cat === 'concluidas' && conclClique(e)) return;
   if (st.sel) { const o2 = e.target.closest('[data-key]'); if (o2) alternarSel(o2.dataset.key); return; }
@@ -4734,7 +4780,7 @@ function renderControlesColecoes(){
     const nh = b.querySelector('.n-h');
     if (nh) nh.textContent = cnt;
   });
-  const grpCor = {jogo:'var(--jogo)', audiovisual:'var(--av)', livro:'var(--livro)', misto:'#9aa1ae'};
+  const grpCor = {jogo:'var(--jogo)', audiovisual:'var(--av)', livro:'var(--livro)', misto:'var(--col)'};
   const gruposVisiveis = GRUPOS_COL.filter(([k]) => k !== 'misto' || colecoes.some(c => c.grupo === 'misto'));
   const grpSel = document.getElementById('colGrupoSel');
   if (grpSel) {
