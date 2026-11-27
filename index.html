@@ -1402,7 +1402,7 @@ function recarregarItens(){
 }
 function gravarEdicoes(){ gravarJSON(EDICOES_KEY, edicoes); }
 recarregarItens();
-const st = {cat:'jogo', grp:'todos', q:'', ord:'titulo', dir:'asc', tag:'', onde:'', notaFiltro:'', sel:false, selecionados:new Set()};
+const st = {cat:'jogo', grp:'todos', q:'', ord:'titulo', dir:'asc', tag:'', onde:'', ondeExact:false, notaFiltro:'', sel:false, selecionados:new Set()};
 const MESES = ['J','F','M','A','M','J','J','A','S','O','N','D'];
 const STATUS_POR_CAT = {
   jogo: ['Na fila','Jogando','Jogado','Zerado','Platinado','No aguardo','Abandonado'],
@@ -1417,21 +1417,78 @@ const FILTROS_POR_CAT = {
 };
 const VISTAS_KEY = 'hub-midias-vistas-v1';
 const PREFS_KEY = 'hub-midias-prefs-v1';
+const FILTRO_PADRAO = {grp:'todos', ord:'titulo', dir:'asc', q:'', tag:'', onde:'', ondeExact:false, notaFiltro:''};
 let prefs = {mostrarMeta: false, ...lerJSON(PREFS_KEY, {})};
 let vistas = lerJSON(VISTAS_KEY, {});
+if (!vistas || typeof vistas !== 'object') vistas = {};
+function sincronizarCamposToolbar(){
+  const qEl = document.getElementById('q');
+  if (qEl) {
+    qEl.value = st.tag
+      ? '#' + st.tag
+      : (st.onde ? '@' + (st.onde === '__sem__' ? 'sem' : st.onde) : (st.notaFiltro ? '*' + st.notaFiltro : st.q));
+  }
+  const ordSel = document.getElementById('ord');
+  if (ordSel) {
+    ordSel.value = st.ord;
+    sincronizarSelect(ordSel);
+  }
+}
 function salvarVista(){
-  vistas[st.grp] = {ord: st.ord, dir: st.dir, tag: st.tag, onde: st.onde, notaFiltro: st.notaFiltro, q: st.q};
+  if (!vistas.porCat || typeof vistas.porCat !== 'object') vistas.porCat = {};
+  vistas.cat = st.cat;
+  if (['jogo','audiovisual','livro','saude','todos'].includes(st.cat)) {
+    vistas.porCat[st.cat] = {
+      grp: st.grp, ord: st.ord, dir: st.dir, q: st.q,
+      tag: st.tag, onde: st.onde, ondeExact: !!st.ondeExact, notaFiltro: st.notaFiltro
+    };
+  }
+  if (typeof colUI !== 'undefined') {
+    vistas.col = {aberta: colUI.aberta || null, filtro: colUI.filtro || 'todas', ord: colUI.ord || 'manual', q: colUI.q || ''};
+  }
+  if (typeof conclUI !== 'undefined') {
+    vistas.concl = {ano: conclUI.ano || null, cat: conclUI.cat || 'todos', mes: conclUI.mes ?? null};
+  }
   gravarJSON(VISTAS_KEY, vistas);
 }
-function aplicarVista(grp){
-  const v = vistas[grp] || {ord:'titulo', dir:'asc', tag:'', onde:'', notaFiltro:'', q:''};
-  Object.assign(st, {ord: v.ord, dir: v.dir, tag: v.tag || '', onde: v.onde || '', notaFiltro: v.notaFiltro || '', q: v.q || ''});
-  document.getElementById('q').value = st.tag
-    ? '#' + st.tag
-    : (st.onde ? '@' + (st.onde === '__sem__' ? 'sem' : st.onde) : (st.notaFiltro ? '*' + st.notaFiltro : st.q));
-  const ordSel = document.getElementById('ord');
-  ordSel.value = st.ord;
-  sincronizarSelect(ordSel);
+function aplicarVistaCat(cat){
+  const catsValidas = ['jogo','audiovisual','livro','colecoes','concluidas','saude'];
+  const alvo = catsValidas.includes(cat) ? cat : 'jogo';
+  st.cat = alvo;
+  const v = (vistas.porCat && vistas.porCat[alvo]) || FILTRO_PADRAO;
+  const grpsValidos = ['todos', ...(FILTROS_POR_CAT[alvo] || []).map(x => x[0])];
+  const ordsValidos = ['titulo','nota','lancamento','conclusao','status','adicao'];
+  Object.assign(st, {
+    grp: grpsValidos.includes(v.grp) ? v.grp : 'todos',
+    ord: ordsValidos.includes(v.ord) ? v.ord : 'titulo',
+    dir: v.dir === 'desc' ? 'desc' : 'asc',
+    q: typeof v.q === 'string' ? v.q : '',
+    tag: typeof v.tag === 'string' ? v.tag : '',
+    onde: typeof v.onde === 'string' ? v.onde : '',
+    ondeExact: !!v.ondeExact,
+    notaFiltro: typeof v.notaFiltro === 'string' ? v.notaFiltro : ''
+  });
+  sincronizarCamposToolbar();
+}
+function restaurarEstadoInicial(){
+  if (vistas.col && typeof vistas.col === 'object') {
+    const existe = vistas.col.aberta && colecoes.some(c => c.id === vistas.col.aberta);
+    Object.assign(colUI, {
+      aberta: existe ? vistas.col.aberta : null,
+      filtro: ['todas','faltam','andamento','concluido'].includes(vistas.col.filtro) ? vistas.col.filtro : 'todas',
+      ord: ['manual','nota','lancamento','titulo'].includes(vistas.col.ord) ? vistas.col.ord : 'manual',
+      q: typeof vistas.col.q === 'string' ? vistas.col.q : '',
+      reordenar: false
+    });
+  }
+  if (vistas.concl && typeof vistas.concl === 'object') {
+    Object.assign(conclUI, {
+      ano: vistas.concl.ano || null,
+      cat: ['todos','jogo','audiovisual','livro'].includes(vistas.concl.cat) ? vistas.concl.cat : 'todos',
+      mes: (typeof vistas.concl.mes === 'number' && vistas.concl.mes >= 0 && vistas.concl.mes <= 11) ? vistas.concl.mes : null
+    });
+  }
+  aplicarVistaCat(vistas.cat || 'jogo');
 }
 
 const atual = i => i.s;
@@ -1899,7 +1956,9 @@ function montarCategorias(){
   ).join('');
   document.getElementById('cats').addEventListener('click', e => {
     const b = e.target.closest('[data-cat]'); if (!b) return;
-    st.cat = b.dataset.cat; st.grp = 'todos'; aplicarVista('todos'); render();
+    salvarVista();
+    aplicarVistaCat(b.dataset.cat);
+    render();
   });
 }
 function atualizarIndicador(seg, selector){
@@ -2003,16 +2062,13 @@ function montarBusca(){
     document.getElementById('tagsSug').hidden = true;
     render();
   });
-  document.getElementById('statusSel').addEventListener('change', e => { st.grp = e.target.value; aplicarVista(st.grp); render(); });
+  document.getElementById('statusSel').addEventListener('change', e => { st.grp = e.target.value; render(); });
   document.getElementById('ord').addEventListener('change', e => { st.ord = e.target.value; render(); });
   document.getElementById('ordemDir').addEventListener('click', () => { st.dir = st.dir === 'asc' ? 'desc' : 'asc'; render(); });
   document.getElementById('limparFiltros').addEventListener('click', () => {
-    Object.assign(st, {cat:'jogo', grp:'todos', q:'', ord:'titulo', dir:'asc', tag:'', onde:'', ondeExact:false, notaFiltro:''});
+    Object.assign(st, {...FILTRO_PADRAO});
+    sincronizarCamposToolbar();
     salvarVista();
-    document.getElementById('q').value = '';
-    const ordSel = document.getElementById('ord');
-    ordSel.value = 'titulo';
-    sincronizarSelect(ordSel);
     render();
   });
   document.getElementById('novoBtn').addEventListener('click', abrirNovo);
@@ -2228,7 +2284,7 @@ function renderControles(){
   const noAguardo = st.grp === 'No aguardo';
   ad.hidden = !noAguardo;
   ad.disabled = !noAguardo;
-  document.getElementById('limparFiltros').disabled = !(st.cat !== 'jogo' || st.grp !== 'todos' || st.q || st.tag || st.onde || st.notaFiltro || st.ord !== 'titulo' || st.dir !== 'asc');
+  document.getElementById('limparFiltros').disabled = !(st.grp !== 'todos' || st.q || st.tag || st.onde || st.notaFiltro || st.ord !== 'titulo' || st.dir !== 'asc');
   requestAnimationFrame(atualizarIndicadores);
 }
 
@@ -4052,6 +4108,7 @@ function colecoesClique(e){
   const fp = t.closest('[data-col-filtro]');
   if (fp) {
     colUI.filtro = fp.dataset.colFiltro;
+    salvarVista();
     document.querySelectorAll('[data-col-filtro]').forEach(b => b.setAttribute('aria-pressed', String(b === fp)));
     const c = colecoes.find(x => x.id === colUI.aberta);
     if (c) renderColBody(c);
@@ -4129,6 +4186,7 @@ function iniciarColecoes(){
   grid.addEventListener('input', e => {
     if (e.target.id === 'colFiltroBusca') {
       colUI.q = e.target.value;
+      salvarVista();
       const c = colecoes.find(x => x.id === colUI.aberta);
       if (c) renderColBody(c);
     }
@@ -4136,6 +4194,7 @@ function iniciarColecoes(){
   grid.addEventListener('change', e => {
     if (e.target.id === 'colOrd') {
       colUI.ord = e.target.value;
+      salvarVista();
       const c = colecoes.find(x => x.id === colUI.aberta);
       if (c) renderColBody(c);
     }
@@ -4180,10 +4239,10 @@ iniciarBackup();
 iniciarMassa();
 iniciarVoltarTopo();
 iniciarDuelo();
-render();
 montarCategorias();
 montarBusca();
 melhorarSelects(document);
+restaurarEstadoInicial();
 render();
 window.addEventListener('resize', atualizarIndicadores);
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(atualizarIndicadores);
