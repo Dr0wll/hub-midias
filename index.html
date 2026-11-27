@@ -4206,7 +4206,8 @@ SYNC_KEYS_LIST = [EDICOES_KEY, NOVOS_KEY, CAPAS_KEY, FONTES_KEY, PERFIL_KEY, COL
 const FB_CFG_KEY = 'hub-midias-firebase-v1';
 let fbCfg = lerJSON(FB_CFG_KEY, null);
 let fbAuth = null, fbDb = null, fbDocRef = null, fbUnsub = null, fbTimer = null;
-let fbAplicandoRemoto = false;
+let fbAplicandoRemoto = false, fbPendente = false, fbEmVoo = 0, fbSeq = 0;
+const fbClientId = 'c' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 let fbUser = null;
 
 function setStatusFb(msg){ const el = document.getElementById('fb-status'); if (el) el.textContent = msg; }
@@ -4222,21 +4223,30 @@ function setSyncEstado(estado, rotulo){
 function agendarEnvio(){
   if (!fbDocRef || fbAplicandoRemoto) return;
   clearTimeout(fbTimer);
+  fbPendente = true;
   setSyncEstado('syncing', 'Sincronizando…');
   fbTimer = setTimeout(enviarAgora, 800);
 }
 function enviarAgora(){
   if (!fbDocRef) return;
+  clearTimeout(fbTimer);
+  fbTimer = null;
+  fbPendente = false;
+  const meuSeq = ++fbSeq;
+  fbEmVoo++;
   setSyncEstado('syncing', 'Sincronizando…');
-  const dados = JSON.parse(JSON.stringify({escalaNotas: 10, edicoes, novos, capas, fontes: configFontes, perfil, colecoes}));
+  const dados = JSON.parse(JSON.stringify({escalaNotas: 10, edicoes, novos, capas, fontes: configFontes, perfil, colecoes, rev: {cli: fbClientId, seq: meuSeq}}));
   dados.atualizado = firebase.firestore.FieldValue.serverTimestamp();
   fbDocRef.set(dados)
     .then(() => {
+      fbEmVoo = Math.max(0, fbEmVoo - 1);
+      if (fbPendente || fbEmVoo > 0) return;
       const hora = new Date().toLocaleTimeString('pt-BR', {timeStyle:'short'});
       setStatusFb('Sincronizado às ' + hora);
       setSyncEstado('ok', 'Sincronizado às ' + hora);
     })
     .catch(err => {
+      fbEmVoo = Math.max(0, fbEmVoo - 1);
       setStatusFb('Erro ao sincronizar: ' + err.message);
       setSyncEstado('err', 'Erro ao sincronizar');
     });
@@ -4261,18 +4271,21 @@ function aplicarRemoto(d){
   recarregarItens();
   montarFontes();
   render();
+  if (document.getElementById('colItensDlg')?.open) renderColItens();
 }
 function ligarSync(uid){
   desligarSync();
   fbDocRef = fbDb.collection('usuarios').doc(uid);
   fbUnsub = fbDocRef.onSnapshot(snap => {
-    if (snap.metadata.hasPendingWrites) { setSyncEstado('syncing', 'Sincronizando…'); return; }
+    if (snap.metadata.hasPendingWrites || fbPendente || fbEmVoo > 0) { setSyncEstado('syncing', 'Sincronizando…'); return; }
     if (!snap.exists) {
       if (!snap.metadata.fromCache) enviarAgora();
       else setSyncEstado(navigator.onLine ? 'ok' : 'off', navigator.onLine ? 'Sincronizado' : 'Offline (cache local)');
       return;
     }
-    aplicarRemoto(snap.data());
+    const d = snap.data();
+    const ehEcoProprio = !!(d && d.rev && d.rev.cli === fbClientId);
+    if (!ehEcoProprio) aplicarRemoto(d);
     if (snap.metadata.fromCache && !navigator.onLine) {
       setStatusFb('Offline · usando cache local');
       setSyncEstado('off', 'Offline (cache local)');
@@ -4287,6 +4300,7 @@ function ligarSync(uid){
 }
 function desligarSync(){
   clearTimeout(fbTimer); fbTimer = null;
+  fbPendente = false; fbEmVoo = 0;
   if (fbUnsub) fbUnsub();
   fbUnsub = null; fbDocRef = null;
 }
@@ -4356,6 +4370,7 @@ function iniciarSync(){
   document.getElementById('fb-sair').addEventListener('click', () => { if (fbAuth) fbAuth.signOut(); });
   window.addEventListener('offline', () => { if (fbUser) setSyncEstado('off', 'Sem internet (local)'); });
   window.addEventListener('online', () => { if (fbUser && fbDocRef) setSyncEstado('ok', 'Sincronizado'); });
+  document.addEventListener('visibilitychange', () => { if (document.hidden && fbPendente && fbDocRef) enviarAgora(); });
   iniciarFirebase();
 }
 
@@ -5132,8 +5147,9 @@ function iniciarColecoes(){
   document.getElementById('colLista').addEventListener('click', e => {
     const b = e.target.closest('[data-col-item]'); if (!b) return;
     const c = colecoes.find(x => x.id === colItensAtual); if (!c) return;
+    if (!Array.isArray(c.itens)) c.itens = [];
     const k = b.dataset.colItem;
-    c.itens = c.itens.includes(k) ? c.itens.filter(x => x !== k) : [...c.itens, k];
+    c.itens = c.itens.includes(k) ? c.itens.filter(x => x !== k) : [...new Set([...c.itens, k])];
     gravarJSON(COLECOES_KEY, colecoes);
     renderColItens(); render();
   });
