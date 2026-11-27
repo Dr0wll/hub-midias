@@ -58,11 +58,11 @@ body{
 button,a,input,select,textarea{touch-action:manipulation}
 /* fundo gradient blinds (reactbits webgl2) */
 #bgBlinds{
-  position:fixed;inset:0;width:100%;height:100%;z-index:-2;pointer-events:none;display:block;
+  position:fixed;inset:0;width:100%;height:100%;min-height:100lvh;z-index:-2;pointer-events:none;display:block;
   background:radial-gradient(60% 60% at 25% 30%,rgba(16,185,129,.22),transparent 70%),radial-gradient(60% 60% at 75% 70%,rgba(124,58,237,.22),transparent 70%),var(--bg);
 }
 .bg-scrim{
-  position:fixed;inset:0;z-index:-1;pointer-events:none;
+  position:fixed;inset:0;width:100%;height:100%;min-height:100lvh;z-index:-1;pointer-events:none;
   background:radial-gradient(85% 80% at 50% 35%,rgba(7,9,13,.74) 0%,rgba(7,9,13,.88) 100%);
 }
 .wrap{max-width:1180px;margin:0 auto;padding:24px 20px 72px}
@@ -1845,7 +1845,6 @@ void main() {
 precision highp float;
 precision highp int;
 uniform vec2 uResolution;
-uniform float uTime;
 uniform vec2 uMouse;
 uniform float uAngle;
 uniform float uNoise;
@@ -1858,14 +1857,12 @@ uniform float uDistort;
 uniform float uShineFlip;
 uniform vec3 uColors[8];
 uniform int uColorCount;
-uniform float uLightMode;
 uniform float uShine;
 uniform float uRelief;
 uniform float uGlow;
 uniform float uSway;
 uniform float uSwayTime;
 uniform float uHover;
-uniform vec4 uWaves[4];
 uniform float uIntro;
 uniform float uGrainTime;
 uniform vec3 uLightColor;
@@ -1882,8 +1879,15 @@ vec2 rotate2D(vec2 p, float a) {
   float s = sin(a);
   return mat2(c, -s, s, c) * p;
 }
-vec2 blindSpace(vec2 uv0) {
+vec2 coverUV(vec2 frag) {
   float aspect = uResolution.x / uResolution.y;
+  float refAspect = max(aspect, 1.35);
+  vec2 uv = frag / uResolution;
+  uv.x = (uv.x - 0.5) * (aspect / refAspect) + 0.5;
+  return uv;
+}
+vec2 blindSpace(vec2 uv0) {
+  float aspect = max(uResolution.x / uResolution.y, 1.35);
   vec2 p = uv0 * 2.0 - 1.0;
   p.x *= aspect;
   vec2 pr = rotate2D(p, uAngle);
@@ -1913,11 +1917,10 @@ vec3 gradientColor(float t) {
 }
 void main() {
   vec2 frag = gl_FragCoord.xy;
-  vec2 uv0 = frag / uResolution;
+  vec2 uv0 = coverUV(frag);
   vec2 uvMod = blindSpace(uv0);
   float count = max(uBlindCount, 1.0);
   float stripePhase = uvMod.x * count;
-  float pixel = max(fwidth(stripePhase), 1e-5);
   float t = uvMod.x;
   if (uGradientShift != 0.0) {
     t = 1.0 - abs(1.0 - fract((t + uGradientShift) * 0.5) * 2.0);
@@ -1926,13 +1929,13 @@ void main() {
     t = 1.0 - abs(1.0 - 2.0 * fract(t));
   }
   vec3 base = gradientColor(t);
-  vec2 offset = uMouse / uResolution;
+  vec2 offset = coverUV(uMouse);
   float d = length(uv0 - offset);
   float r = max(uSpotlightRadius, 1e-4);
   float spot = (1.0 - 2.0 * pow(d / r, uSpotlightSoftness)) * uSpotlightOpacity;
   float slat = floor(stripePhase);
   float s = stripePhase - slat;
-  float stripeAA = clamp(count * 1.25 / min(uResolution.x, uResolution.y), 0.001, 0.12);
+  float stripeAA = clamp(count * 1.25 / max(uResolution.y, uResolution.x / 1.35), 0.001, 0.12);
   float edgeBlend = 1.0 - smoothstep(0.0, stripeAA, min(s, 1.0 - s));
   float across = mix(s, 0.5, edgeBlend);
   float ramp = uShineFlip > 0.5 ? 1.0 - across : across;
@@ -1950,7 +1953,6 @@ void main() {
     tilt -= (1.0 - settle) * 1.2;
   }
   float edge = ramp;
-  float calm = 1.0 - 0.6 * clamp(spot, 0.0, 1.0);
   ramp = pow(clamp(ramp, 0.0, 1.0), exp(tilt * 0.9));
   float crease = uRelief * 0.38 * smoothstep(0.62, 1.0, ramp);
   float sheen = uShine * exp(-pow((edge - 0.035) / 0.07, 2.0)) * (0.3 + 0.7 * nearLight) * (1.0 - edgeBlend);
@@ -2009,7 +2011,6 @@ void main() {
   const colorFlat = new Float32Array(24);
   for (let i = 0; i < 8; i++) colorFlat.set(hexToRGB(stops[i]), i * 3);
   const lightRGB = hexToRGB(cfg.lightColor);
-  const waves = new Float32Array(16);
   const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const view = {width: 1, height: 1, ratio: 1};
   const ptr = {x: 0, y: 0, inside: false};
@@ -2020,37 +2021,36 @@ void main() {
     const byW = Math.max(1, Math.floor(view.width / cfg.blindMinWidth));
     return Math.max(1, Math.min(cfg.blindCount, byW));
   };
+  const set1f = (loc, v) => { if (loc != null) gl.uniform1f(loc, v); };
+  const set2f = (loc, a, b) => { if (loc != null) gl.uniform2f(loc, a, b); };
   const draw = () => {
     gl.viewport(0, 0, cv.width, cv.height);
     gl.useProgram(prog);
     gl.bindVertexArray(vao);
-    gl.uniform2f(u.uResolution, cv.width, cv.height);
-    gl.uniform1f(u.uTime, time);
-    gl.uniform2f(u.uMouse, light.x * view.ratio, (view.height - light.y) * view.ratio);
-    gl.uniform1f(u.uAngle, (cfg.angle * Math.PI) / 180);
-    gl.uniform1f(u.uNoise, reduce ? 0 : cfg.noise);
-    gl.uniform1f(u.uBlindCount, blindTotal());
-    gl.uniform1f(u.uSpotlightRadius, cfg.spotlightRadius);
-    gl.uniform1f(u.uSpotlightSoftness, cfg.spotlightSoftness);
-    gl.uniform1f(u.uSpotlightOpacity, cfg.spotlightOpacity);
-    gl.uniform1f(u.uMirror, cfg.mirrorGradient ? 1 : 0);
-    gl.uniform1f(u.uDistort, cfg.distortAmount);
-    gl.uniform1f(u.uShineFlip, cfg.shineDirection === 'right' ? 1 : 0);
-    gl.uniform3fv(u.uColors, colorFlat);
-    gl.uniform1i(u.uColorCount, cfg.gradientColors.length);
-    gl.uniform1f(u.uLightMode, 0);
-    gl.uniform1f(u.uShine, cfg.shine);
-    gl.uniform1f(u.uRelief, cfg.relief);
-    gl.uniform1f(u.uGlow, cfg.glow);
-    gl.uniform1f(u.uSway, reduce ? 0 : cfg.sway);
-    gl.uniform1f(u.uSwayTime, swayTime);
-    gl.uniform1f(u.uHover, hover * cfg.hoverTilt);
-    gl.uniform4fv(u.uWaves, waves);
-    gl.uniform1f(u.uIntro, introClock);
-    gl.uniform1f(u.uGrainTime, grainTime);
-    gl.uniform3fv(u.uLightColor, lightRGB);
-    gl.uniform1f(u.uPerspective, cfg.perspective);
-    gl.uniform1f(u.uGradientShift, shift);
+    set2f(u.uResolution, cv.width, cv.height);
+    set2f(u.uMouse, light.x * view.ratio, (view.height - light.y) * view.ratio);
+    set1f(u.uAngle, (cfg.angle * Math.PI) / 180);
+    set1f(u.uNoise, reduce ? 0 : cfg.noise);
+    set1f(u.uBlindCount, blindTotal());
+    set1f(u.uSpotlightRadius, cfg.spotlightRadius);
+    set1f(u.uSpotlightSoftness, cfg.spotlightSoftness);
+    set1f(u.uSpotlightOpacity, cfg.spotlightOpacity);
+    set1f(u.uMirror, cfg.mirrorGradient ? 1 : 0);
+    set1f(u.uDistort, cfg.distortAmount);
+    set1f(u.uShineFlip, cfg.shineDirection === 'right' ? 1 : 0);
+    if (u.uColors != null) gl.uniform3fv(u.uColors, colorFlat);
+    if (u.uColorCount != null) gl.uniform1i(u.uColorCount, cfg.gradientColors.length);
+    set1f(u.uShine, cfg.shine);
+    set1f(u.uRelief, cfg.relief);
+    set1f(u.uGlow, cfg.glow);
+    set1f(u.uSway, reduce ? 0 : cfg.sway);
+    set1f(u.uSwayTime, swayTime);
+    set1f(u.uHover, hover * cfg.hoverTilt);
+    set1f(u.uIntro, introClock);
+    set1f(u.uGrainTime, grainTime);
+    if (u.uLightColor != null) gl.uniform3fv(u.uLightColor, lightRGB);
+    set1f(u.uPerspective, cfg.perspective);
+    set1f(u.uGradientShift, shift);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
     gl.bindVertexArray(null);
   };
@@ -2077,8 +2077,8 @@ void main() {
   };
   const wake = () => { if (!raf && !document.hidden) { last = 0; raf = requestAnimationFrame(frame); } };
   const resize = () => {
-    view.width = Math.max(1, window.innerWidth);
-    view.height = Math.max(1, window.innerHeight);
+    view.width = Math.max(1, cv.clientWidth || window.innerWidth);
+    view.height = Math.max(1, cv.clientHeight || window.innerHeight);
     view.ratio = Math.min(window.devicePixelRatio || 1, view.width <= 640 ? 1.25 : 1.75);
     cv.width = Math.max(1, Math.round(view.width * view.ratio));
     cv.height = Math.max(1, Math.round(view.height * view.ratio));
