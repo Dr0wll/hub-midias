@@ -867,7 +867,7 @@ dialog#modal.morph-open .sheet,dialog#modal.morph-close .sheet{animation:none!im
   100%{transform:translateY(0) scale(1)}
 }
 .peek-rating{display:grid;gap:6px;width:100%}
-.pr-row{display:flex;align-items:center;gap:2px;touch-action:none;padding:2px 0}
+.pr-row{display:flex;align-items:center;gap:2px;touch-action:manipulation;padding:2px 0}
 .pr-star{
   flex:1 1 0;min-width:0;height:30px;padding:0;margin:0;border:0;background:none;cursor:pointer;
   display:grid;place-items:center;color:rgba(255,255,255,.18);
@@ -1880,25 +1880,47 @@ function criarPeekRating(container, valorInicial, onChange){
     if (onChange) onChange(atualVal);
   };
   let scrubbing = false;
+  let touchTap = null;
+  const sheetScroll = () => row.closest('.sheet')?.scrollTop || 0;
   row.addEventListener('pointerdown', e => {
+    if (e.pointerType === 'touch') {
+      const btn = e.target.closest('.pr-star');
+      touchTap = btn ? {id: e.pointerId, x: e.clientX, y: e.clientY, t: Date.now(), sy: sheetScroll(), val: Number(btn.dataset.val), moved: false} : null;
+      return;
+    }
     scrubbing = true;
     try { row.setPointerCapture(e.pointerId); } catch(err){}
     const v = onda(e.clientX);
     if (v != null) pintar(v);
   });
   row.addEventListener('pointermove', e => {
-    if (e.pointerType === 'touch' && !scrubbing) return;
+    if (e.pointerType === 'touch') {
+      if (touchTap && e.pointerId === touchTap.id && (Math.hypot(e.clientX - touchTap.x, e.clientY - touchTap.y) > 8 || Math.abs(sheetScroll() - touchTap.sy) > 2)) {
+        touchTap.moved = true;
+      }
+      return;
+    }
     const v = onda(e.clientX);
     if (v != null) pintar(v);
   });
   row.addEventListener('pointerup', e => {
+    if (e.pointerType === 'touch') {
+      if (!touchTap || e.pointerId !== touchTap.id) return;
+      const tap = touchTap;
+      touchTap = null;
+      const dist = Math.hypot(e.clientX - tap.x, e.clientY - tap.y);
+      const dur = Date.now() - tap.t;
+      const rolou = Math.abs(sheetScroll() - tap.sy) > 2;
+      if (!tap.moved && !rolou && dist <= 8 && dur <= 350 && tap.val != null) confirmar(tap.val);
+      return;
+    }
     if (!scrubbing) return;
     scrubbing = false;
     const v = onda(e.clientX);
     limparOnda();
     if (v != null) confirmar(v);
   });
-  row.addEventListener('pointercancel', () => { scrubbing = false; limparOnda(); });
+  row.addEventListener('pointercancel', () => { scrubbing = false; touchTap = null; limparOnda(); });
   row.addEventListener('pointerleave', () => { if (!scrubbing) limparOnda(); });
   row.addEventListener('keydown', e => {
     const idx = stars.indexOf(document.activeElement);
