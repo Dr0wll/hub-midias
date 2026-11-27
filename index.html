@@ -1551,7 +1551,17 @@ function capaHTML(capa, eager = false){
   const attrs = eager ? 'decoding="sync"' : 'loading="lazy"';
   return `<img class="bg" src="${esc(capa)}" alt="" aria-hidden="true" ${attrs} referrerpolicy="no-referrer" onerror="${erro}"><img class="fg" src="${esc(capa)}" alt="" ${attrs} referrerpolicy="no-referrer" onerror="${erro}">`;
 }
-const capaDe = i => i.capa || (capas[i.key] && typeof capas[i.key] === 'object' ? capas[i.key].u : (typeof capas[i.key] === 'string' ? capas[i.key] : ''));
+function melhorarUrlCapa(u){
+  if (!u || typeof u !== 'string') return '';
+  let s = u.trim();
+  if (/images\.igdb\.com/i.test(s)) s = s.replace(/\/t_(?:cover_big|cover_small|thumb)\//i, '/t_cover_big_2x/');
+  else if (/image\.tmdb\.org/i.test(s)) s = s.replace(/\/t\/p\/w(?:185|300|342|500)\//i, '/t/p/w780/');
+  else if (/uploads\.mangadex\.org/i.test(s)) s = s.replace(/\.256\.jpg$/i, '.512.jpg');
+  else if (/(?:media|images)-amazon\.com/i.test(s)) s = s.replace(/_SX300(?=\.)/i, '_SX700');
+  else if (/books\.google\.com/i.test(s)) s = s.replace(/^http:\/\//i, 'https://').replace(/&edge=curl/gi, '').replace(/([?&])zoom=5(&|$)/i, '$1zoom=1$2');
+  return s;
+}
+const capaDe = i => melhorarUrlCapa(i.capa || (capas[i.key] && typeof capas[i.key] === 'object' ? capas[i.key].u : (typeof capas[i.key] === 'string' ? capas[i.key] : '')));
 const grupo = i => GRUPO_DE[atual(i)] || 'fila';
 const tipoOf = i => i.c === 'jogo' ? 'Jogo' : i.tipo;
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -2894,7 +2904,7 @@ async function buscarOpcoesCapa(i){
       const timer = setTimeout(() => ctrl.abort(), TIMEOUT_FONTE);
       try {
         const res = await FONTES[id].sugerir(i.t, tipoAtual, ctrl.signal);
-        return (res || []).filter(r => r && r.capa).map(r => ({u: r.capa, fonte: r.fonte || FONTES[id].nome, titulo: r.t || i.t}));
+        return (res || []).filter(r => r && r.capa).map(r => ({u: melhorarUrlCapa(r.capa), fonte: r.fonte || FONTES[id].nome, titulo: r.t || i.t}));
       } catch (err) {
         falhas.push(`${FONTES[id].nome}: ${err.name === 'AbortError' ? 'demorou demais' : err.message}`);
         return [];
@@ -2908,7 +2918,7 @@ async function buscarOpcoesCapa(i){
     vistasU.add(r.u);
     out.push(r);
   });
-  return {itens: out.slice(0, 12), falhas};
+  return {itens: out.slice(0, 16), falhas};
 }
 function aplicarCapaManual(key, url, fonte){
   edicoes[key] = {...(edicoes[key] || {}), capa: url};
@@ -3179,29 +3189,87 @@ async function getJSON(url, headers, signal){
 }
 
 /* cada fonte recebe a mídia e um sinal de cancelamento; devolve a URL da capa ou '' */
+const isoLocal = d => { const p = n => String(n).padStart(2,'0'); return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`; };
+const IGDB_CAMPOS = 'fields name,cover.image_id,first_release_date,version_parent,parent_game,game_type,total_rating_count;';
+async function igdbQuery(body, s){
+  const r = await fetch(proxyIgdb(), {method:'POST', signal: s,
+    headers:{'Client-ID': chaves.igdbId, 'Authorization': 'Bearer ' + chaves.igdbTok},
+    body});
+  if (!r.ok) throw new Error(`IGDB HTTP ${r.status}`);
+  return r.json();
+}
+function ranquearIgdb(lista, termo){
+  const q = normBusca(termo);
+  const pontuar = x => {
+    const t = normBusca(x.name);
+    let sc = 0;
+    if (q && t === q) sc += 1000;
+    else if (q && t.startsWith(q + ' ')) sc += 360;
+    else if (q && t.startsWith(q)) sc += 240;
+    else if (q && t.includes(q)) sc += 110;
+    if (!x.version_parent) sc += 180;
+    if (!x.parent_game) sc += 90;
+    const gt = x.game_type;
+    if (gt == null || gt === 0 || gt === 8 || gt === 9) sc += 120;
+    else if (gt >= 1 && gt <= 7) sc -= 140;
+    if (x.cover && x.cover.image_id) sc += 60;
+    sc += Math.min(80, Math.log10((x.total_rating_count || 0) + 1) * 28);
+    if (q) sc -= Math.min(60, Math.abs(t.length - q.length) * 2);
+    return sc;
+  };
+  return [...lista].sort((a, b) => pontuar(b) - pontuar(a));
+}
+async function igdbBuscarLista(termo, s){
+  const limpo = String(termo || '').replace(/["\\]/g, '').trim();
+  if (!limpo) return [];
+  const q = normBusca(limpo);
+  const prim = await igdbQuery(`search "${limpo}"; ${IGDB_CAMPOS} limit 30;`, s);
+  const mapa = new Map();
+  (prim || []).forEach(x => { if (x && x.id != null) mapa.set(x.id, x); });
+  const temExato = [...mapa.values()].some(x => normBusca(x.name) === q && !x.version_parent);
+  if (!temExato && limpo.length >= 2) {
+    try {
+      const seg = await igdbQuery(`where name ~ *"${limpo}"*; ${IGDB_CAMPOS} limit 20;`, s);
+      (seg || []).forEach(x => { if (x && x.id != null && !mapa.has(x.id)) mapa.set(x.id, x); });
+    } catch {}
+  }
+  return ranquearIgdb([...mapa.values()], limpo);
+}
+function igdbMapearItem(x){
+  const ts = x.first_release_date;
+  return {
+    t: x.name,
+    capa: x.cover && x.cover.image_id ? `https://images.igdb.com/igdb/image/upload/t_cover_big_2x/${x.cover.image_id}.jpg` : '',
+    ano: ts ? String(new Date(ts * 1000).getFullYear()) : '',
+    data: ts ? isoLocal(new Date(ts * 1000)) : '',
+    g: x.id,
+    fonte: 'IGDB'
+  };
+}
 const FONTES = {
   tmdb: {nome:'TMDB', tipos:['Filme','Série','Anime'], precisa:'chave TMDB', ok:() => !!chaves.tmdb,
     busca: async (i, s) => {
       const tipo = tipoOf(i) === 'Filme' ? 'movie' : 'tv';
       const r = await getJSON(`https://api.themoviedb.org/3/search/${tipo}?api_key=${encodeURIComponent(chaves.tmdb)}&language=pt-BR&query=${encodeURIComponent(i.t)}`, null, s);
       const p = r.results?.[0]?.poster_path;
-      return p ? `https://image.tmdb.org/t/p/w342${p}` : '';
+      return p ? `https://image.tmdb.org/t/p/w780${p}` : '';
     }},
   igdb: {nome:'IGDB (via proxy)', tipos:['Jogo'], precisa:'Client ID e token da IGDB', ok:() => !!(chaves.igdbId && chaves.igdbTok),
     busca: async (i, s) => {
-      if (i.g == null) return '';
-      const r = await fetch(proxyIgdb(), {method:'POST', signal: s,
-        headers:{'Client-ID': chaves.igdbId, 'Authorization': 'Bearer ' + chaves.igdbTok},
-        body: `fields cover.image_id; where id = ${i.g};`});
-      if (!r.ok) throw new Error(`IGDB HTTP ${r.status}`);
-      const img = (await r.json())?.[0]?.cover?.image_id;
-      return img ? `https://images.igdb.com/igdb/image/upload/t_cover_big/${img}.jpg` : '';
+      if (i.g != null) {
+        const res = await igdbQuery(`fields cover.image_id; where id = ${i.g};`, s);
+        const img = res?.[0]?.cover?.image_id;
+        if (img) return `https://images.igdb.com/igdb/image/upload/t_cover_big_2x/${img}.jpg`;
+      }
+      const lista = await igdbBuscarLista(i.t, s);
+      const hit = lista.find(x => x.cover && x.cover.image_id);
+      return hit ? `https://images.igdb.com/igdb/image/upload/t_cover_big_2x/${hit.cover.image_id}.jpg` : '';
     }},
   omdb: {nome:'OMDb', tipos:['Filme','Série','Anime'], precisa:'chave OMDb (gratuita)', ok:() => !!chaves.omdb,
     busca: async (i, s) => {
       const tipo = tipoOf(i) === 'Filme' ? 'movie' : 'series';
       const r = await getJSON(`https://www.omdbapi.com/?apikey=${encodeURIComponent(chaves.omdb)}&t=${encodeURIComponent(i.t)}&type=${tipo}`, null, s);
-      return r.Poster && r.Poster !== 'N/A' ? r.Poster : '';
+      return r.Poster && r.Poster !== 'N/A' ? melhorarUrlCapa(r.Poster) : '';
     }},
   rawg: {nome:'RAWG', tipos:['Jogo'], precisa:'chave RAWG (gratuita)', ok:() => !!chaves.rawg,
     busca: async (i, s) => {
@@ -3218,10 +3286,11 @@ const FONTES = {
     busca: async (i, s) => {
       const r = await fetch('https://graphql.anilist.co', {method:'POST', signal: s,
         headers:{'Content-Type':'application/json','Accept':'application/json'},
-        body: JSON.stringify({query:'query($s:String,$t:MediaType){Media(search:$s,type:$t){coverImage{large}}}',
+        body: JSON.stringify({query:'query($s:String,$t:MediaType){Media(search:$s,type:$t){coverImage{extraLarge large}}}',
           variables:{s:i.t, t: tipoOf(i) === 'Mangá' ? 'MANGA' : 'ANIME'}})});
       if (!r.ok) throw new Error(`AniList HTTP ${r.status}`);
-      return (await r.json()).data?.Media?.coverImage?.large || '';
+      const c = (await r.json()).data?.Media?.coverImage;
+      return (c && (c.extraLarge || c.large)) || '';
     }},
   openlibrary: {nome:'Open Library', tipos:['Livro','Mangá'], precisa:null, ok:() => true,
     busca: async (i, s) => {
@@ -3237,11 +3306,10 @@ const FONTES = {
     busca: async (i, s) => {
       const r = await getJSON(`https://www.googleapis.com/books/v1/volumes?q=intitle:${encodeURIComponent(i.t)}&maxResults=1`, null, s);
       const l = r.items?.[0]?.volumeInfo?.imageLinks;
-      const u = l?.thumbnail || l?.smallThumbnail;
-      return u ? u.replace('http://', 'https://') : '';
+      const u = l?.extraLarge || l?.large || l?.medium || l?.thumbnail || l?.smallThumbnail;
+      return u ? melhorarUrlCapa(u) : '';
     }}
 };
-const isoLocal = d => { const p = n => String(n).padStart(2,'0'); return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`; };
 FONTES.tmdb.data = async (i, s) => {
   const tipo = tipoOf(i) === 'Filme' ? 'movie' : 'tv';
   const r = await getJSON(`https://api.themoviedb.org/3/search/${tipo}?api_key=${encodeURIComponent(chaves.tmdb)}&language=pt-BR&query=${encodeURIComponent(i.t)}`, null, s);
@@ -3256,13 +3324,14 @@ FONTES.omdb.data = async (i, s) => {
   return isNaN(d) ? '' : isoLocal(d);
 };
 FONTES.igdb.data = async (i, s) => {
-  if (i.g == null) return '';
-  const r = await fetch(proxyIgdb(), {method:'POST', signal: s,
-    headers:{'Client-ID': chaves.igdbId, 'Authorization': 'Bearer ' + chaves.igdbTok},
-    body: `fields first_release_date; where id = ${i.g};`});
-  if (!r.ok) throw new Error(`IGDB HTTP ${r.status}`);
-  const ts = (await r.json())?.[0]?.first_release_date;
-  return ts ? isoLocal(new Date(ts * 1000)) : '';
+  if (i.g != null) {
+    const res = await igdbQuery(`fields first_release_date; where id = ${i.g};`, s);
+    const ts = res?.[0]?.first_release_date;
+    if (ts) return isoLocal(new Date(ts * 1000));
+  }
+  const lista = await igdbBuscarLista(i.t, s);
+  const hit = lista.find(x => x.first_release_date);
+  return hit ? isoLocal(new Date(hit.first_release_date * 1000)) : '';
 };
 FONTES.rawg.data = async (i, s) => {
   const r = await getJSON(`https://api.rawg.io/api/games?key=${encodeURIComponent(chaves.rawg)}&search=${encodeURIComponent(i.t)}&page_size=1`, null, s);
@@ -3290,19 +3359,15 @@ FONTES.anilist.data = async (i, s) => {
 FONTES.tmdb.sugerir = async (termo, tipo, s) => {
   const kind = tipo === 'Filme' ? 'movie' : 'tv';
   const r = await getJSON(`https://api.themoviedb.org/3/search/${kind}?api_key=${encodeURIComponent(chaves.tmdb)}&language=pt-BR&query=${encodeURIComponent(termo)}`, null, s);
-  return (r.results || []).slice(0, 6).map(x => ({t: x.title || x.name, capa: x.poster_path ? `https://image.tmdb.org/t/p/w342${x.poster_path}` : '', ano: (x.release_date || x.first_air_date || '').slice(0, 4), data: x.release_date || x.first_air_date || '', fonte: 'TMDB'}));
+  return (r.results || []).slice(0, 6).map(x => ({t: x.title || x.name, capa: x.poster_path ? `https://image.tmdb.org/t/p/w780${x.poster_path}` : '', ano: (x.release_date || x.first_air_date || '').slice(0, 4), data: x.release_date || x.first_air_date || '', fonte: 'TMDB'}));
 };
 FONTES.omdb.sugerir = async (termo, tipo, s) => {
   const kind = tipo === 'Filme' ? 'movie' : 'series';
   const r = await getJSON(`https://www.omdbapi.com/?apikey=${encodeURIComponent(chaves.omdb)}&s=${encodeURIComponent(termo)}&type=${kind}`, null, s);
-  return (r.Search || []).slice(0, 6).map(x => ({t: x.Title, capa: x.Poster && x.Poster !== 'N/A' ? x.Poster : '', ano: x.Year || '', fonte: 'OMDb'}));
+  return (r.Search || []).slice(0, 6).map(x => ({t: x.Title, capa: x.Poster && x.Poster !== 'N/A' ? melhorarUrlCapa(x.Poster) : '', ano: x.Year || '', fonte: 'OMDb'}));
 };
 FONTES.igdb.sugerir = async (termo, tipo, s) => {
-  const r = await fetch(proxyIgdb(), {method: 'POST', signal: s,
-    headers: {'Client-ID': chaves.igdbId, 'Authorization': 'Bearer ' + chaves.igdbTok},
-    body: `search "${termo.replace(/"/g, '')}"; fields name,cover.image_id,first_release_date; limit 6;`});
-  if (!r.ok) throw new Error(`IGDB HTTP ${r.status}`);
-  return (await r.json()).map(x => ({t: x.name, capa: x.cover && x.cover.image_id ? `https://images.igdb.com/igdb/image/upload/t_cover_big/${x.cover.image_id}.jpg` : '', ano: x.first_release_date ? String(new Date(x.first_release_date * 1000).getFullYear()) : '', data: x.first_release_date ? isoLocal(new Date(x.first_release_date * 1000)) : '', g: x.id, fonte: 'IGDB'}));
+  return (await igdbBuscarLista(termo, s)).slice(0, 12).map(igdbMapearItem);
 };
 FONTES.rawg.sugerir = async (termo, tipo, s) => {
   const r = await getJSON(`https://api.rawg.io/api/games?key=${encodeURIComponent(chaves.rawg)}&search=${encodeURIComponent(termo)}&page_size=6`, null, s);
@@ -3316,11 +3381,11 @@ FONTES.jikan.sugerir = async (termo, tipo, s) => {
 FONTES.anilist.sugerir = async (termo, tipo, s) => {
   const r = await fetch('https://graphql.anilist.co', {method: 'POST', signal: s,
     headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
-    body: JSON.stringify({query: 'query($s:String,$t:MediaType){Page(perPage:6){media(search:$s,type:$t){title{romaji english} coverImage{large} startDate{year}}}}',
+    body: JSON.stringify({query: 'query($s:String,$t:MediaType){Page(perPage:6){media(search:$s,type:$t){title{romaji english} coverImage{extraLarge large} startDate{year month day}}}}',
       variables: {s: termo, t: tipo === 'Mangá' ? 'MANGA' : 'ANIME'}})});
   if (!r.ok) throw new Error(`AniList HTTP ${r.status}`);
   const lista = (await r.json()).data?.Page?.media || [];
-  return lista.map(m => ({t: (m.title && (m.title.english || m.title.romaji)) || '', capa: (m.coverImage && m.coverImage.large) || '', ano: m.startDate && m.startDate.year ? String(m.startDate.year) : '', data: m.startDate && m.startDate.month && m.startDate.day ? `${m.startDate.year}-${String(m.startDate.month).padStart(2, '0')}-${String(m.startDate.day).padStart(2, '0')}` : '', fonte: 'AniList'}));
+  return lista.map(m => ({t: (m.title && (m.title.english || m.title.romaji)) || '', capa: (m.coverImage && (m.coverImage.extraLarge || m.coverImage.large)) || '', ano: m.startDate && m.startDate.year ? String(m.startDate.year) : '', data: m.startDate && m.startDate.month && m.startDate.day ? `${m.startDate.year}-${String(m.startDate.month).padStart(2, '0')}-${String(m.startDate.day).padStart(2, '0')}` : '', fonte: 'AniList'}));
 };
 FONTES.openlibrary.sugerir = async (termo, tipo, s) => {
   const r = await getJSON(`https://openlibrary.org/search.json?q=${encodeURIComponent(termo)}&limit=6&fields=title,cover_i,first_publish_year`, null, s);
@@ -3328,7 +3393,7 @@ FONTES.openlibrary.sugerir = async (termo, tipo, s) => {
 };
 FONTES.googlebooks.sugerir = async (termo, tipo, s) => {
   const r = await getJSON(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(termo)}&maxResults=6`, null, s);
-  return (r.items || []).map(x => { const v = x.volumeInfo || {}, l = v.imageLinks || {}; return {t: v.title || '', capa: (l.thumbnail || '').replace('http://', 'https://'), ano: (v.publishedDate || '').slice(0, 4), data: (v.publishedDate || '').length === 10 ? v.publishedDate : '', fonte: 'Google Books'}; });
+  return (r.items || []).map(x => { const v = x.volumeInfo || {}, l = v.imageLinks || {}; const u = l.extraLarge || l.large || l.medium || l.thumbnail || l.smallThumbnail || ''; return {t: v.title || '', capa: u ? melhorarUrlCapa(u) : '', ano: (v.publishedDate || '').slice(0, 4), data: (v.publishedDate || '').length === 10 ? v.publishedDate : '', fonte: 'Google Books'}; });
 };
 
 FONTES.googlebooks.data = async (i, s) => {
@@ -3357,7 +3422,7 @@ async function mangadexBusca(termo, limite, s){
     const titulo = (at.title && (at.title.en || Object.values(at.title)[0])) || '';
     const cov = (m.relationships || []).find(x => x.type === 'cover_art');
     const arq = cov && cov.attributes && cov.attributes.fileName;
-    return {t: titulo, capa: arq ? `https://uploads.mangadex.org/covers/${m.id}/${arq}.256.jpg` : '', ano: at.year ? String(at.year) : '', fonte: 'MangaDex'};
+    return {t: titulo, capa: arq ? `https://uploads.mangadex.org/covers/${m.id}/${arq}.512.jpg` : '', ano: at.year ? String(at.year) : '', fonte: 'MangaDex'};
   });
 }
 FONTES.mangadex = {nome: 'MangaDex', tipos: ['Mangá'], precisa: null, ok: () => true,
@@ -3419,7 +3484,7 @@ async function sugerirMidias(termo, cat, tipo){
     if (!r.t || vistos.has(k)) return;
     vistos.add(k); out.push(r);
   });
-  return {itens: out.slice(0, 12), falhas};
+  return {itens: out.slice(0, 16), falhas};
 }
 
 async function buscarCapasPendentes(){
