@@ -1418,6 +1418,7 @@ const FILTROS_POR_CAT = {
 const VISTAS_KEY = 'hub-midias-vistas-v1';
 const PREFS_KEY = 'hub-midias-prefs-v1';
 const FILTRO_PADRAO = {grp:'todos', ord:'titulo', dir:'asc', q:'', tag:'', onde:'', ondeExact:false, notaFiltro:''};
+const ORDS_VALIDOS = ['titulo','nota','lancamento','conclusao','status','adicao'];
 let prefs = {mostrarMeta: false, ...lerJSON(PREFS_KEY, {})};
 let vistas = lerJSON(VISTAS_KEY, {});
 if (!vistas || typeof vistas !== 'object') vistas = {};
@@ -1438,9 +1439,13 @@ function salvarVista(){
   if (!vistas.porCat || typeof vistas.porCat !== 'object') vistas.porCat = {};
   vistas.cat = st.cat;
   if (['jogo','audiovisual','livro','saude','todos'].includes(st.cat)) {
+    const prev = vistas.porCat[st.cat];
+    const porStatus = (prev && prev.porStatus && typeof prev.porStatus === 'object') ? {...prev.porStatus} : {};
+    porStatus[st.grp] = {ord: st.ord, dir: st.dir};
     vistas.porCat[st.cat] = {
       grp: st.grp, ord: st.ord, dir: st.dir, q: st.q,
-      tag: st.tag, onde: st.onde, ondeExact: !!st.ondeExact, notaFiltro: st.notaFiltro
+      tag: st.tag, onde: st.onde, ondeExact: !!st.ondeExact, notaFiltro: st.notaFiltro,
+      porStatus
     };
   }
   if (typeof colUI !== 'undefined') {
@@ -1451,17 +1456,25 @@ function salvarVista(){
   }
   gravarJSON(VISTAS_KEY, vistas);
 }
+function aplicarOrdemStatus(cat, grp){
+  const v = vistas.porCat && vistas.porCat[cat];
+  const s = (v && v.porStatus && v.porStatus[grp]) || null;
+  st.ord = (s && ORDS_VALIDOS.includes(s.ord)) ? s.ord : FILTRO_PADRAO.ord;
+  st.dir = (s && s.dir === 'desc') ? 'desc' : FILTRO_PADRAO.dir;
+  sincronizarCamposToolbar();
+}
 function aplicarVistaCat(cat){
   const catsValidas = ['jogo','audiovisual','livro','colecoes','concluidas','saude'];
   const alvo = catsValidas.includes(cat) ? cat : 'jogo';
   st.cat = alvo;
   const v = (vistas.porCat && vistas.porCat[alvo]) || FILTRO_PADRAO;
   const grpsValidos = ['todos', ...(FILTROS_POR_CAT[alvo] || []).map(x => x[0])];
-  const ordsValidos = ['titulo','nota','lancamento','conclusao','status','adicao'];
+  const grp = grpsValidos.includes(v.grp) ? v.grp : 'todos';
+  const ordSrc = (v.porStatus && v.porStatus[grp]) || v;
   Object.assign(st, {
-    grp: grpsValidos.includes(v.grp) ? v.grp : 'todos',
-    ord: ordsValidos.includes(v.ord) ? v.ord : 'titulo',
-    dir: v.dir === 'desc' ? 'desc' : 'asc',
+    grp,
+    ord: ORDS_VALIDOS.includes(ordSrc.ord) ? ordSrc.ord : 'titulo',
+    dir: ordSrc.dir === 'desc' ? 'desc' : 'asc',
     q: typeof v.q === 'string' ? v.q : '',
     tag: typeof v.tag === 'string' ? v.tag : '',
     onde: typeof v.onde === 'string' ? v.onde : '',
@@ -2062,7 +2075,12 @@ function montarBusca(){
     document.getElementById('tagsSug').hidden = true;
     render();
   });
-  document.getElementById('statusSel').addEventListener('change', e => { st.grp = e.target.value; render(); });
+  document.getElementById('statusSel').addEventListener('change', e => {
+    salvarVista();
+    st.grp = e.target.value;
+    aplicarOrdemStatus(st.cat, st.grp);
+    render();
+  });
   document.getElementById('ord').addEventListener('change', e => { st.ord = e.target.value; render(); });
   document.getElementById('ordemDir').addEventListener('click', () => { st.dir = st.dir === 'asc' ? 'desc' : 'asc'; render(); });
   document.getElementById('limparFiltros').addEventListener('click', () => {
