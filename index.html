@@ -25,7 +25,7 @@
   --ink-2:#a2a9b8;
   --ink-3:#6b7385;
   --glass:linear-gradient(155deg,rgba(255,255,255,.11) 0%,rgba(255,255,255,.04) 38%,rgba(12,16,26,.56) 100%);
-  --glass-2:linear-gradient(160deg,rgba(255,255,255,.13) 0%,rgba(22,27,40,.74) 44%,rgba(10,13,21,.86) 100%);
+  --glass-2:linear-gradient(160deg,rgba(28,33,48,.92) 0%,rgba(16,20,31,.95) 45%,rgba(10,13,21,.98) 100%);
   --glass-btn:linear-gradient(180deg,rgba(255,255,255,.17) 0%,rgba(255,255,255,.07) 52%,rgba(255,255,255,.03) 100%);
   --edge:rgba(255,255,255,.15);
   --edge-2:rgba(255,255,255,.24);
@@ -329,9 +329,10 @@ textarea.field{min-height:84px;line-height:1.45;border-radius:14px;padding:10px 
 /* dropdown tags / onde / nota */
 .sug{
   position:absolute;top:100%;left:0;right:0;z-index:65;margin-top:6px;max-height:260px;overflow:auto;
-  background:var(--glass-2);border:1px solid var(--edge-2);border-radius:16px;
+  background:linear-gradient(170deg,rgba(26,31,45,.97) 0%,rgba(14,18,28,.985) 55%,rgba(10,13,21,.995) 100%);
+  border:1px solid var(--edge-2);border-radius:16px;
   backdrop-filter:blur(28px) saturate(195%);-webkit-backdrop-filter:blur(28px) saturate(195%);
-  box-shadow:var(--chamfer),var(--drop);padding:4px;transform-origin:top center;animation:popIn 180ms var(--ease-out);
+  box-shadow:var(--chamfer),0 22px 48px -12px rgba(0,0,0,.95);padding:4px;transform-origin:top center;animation:popIn 180ms var(--ease-out);
 }
 .sug-head{padding:5px 10px 3px;font-size:.7rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-3)}
 .sug button{
@@ -719,9 +720,10 @@ dialog#modal.morph-open .sheet,dialog#modal.morph-close .sheet{animation:none!im
 .csel-list{
   display:grid;gap:2px;padding:4px;border-radius:16px;
   max-height:280px;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;
-  background:var(--glass-2);border:1px solid var(--edge-2);
+  background:linear-gradient(170deg,rgba(26,31,45,.97) 0%,rgba(14,18,28,.985) 55%,rgba(10,13,21,.995) 100%);
+  border:1px solid var(--edge-2);
   backdrop-filter:blur(28px) saturate(195%);-webkit-backdrop-filter:blur(28px) saturate(195%);
-  box-shadow:var(--chamfer),var(--drop);
+  box-shadow:var(--chamfer),0 22px 48px -12px rgba(0,0,0,.95);
   opacity:0;transform:translateY(-4px);
   transition:opacity 200ms var(--ease-out),transform 220ms var(--ease-out);
 }
@@ -1007,30 +1009,33 @@ dialog#modal.morph-open .sheet,dialog#modal.morph-close .sheet{animation:none!im
   .ring .trk,.ring .prog{stroke-width:9}
   .ring-val b{font-size:1rem;white-space:nowrap}
   #mediaRing{font-size:.7rem}
-  .toolbar{padding:10px;margin-top:12px;gap:8px}
-  .bar-top{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px;width:100%;min-width:0}
+  .toolbar{padding:9px;margin-top:12px;gap:7px}
+  .bar-top{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:7px;width:100%;min-width:0}
   #cats{grid-column:1/-1;grid-row:1}
   .bar-top>.csel{grid-column:1;grid-row:2;width:100%;min-width:0}
   .bar-top>.csel:not(.csel-inline) .csel-drop{left:0;right:0;width:auto;max-width:none}
   .bar-top-right{display:contents}
-  #dueloBtn{grid-column:2;grid-row:2;justify-self:end;width:42px;height:42px;border-radius:50%}
-  #atualizarDatas{grid-column:1/-1;grid-row:3;margin-left:0;width:100%;min-width:0;min-height:40px}
+  #dueloBtn{grid-column:2;grid-row:2;justify-self:end;width:36px;height:36px;border-radius:50%}
+  #dueloBtn svg{width:15px;height:15px}
+  #atualizarDatas{grid-column:1/-1;grid-row:3;margin-left:0;width:100%;min-width:0;min-height:36px;padding:6px 12px;font-size:.82rem}
   .cat-full{display:none}
   .cat-short{display:inline}
   #cats .pill .n,#cats .pill .n-h{display:none}
   .seg{display:flex;flex-wrap:nowrap;overflow:visible;justify-content:space-between;gap:2px;padding:3px;width:100%;max-width:100%;min-width:0}
   .seg-ind{top:3px;bottom:3px}
-  .seg .pill{flex:1 1 auto;min-width:0;min-height:36px;padding:6px 6px;font-size:.79rem;display:inline-flex;align-items:center;justify-content:center;text-align:center}
-  .tools{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;width:100%;min-width:0;padding-top:8px;border-top:1px solid rgba(255,255,255,.08)}
+  .seg .pill{flex:1 1 auto;min-width:0;min-height:34px;padding:5px 6px;font-size:.79rem;display:inline-flex;align-items:center;justify-content:center;text-align:center}
+  .tools{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:7px;width:100%;min-width:0;padding-top:7px;border-top:1px solid rgba(255,255,255,.08)}
   .tools>.busca-wrap{grid-column:1/-1;grid-row:auto;width:100%;min-width:0;max-width:none}
   .tools>.csel{grid-column:auto;grid-row:auto;width:100%;min-width:0}
-  .tools .field,.tools .btn,.tools .csel{width:100%;min-width:0;min-height:42px}
+  .tools .field,.tools .btn,.tools .csel{width:100%;min-width:0;min-height:36px}
   #ordemDir{min-width:0}
   .tools .csel:not(.csel-inline) .csel-drop{left:0;right:0;width:auto;max-width:none}
-  input,select,textarea,.field,.csel-trigger{font-size:16px}
-  .csel-trigger{min-height:42px}
-  .csel-opt{min-height:40px;font-size:.94rem}
-  #limparFiltros{grid-column:1;justify-self:start;align-self:center;min-height:36px;font-size:.85rem}
+  dialog input,dialog select,dialog textarea{font-size:16px}
+  #barra .field,#barra .csel-trigger,#barra .btn{min-height:36px;padding:6px 12px;font-size:.82rem}
+  #barra .busca{padding:6px 13px;font-size:.83rem}
+  .csel-trigger{min-height:36px;padding:6px 12px;font-size:.82rem}
+  .csel-opt{min-height:36px;padding:6px 10px;font-size:.84rem}
+  #limparFiltros{grid-column:1;justify-self:start;align-self:center;min-height:32px;font-size:.8rem}
   #selecionarBtn{grid-column:2}
   .count{margin:12px 2px 0;font-size:.82rem}
   .grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}
