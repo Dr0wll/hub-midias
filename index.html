@@ -402,6 +402,23 @@ textarea.field{min-height:84px;line-height:1.45;border-radius:14px;padding:10px 
   color:var(--ink);font-size:.68rem;font-weight:600;font-variant-numeric:tabular-nums;line-height:1;white-space:nowrap;
 }
 .nota-capa .est{display:block;font-size:.7rem;line-height:1;color:var(--av);transform:translateY(-.5px)}
+.card-col-btn{
+  position:absolute;top:14px;right:14px;z-index:4;
+  min-width:28px;height:28px;padding:0 6px;border-radius:999px;
+  display:inline-flex;align-items:center;justify-content:center;gap:3px;
+  background:rgba(12,15,24,.72);border:1px solid rgba(255,255,255,.22);
+  backdrop-filter:blur(12px) saturate(170%);-webkit-backdrop-filter:blur(12px) saturate(170%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 6px 14px -6px rgba(0,0,0,.85);
+  color:var(--ink-2);font:inherit;font-size:.68rem;font-weight:700;font-variant-numeric:tabular-nums;
+  cursor:pointer;line-height:1;
+  transition:opacity var(--dur-fast) var(--ease-out),background-color var(--dur-fast) var(--ease-out),border-color var(--dur-fast) var(--ease-out),color var(--dur-fast) var(--ease-out),transform var(--dur-fast) var(--ease-out);
+}
+.card-col-btn svg{display:block;flex:none}
+.card-col-btn:active{transform:scale(.92)}
+.card-col-btn.is-in{
+  background:rgba(16,42,34,.84);border-color:rgba(111,208,176,.65);color:var(--jogo);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 6px 14px -6px rgba(0,0,0,.85);
+}
 .body{padding:4px 12px 12px}
 .body h3{
   font-size:.92rem;font-weight:600;line-height:1.32;margin:0 0 6px;
@@ -1083,6 +1100,8 @@ dialog#modal.morph-open .sheet,dialog#modal.morph-close .sheet{animation:none!im
   .sug button:hover,.sug button:focus-visible{background:rgba(255,255,255,.09)}
   .card:hover{transform:translateY(-2px);border-color:var(--edge-2);box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 18px 34px -18px rgba(0,0,0,.92)}
   .card:hover .cover .fg{transform:scale(1.025)}
+  .card-col-btn:hover{background:rgba(24,30,46,.92);border-color:var(--edge-3);color:var(--ink)}
+  .card-col-btn.is-in:hover{background:rgba(20,56,44,.94);border-color:var(--jogo);color:var(--jogo)}
   .col-card:hover,.col-card:focus-visible{border-color:var(--edge-2);background:linear-gradient(160deg,rgba(255,255,255,.1),rgba(20,23,33,.82))}
   .acc-head:hover{background:rgba(255,255,255,.04)}
   .sheet .x:hover{background:rgba(255,255,255,.15);color:var(--ink)}
@@ -1095,6 +1114,10 @@ dialog#modal.morph-open .sheet,dialog#modal.morph-close .sheet{animation:none!im
   .csel-opt.is-selected:hover{background:rgba(255,255,255,.14)}
   .capa-opt:hover,.capa-opt:focus-visible{border-color:var(--jogo);background:rgba(255,255,255,.1)}
   .col-fpill:hover:not([aria-pressed="true"]){border-color:var(--edge-2);color:var(--ink)}
+}
+@media (hover:hover) and (pointer:fine){
+  .card-col-btn:not(.is-in){opacity:0}
+  .card:hover .card-col-btn,.card:focus-within .card-col-btn{opacity:1}
 }
 
 /* tablet */
@@ -1177,6 +1200,8 @@ dialog#modal.morph-open .sheet,dialog#modal.morph-close .sheet{animation:none!im
   .dot-status{width:8px;height:8px;left:5px;bottom:5px}
   .nota-capa{font-size:.6rem;right:5px;bottom:5px;height:18px;padding:0 5px}
   .nota-capa .est{font-size:.62rem}
+  .card-col-btn{top:9px;right:9px;min-width:24px;height:24px;padding:0 5px;font-size:.62rem;opacity:.92}
+  .card-col-btn svg{width:12px;height:12px}
   .data-lanc{font-size:.72rem}
   .massa{bottom:calc(10px + env(safe-area-inset-bottom,0px));width:calc(100vw - 20px);max-width:none;padding:10px;border-radius:20px}
   .massa .field,.massa .csel{max-width:none;flex:1 1 130px}
@@ -1346,6 +1371,20 @@ dialog#modal.morph-open .sheet,dialog#modal.morph-close .sheet{animation:none!im
     <div class="head"><h2 id="col-itens-titulo">Mídias da coleção</h2><button class="x" type="button" data-fechar-col-itens aria-label="Fechar">✕</button></div>
     <label style="display:grid;gap:6px;margin-top:14px">Buscar mídia<input id="colBusca" class="field" type="search" placeholder="Título ou #tag…" autocomplete="off"></label>
     <div id="colLista" class="fav-lista"></div>
+  </div>
+</dialog>
+<dialog id="midiaColDlg" aria-labelledby="midia-col-titulo">
+  <div class="sheet">
+    <div class="head">
+      <div>
+        <h2 id="midia-col-titulo">Coleções</h2>
+        <p class="duelo-sub" id="midia-col-sub"></p>
+      </div>
+      <button class="x" type="button" data-fechar-midia-col aria-label="Fechar">✕</button>
+    </div>
+    <label id="midiaColBuscaWrap" style="display:grid;gap:6px;margin-top:14px">Buscar coleção<input id="midiaColBusca" class="field" type="search" placeholder="Nome da coleção…" autocomplete="off"></label>
+    <div id="midiaColLista" class="fav-lista"></div>
+    <div class="keys-actions" style="margin-top:14px"><div class="group"><button class="btn" id="midiaColNova" type="button">+ Nova coleção</button></div></div>
   </div>
 </dialog>
 <dialog id="dueloDlg" aria-labelledby="duelo-titulo">
@@ -2540,6 +2579,11 @@ function card(i){
   const badges = mostraMeta ? `<span class="badge">${esc(tipoOf(i))}</span>${i.l ? `<span class="badge ghost">${esc(i.l.slice(0,4))}</span>` : ''}` : '';
   const meta = (badges || cadeado) ? `<div class="meta">${badges}${cadeado}</div>` : '';
   const nota = i.n != null ? `<div class="nota-linha">${estrelas(i.n)}<span class="nota-num">${fmtNota(i.n)}</span></div>` : '<div class="nota-linha"></div>';
+  const nCols = (colecoes || []).reduce((acc, col) => acc + (Array.isArray(col.itens) && col.itens.includes(i.key) ? 1 : 0), 0);
+  const colIcon = nCols
+    ? '<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 3a2 2 0 0 0-2 2v16l8-4 8 4V5a2 2 0 0 0-2-2H6z"/></svg>'
+    : '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21l-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/><line x1="12" y1="7" x2="12" y2="13"/><line x1="9" y1="10" x2="15" y2="10"/></svg>';
+  const colBtn = !st.sel ? `<button class="card-col-btn${nCols ? ' is-in' : ''}" type="button" data-card-col="${esc(i.key)}" aria-label="${nCols ? `Em ${nCols} coleção(ões) · Gerenciar` : 'Adicionar a uma coleção'}" title="${nCols ? `Em ${nCols} coleção(ões)` : 'Adicionar a uma coleção'}">${colIcon}${nCols > 1 ? `<span>${nCols}</span>` : ''}</button>` : '';
   return `<article class="card${st.selecionados.has(i.key) ? ' selecionado' : ''}" style="--tint:${c.tint}">
     <button class="open" type="button" data-key="${esc(i.key)}" aria-label="Abrir ${esc(i.t)}">
       <div class="cover${capa ? ' has-img' : ''}">${capa ? '' : `<span class="cat-pad">${esc(c.label)}</span>`}${capaHTML(capa)}<span class="ini" aria-hidden="true">${esc(i.t.charAt(0).toUpperCase())}</span><span class="dot-status${s2 === 'Platinado' ? ' brilho' : ''}${jaSaiu(i) ? ' saiu' : ''}" style="--c:${jaSaiu(i) ? '#ffc93c' : (STATUS_COR[s2] || '#7b8190')}" title="${jaSaiu(i) ? 'Já saiu: atualize o status' : esc(s2)}" role="img" aria-label="${jaSaiu(i) ? 'Já saiu' : 'Status: ' + esc(s2)}"></span>${i.n != null ? `<span class="nota-capa"><span class="est">★</span>${fmtNota(i.n)}</span>` : ''}</div>
@@ -2548,7 +2592,7 @@ function card(i){
         ${meta}
         ${dataLanc}
       </div>
-    </button>
+    </button>${colBtn}
   </article>`;
 }
 
@@ -3290,6 +3334,7 @@ function preencherSheet(key){
           ${i.video ? `<a class="btn" href="${esc(i.video)}" target="_blank" rel="noopener">Ver gameplay</a>` : ''}
           ${i.c === 'jogo' ? `<a class="btn" href="https://howlongtobeat.com/?q=${encodeURIComponent(i.t)}" target="_blank" rel="noopener">Ver no HowLongToBeat</a>` : ''}
           <button class="btn" type="button" data-buscar-capa>Buscar capa</button>
+          <button class="btn" type="button" data-gerenciar-cols>Coleções${(() => { const n = (colecoes || []).filter(col => Array.isArray(col.itens) && col.itens.includes(key)).length; return n ? ` (${n})` : ''; })()}</button>
           ${capa ? '<button class="link" type="button" data-remover-capa>Remover capa</button>' : ''}
           <button class="hold-button" type="button" data-remover></button>
         </div></div>
@@ -3346,6 +3391,8 @@ function preencherSheet(key){
     toast(e.target.checked ? 'Este jogo ficou fora das atualizações automáticas.' : 'Atualizações liberadas para este jogo.');
   });
   document.querySelector('[data-buscar-capa]').addEventListener('click', () => abrirSeletorCapa(key));
+  const gc = document.querySelector('[data-gerenciar-cols]');
+  if (gc) gc.addEventListener('click', () => abrirMidiaColDlg(key));
   const rc = document.querySelector('[data-remover-capa]');
   if (rc) rc.addEventListener('click', () => removerCapa(key));
   const rm = document.querySelector('[data-remover]');
@@ -3435,6 +3482,8 @@ function abrir(key, origemEl){
 }
 
 document.getElementById('grid').addEventListener('click', e => {
+  const cb = e.target.closest('[data-card-col]');
+  if (cb) { e.stopPropagation(); abrirMidiaColDlg(cb.dataset.cardCol); return; }
   if (st.cat === 'colecoes' && colecoesClique(e)) return;
   if (st.cat === 'concluidas' && conclClique(e)) return;
   if (st.sel) { const o2 = e.target.closest('[data-key]'); if (o2) alternarSel(o2.dataset.key); return; }
@@ -4272,6 +4321,7 @@ function aplicarRemoto(d){
   montarFontes();
   render();
   if (document.getElementById('colItensDlg')?.open) renderColItens();
+  if (document.getElementById('midiaColDlg')?.open) renderMidiaCol();
 }
 function ligarSync(uid){
   desligarSync();
@@ -5070,9 +5120,53 @@ function abrirColItensDlg(id){
   renderColItens();
   document.getElementById('colItensDlg').showModal();
 }
+let midiaColKey = null, colMidiaPendente = null;
+function atualizarBotaoColsModal(key){
+  const btn = document.querySelector('#modal [data-gerenciar-cols]');
+  if (!btn || modalKey !== key) return;
+  const n = (colecoes || []).filter(col => Array.isArray(col.itens) && col.itens.includes(key)).length;
+  btn.textContent = n ? `Coleções (${n})` : 'Coleções';
+}
+function renderMidiaCol(){
+  const i = ITEMS.find(x => x.key === midiaColKey);
+  const subEl = document.getElementById('midia-col-sub');
+  if (subEl) subEl.textContent = i ? i.t : '';
+  const buscaWrap = document.getElementById('midiaColBuscaWrap');
+  if (buscaWrap) buscaWrap.hidden = (colecoes || []).length <= 5;
+  const q = (document.getElementById('midiaColBusca')?.value || '').trim();
+  const grupoPeso = g => (i && g === i.c) ? 0 : (g === 'misto' ? 1 : 2);
+  const lista = [...(colecoes || [])]
+    .filter(c => !q || casaTexto(c.nome, q))
+    .sort((a, b) => grupoPeso(a.grupo) - grupoPeso(b.grupo));
+  const listaEl = document.getElementById('midiaColLista');
+  const scrollTop = listaEl.scrollTop;
+  const chkSvg = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>';
+  if (!colecoes || !colecoes.length) {
+    listaEl.innerHTML = '<p class="hint">Você ainda não criou nenhuma coleção. Use “+ Nova coleção” abaixo.</p>';
+  } else if (!lista.length) {
+    listaEl.innerHTML = '<p class="hint">Nenhuma coleção encontrada.</p>';
+  } else {
+    listaEl.innerHTML = lista.map(c => {
+      const em = Array.isArray(c.itens) && c.itens.includes(midiaColKey);
+      const ic = c.icone ? `<span aria-hidden="true">${esc(c.icone)}</span> ` : '';
+      const qtd = Array.isArray(c.itens) ? c.itens.length : 0;
+      return `<button type="button" class="${em ? 'is-on' : ''}" aria-pressed="${em ? 'true' : 'false'}" data-midia-col="${esc(c.id)}"><span class="col-pick-main"><span class="col-pick-chk" aria-hidden="true">${em ? chkSvg : ''}</span><span class="col-pick-tit">${ic}${esc(c.nome)}</span></span><span class="col-pick-meta">${em ? '<span class="col-pick-tag">Na coleção</span>' : ''}<small>${qtd}</small></span></button>`;
+    }).join('');
+  }
+  listaEl.scrollTop = scrollTop;
+}
+function abrirMidiaColDlg(key){
+  if (!ITEMS.some(x => x.key === key)) return;
+  midiaColKey = key;
+  const busca = document.getElementById('midiaColBusca');
+  if (busca) busca.value = '';
+  renderMidiaCol();
+  document.getElementById('midiaColDlg').showModal();
+}
 function iniciarColecoes(){
   const dlg = document.getElementById('colDlg');
   dlg.querySelector('[data-fechar-col]').addEventListener('click', () => fecharDialogo(dlg));
+  dlg.addEventListener('close', () => { colMidiaPendente = null; });
   document.getElementById('col-salvar').addEventListener('click', () => {
     const nome = document.getElementById('col-nome').value.trim();
     const grupo = document.getElementById('col-grupo').value;
@@ -5080,15 +5174,50 @@ function iniciarColecoes(){
     const imagem = document.getElementById('col-imagem').value.trim();
     if (imagem && !/^https?:\/\//i.test(imagem)) return document.getElementById('col-erro').textContent = 'O link precisa começar com https://';
     if (!nome) return document.getElementById('col-erro').textContent = 'Informe um nome.';
+    let adicionouMidia = false;
     if (colEditando) {
       const c = colecoes.find(x => x.id === colEditando);
       if (c) { c.nome = nome; c.grupo = grupo; c.icone = icone; c.imagem = imagem; }
     } else {
-      colecoes.push({id: 'c' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), nome, grupo, icone, imagem, itens: []});
+      const itensIni = [];
+      if (colMidiaPendente && ITEMS.some(x => x.key === colMidiaPendente)) {
+        itensIni.push(colMidiaPendente);
+        adicionouMidia = colMidiaPendente;
+      }
+      colecoes.push({id: 'c' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), nome, grupo, icone, imagem, itens: itensIni});
     }
+    colMidiaPendente = null;
     gravarJSON(COLECOES_KEY, colecoes);
     fecharDialogo(dlg); render();
-    toast(colEditando ? 'Coleção atualizada.' : 'Coleção criada.');
+    if (adicionouMidia) atualizarBotaoColsModal(adicionouMidia);
+    toast(colEditando ? 'Coleção atualizada.' : (adicionouMidia ? `Coleção “${nome}” criada com a mídia adicionada.` : 'Coleção criada.'));
+  });
+  const midiaDlg = document.getElementById('midiaColDlg');
+  midiaDlg.querySelector('[data-fechar-midia-col]').addEventListener('click', () => fecharDialogo(midiaDlg));
+  document.getElementById('midiaColBusca').addEventListener('input', renderMidiaCol);
+  document.getElementById('midiaColLista').addEventListener('click', e => {
+    const b = e.target.closest('[data-midia-col]'); if (!b) return;
+    const c = colecoes.find(x => x.id === b.dataset.midiaCol);
+    if (!c || !midiaColKey) return;
+    if (!Array.isArray(c.itens)) c.itens = [];
+    const estava = c.itens.includes(midiaColKey);
+    c.itens = estava ? c.itens.filter(k => k !== midiaColKey) : [...new Set([...c.itens, midiaColKey])];
+    gravarJSON(COLECOES_KEY, colecoes);
+    renderMidiaCol();
+    render();
+    atualizarBotaoColsModal(midiaColKey);
+  });
+  document.getElementById('midiaColNova').addEventListener('click', () => {
+    const pend = midiaColKey;
+    fecharDialogo(midiaDlg);
+    colMidiaPendente = pend;
+    abrirColDlg(null);
+    const it = ITEMS.find(x => x.key === pend);
+    if (it && CATS[it.c]) {
+      const grpSel = document.getElementById('col-grupo');
+      grpSel.value = it.c;
+      sincronizarSelect(grpSel);
+    }
   });
   const itens = document.getElementById('colItensDlg');
   itens.querySelector('[data-fechar-col-itens]').addEventListener('click', () => fecharDialogo(itens));
