@@ -806,7 +806,85 @@ dialog#modal.morph-open .sheet,dialog#modal.morph-close .sheet{animation:none!im
 .capa-opt img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:4px;background:rgba(255,255,255,.05);display:block}
 .capa-opt small{color:var(--ink-3);font-size:.68rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 [data-editar]{background:linear-gradient(180deg,rgba(111,208,176,.26),rgba(111,208,176,.11));border-color:color-mix(in srgb,var(--jogo) 50%,transparent);color:var(--ink)}
-[data-remover]{color:var(--danger)}
+.hold-button{
+  --hb-radius:12px;
+  --hb-bg:rgba(217,107,107,.14);
+  --hb-fill:#dc2626;
+  --hb-text:#ff9c9c;
+  --hb-fill-text:#ffffff;
+  --hb-hold:1600ms;
+  --hb-release:200ms;
+  --hb-press:0.97;
+  --hb-wave:6px;
+  --hb-w:0px;
+  --hb-h:0px;
+  --hb-cycles:1.5;
+  --hb-p:0;
+  --hb-ease-out:cubic-bezier(0.23,1,0.32,1);
+  --hb-shadow:inset 0 1px 0 rgba(255,255,255,.12);
+  --hb-glow:inset 0 1px 0 rgba(255,255,255,.16),0 10px 30px -6px color-mix(in srgb,var(--hb-fill) 72%,transparent);
+  position:relative;display:inline-grid;place-items:center;isolation:isolate;margin:0;
+  height:38px;padding:0 16px;font-size:.84rem;font-family:inherit;font-weight:600;letter-spacing:.01em;line-height:1;
+  border:1px solid rgba(217,107,107,.35);border-radius:var(--hb-radius);
+  background:var(--hb-bg);color:var(--hb-text);box-shadow:var(--hb-shadow);
+  cursor:pointer;outline:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+  transition:transform 160ms var(--hb-ease-out),background-color 160ms ease,border-color 160ms ease,box-shadow var(--hb-release) var(--hb-ease-out);
+}
+@media (hover:hover) and (pointer:fine){
+  .hold-button:not(:disabled):hover{background:color-mix(in srgb,var(--hb-bg) 82%,#fff);border-color:rgba(220,38,38,.55)}
+}
+.hold-button[data-phase='holding'][data-input='pointer']{transform:scale(var(--hb-press))}
+.hold-button[data-glow='true'][data-phase='holding'],
+.hold-button[data-glow='true'][data-phase='done']{border-color:rgba(220,38,38,.75);box-shadow:var(--hb-glow)}
+.hold-button[data-glow='true'][data-phase='holding']{
+  transition:transform 160ms var(--hb-ease-out),background-color 160ms ease,border-color 160ms ease,box-shadow var(--hb-hold) linear;
+}
+.hold-button:focus-visible{outline:2px solid var(--hb-fill);outline-offset:3px}
+.hold-button:disabled{opacity:.5;cursor:default;pointer-events:none}
+.hold-button__pulse{position:absolute;inset:0;z-index:0;border-radius:var(--hb-radius);pointer-events:none;opacity:0}
+.hold-button[data-glow='true'][data-phase='done'] .hold-button__pulse{animation:hb-pulse 600ms var(--hb-ease-out) forwards}
+@keyframes hb-pulse{
+  from{opacity:1;box-shadow:0 0 0 0 color-mix(in srgb,var(--hb-fill) 55%,transparent)}
+  to{opacity:0;box-shadow:0 0 0 14px color-mix(in srgb,var(--hb-fill) 0%,transparent)}
+}
+.hold-button__label{position:relative;z-index:2;display:grid;place-items:center}
+.hold-button__label > span{
+  grid-area:1/1;display:inline-flex;align-items:center;gap:8px;white-space:nowrap;
+  transition:opacity 200ms ease,filter 200ms ease;
+}
+.hold-button__icon{display:inline-flex;flex:none}
+.hold-button__icon > svg{display:block}
+.hold-button__done{opacity:0;filter:blur(2px)}
+.hold-button[data-phase='done'] .hold-button__idle{opacity:0;filter:blur(2px)}
+.hold-button[data-phase='done'] .hold-button__done{opacity:1;filter:blur(0)}
+.hold-button__clip{position:absolute;inset:-1px;z-index:3;clip-path:inset(0 round var(--hb-radius));pointer-events:none}
+.hold-button__fill{
+  position:absolute;inset:0;display:grid;place-items:center;background:var(--hb-fill);color:var(--hb-fill-text);
+  clip-path:inset(0 calc((1 - var(--hb-p)) * (100% + 0.75 * var(--hb-wave)) - var(--hb-p) * 0.25 * var(--hb-wave)) 0 0);
+}
+.hold-button__crest{
+  position:absolute;inset:0;display:grid;place-items:center;background:var(--hb-fill);color:var(--hb-fill-text);
+  -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='200' viewBox='0 0 20 200' preserveAspectRatio='none'%3E%3Cpath d='M0 0H10C18 8 18 25.3 10 33.3S2 58.7 10 66.7S18 92 10 100S2 125.3 10 133.3S18 158.7 10 166.7S2 192 10 200H0Z'/%3E%3C/svg%3E");
+  mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='200' viewBox='0 0 20 200' preserveAspectRatio='none'%3E%3Cpath d='M0 0H10C18 8 18 25.3 10 33.3S2 58.7 10 66.7S18 92 10 100S2 125.3 10 133.3S18 158.7 10 166.7S2 192 10 200H0Z'/%3E%3C/svg%3E");
+  -webkit-mask-repeat:repeat-y;mask-repeat:repeat-y;
+  -webkit-mask-size:var(--hb-wave) calc(var(--hb-h) * 2);mask-size:var(--hb-wave) calc(var(--hb-h) * 2);
+  -webkit-mask-position-x:calc(-1 * var(--hb-wave) + var(--hb-p) * (var(--hb-w) + var(--hb-wave)));
+  mask-position-x:calc(-1 * var(--hb-wave) + var(--hb-p) * (var(--hb-w) + var(--hb-wave)));
+  -webkit-mask-position-y:calc(-1 * var(--hb-p) * var(--hb-cycles) * var(--hb-h));
+  mask-position-y:calc(-1 * var(--hb-p) * var(--hb-cycles) * var(--hb-h));
+}
+.hold-button__label--fill{z-index:auto}
+.hold-button__sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+@media (prefers-reduced-motion:reduce){
+  .hold-button{transition:background-color 160ms ease,box-shadow var(--hb-release) ease;transform:none !important}
+  .hold-button__fill{clip-path:inset(0);opacity:0;transition:opacity var(--hb-release) ease}
+  .hold-button__crest{display:none}
+  .hold-button[data-phase='holding'] .hold-button__fill,
+  .hold-button[data-phase='done'] .hold-button__fill{opacity:1;transition:opacity var(--hb-hold) linear}
+  .hold-button__pulse{animation:none !important}
+  .hold-button__label > span{transition:opacity 200ms ease;filter:none !important}
+}
 
 @keyframes prPop{
   0%{transform:translateY(-4px) scale(1.26)}
@@ -1424,7 +1502,9 @@ function recarregarItens(){
     ...RAW.map(r => ({...r, key: r.c + '|' + r.t, novo: false})),
     ...novos.map(n => ({...n, novo: true}))
   ];
-  ITEMS = base.map(b => ({...b, ...(edicoes[b.key] || {}), key: b.key, novo: b.novo}));
+  ITEMS = base
+    .map(b => ({...b, ...(edicoes[b.key] || {}), key: b.key, novo: b.novo}))
+    .filter(x => !x.removido);
 }
 function gravarEdicoes(){ gravarJSON(EDICOES_KEY, edicoes); }
 recarregarItens();
@@ -2979,6 +3059,150 @@ async function abrirSeletorCapa(key){
   });
 }
 
+function inicializarHoldButton(btn, opts = {}){
+  if (!btn) return;
+  const label = opts.label || 'Segurar para excluir';
+  const doneLabel = opts.doneLabel || 'Excluído';
+  const holdTime = opts.holdTime ?? 1600;
+  const releaseTime = opts.releaseTime ?? 200;
+  const waveAmp = opts.waveAmplitude ?? 6;
+  const pressScale = opts.pressScale ?? 0.97;
+  const TAP_MS = 250, HIT_PAD = 10;
+  const LINEAR = t => t;
+  const EASE_OUT = t => 1 - Math.pow(1 - t, 3);
+  const trashSvg = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>';
+  const checkSvg = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>';
+  const labelsHtml = `
+    <span class="hold-button__idle"><span class="hold-button__icon">${trashSvg}</span><span>${esc(label)}</span></span>
+    <span class="hold-button__done"><span class="hold-button__icon">${checkSvg}</span><span>${esc(doneLabel)}</span></span>`;
+  btn.innerHTML = `
+    <span class="hold-button__pulse" aria-hidden="true"></span>
+    <span class="hold-button__label">${labelsHtml}</span>
+    <span class="hold-button__clip" aria-hidden="true">
+      <span class="hold-button__fill"><span class="hold-button__label hold-button__label--fill">${labelsHtml}</span></span>
+      <span class="hold-button__crest"><span class="hold-button__label hold-button__label--fill">${labelsHtml}</span></span>
+    </span>
+    <span class="hold-button__sr">Segure por ${(holdTime / 1000).toFixed(1)} segundos para confirmar</span>`;
+  btn.dataset.phase = 'idle';
+  btn.dataset.direction = 'right';
+  btn.dataset.glow = 'true';
+  btn.style.setProperty('--hb-hold', `${holdTime}ms`);
+  btn.style.setProperty('--hb-cycles', String(holdTime / 1100));
+  btn.style.setProperty('--hb-release', `${releaseTime}ms`);
+  btn.style.setProperty('--hb-press', String(pressScale));
+  btn.style.setProperty('--hb-wave', `${waveAmp}px`);
+
+  let phase = 'idle', inputKind = null;
+  const gesture = {pointerId: null, start: 0, rect: null};
+  const timers = {complete: 0};
+  const motion = {raf: 0, p: 0, from: 0, to: 0, start: 0};
+
+  const measure = () => {
+    btn.style.setProperty('--hb-w', `${btn.offsetWidth}px`);
+    btn.style.setProperty('--hb-h', `${btn.offsetHeight}px`);
+  };
+  measure();
+  const ro = typeof ResizeObserver === 'function' ? new ResizeObserver(measure) : null;
+  if (ro) ro.observe(btn);
+
+  const go = (next, kind = null) => {
+    phase = next; inputKind = kind;
+    btn.dataset.phase = next;
+    if (kind) btn.dataset.input = kind; else delete btn.dataset.input;
+  };
+  const clearTimers = () => { clearTimeout(timers.complete); };
+  const cleanup = () => {
+    clearTimers();
+    cancelAnimationFrame(motion.raf);
+    window.removeEventListener('blur', onBlur);
+    document.removeEventListener('visibilitychange', onVis);
+    if (ro) ro.disconnect();
+  };
+  const complete = () => {
+    if (phase !== 'holding') return;
+    if (performance.now() - gesture.start < holdTime - 50) return;
+    clearTimers();
+    go('done', inputKind);
+    cleanup();
+    if (opts.onHold) opts.onHold();
+  };
+  const drive = (to, duration, ease) => {
+    cancelAnimationFrame(motion.raf);
+    motion.from = motion.p; motion.to = to; motion.start = performance.now();
+    const step = now => {
+      if (!btn.isConnected) { cleanup(); return; }
+      const t = duration > 0 ? Math.min(1, (now - motion.start) / duration) : 1;
+      motion.p = motion.from + (motion.to - motion.from) * ease(t);
+      btn.style.setProperty('--hb-p', motion.p.toFixed(4));
+      if (t < 1) { motion.raf = requestAnimationFrame(step); return; }
+      motion.raf = 0;
+      if (motion.to === 1) complete();
+    };
+    motion.raf = requestAnimationFrame(step);
+  };
+  const begin = kind => {
+    if (btn.disabled || phase !== 'idle') return false;
+    measure();
+    gesture.start = performance.now();
+    gesture.rect = btn.getBoundingClientRect();
+    go('holding', kind);
+    drive(1, holdTime, LINEAR);
+    timers.complete = setTimeout(complete, holdTime + 100);
+    return true;
+  };
+  const release = ({drifted = false} = {}) => {
+    if (phase !== 'holding') return;
+    clearTimers();
+    const held = performance.now() - gesture.start;
+    go('idle');
+    drive(0, releaseTime, EASE_OUT);
+    if (!drifted && held < TAP_MS && opts.onTap) opts.onTap();
+  };
+  const endPointer = (e, options) => {
+    if (e.pointerId !== gesture.pointerId) return;
+    gesture.pointerId = null;
+    try { if (btn.hasPointerCapture(e.pointerId)) btn.releasePointerCapture(e.pointerId); } catch {}
+    release(options);
+  };
+
+  btn.addEventListener('pointerdown', e => {
+    if (e.button !== 0 || !e.isPrimary || gesture.pointerId !== null) return;
+    if (!begin('pointer')) return;
+    gesture.pointerId = e.pointerId;
+    try { btn.setPointerCapture(e.pointerId); } catch {}
+  });
+  btn.addEventListener('pointermove', e => {
+    if (e.pointerId !== gesture.pointerId) return;
+    const r = gesture.rect;
+    if (!r) return;
+    if (e.clientX < r.left - HIT_PAD || e.clientX > r.right + HIT_PAD || e.clientY < r.top - HIT_PAD || e.clientY > r.bottom + HIT_PAD) {
+      endPointer(e, {drifted: true});
+    }
+  });
+  btn.addEventListener('pointerup', e => endPointer(e));
+  btn.addEventListener('pointercancel', e => endPointer(e, {drifted: true}));
+  btn.addEventListener('lostpointercapture', e => endPointer(e, {drifted: true}));
+  btn.addEventListener('pointerleave', e => { if (e.pointerType !== 'touch') endPointer(e, {drifted: true}); });
+  btn.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { if (inputKind === 'key') release({drifted: true}); return; }
+    if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); if (!e.repeat) begin('key'); }
+  });
+  btn.addEventListener('keyup', e => {
+    if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); if (inputKind === 'key') release(); }
+  });
+  btn.addEventListener('contextmenu', e => e.preventDefault());
+  const onBlur = () => {
+    if (!btn.isConnected) { cleanup(); return; }
+    release({drifted: true});
+  };
+  const onVis = () => {
+    if (!btn.isConnected) { cleanup(); return; }
+    if (document.hidden) release({drifted: true});
+  };
+  window.addEventListener('blur', onBlur);
+  document.addEventListener('visibilitychange', onVis);
+}
+
 function preencherSheet(key){
   const i = ITEMS.find(x => x.key === key);
   const c = CATS[i.c];
@@ -3025,7 +3249,7 @@ function preencherSheet(key){
           ${i.c === 'jogo' ? `<a class="btn" href="https://howlongtobeat.com/?q=${encodeURIComponent(i.t)}" target="_blank" rel="noopener">Ver no HowLongToBeat</a>` : ''}
           <button class="btn" type="button" data-buscar-capa>Buscar capa</button>
           ${capa ? '<button class="link" type="button" data-remover-capa>Remover capa</button>' : ''}
-          ${i.novo ? '<button class="link" type="button" data-remover>Remover esta mídia</button>' : ''}
+          <button class="hold-button" type="button" data-remover></button>
         </div></div>
         <div id="det-capas" class="capa-picker" hidden></div>
         <p class="hint">As alterações ficam salvas neste navegador.</p>
@@ -3084,7 +3308,14 @@ function preencherSheet(key){
   const rc = document.querySelector('[data-remover-capa]');
   if (rc) rc.addEventListener('click', () => removerCapa(key));
   const rm = document.querySelector('[data-remover]');
-  if (rm) rm.addEventListener('click', () => removerItem(key));
+  if (rm) inicializarHoldButton(rm, {
+    label: 'Segurar para excluir',
+    doneLabel: 'Excluído',
+    holdTime: 1600,
+    releaseTime: 200,
+    onTap: () => toast('Segure o botão para excluir esta mídia.'),
+    onHold: () => setTimeout(() => removerItem(key), 360)
+  });
   document.getElementById('st-sel').addEventListener('change', e => {
     definirStatus(key, e.target.value);
     render();
@@ -3812,15 +4043,28 @@ function salvarItem(key, colDestinoId = null){
 
 function removerItem(key){
   const i = ITEMS.find(x => x.key === key);
-  if (!i || !i.novo) return;
-  novos = novos.filter(n => n.key !== key);
-  gravarJSON(NOVOS_KEY, novos);
-  delete edicoes[key];
+  if (!i) return;
+  if (i.novo) {
+    novos = novos.filter(n => n.key !== key);
+    gravarJSON(NOVOS_KEY, novos);
+    delete edicoes[key];
+  } else {
+    edicoes[key] = {...(edicoes[key] || {}), removido: true};
+  }
   gravarEdicoes();
+  st.selecionados.delete(key);
+  let colMudou = false;
+  (colecoes || []).forEach(c => {
+    if (Array.isArray(c.itens) && c.itens.includes(key)) {
+      c.itens = c.itens.filter(k => k !== key);
+      colMudou = true;
+    }
+  });
+  if (colMudou) gravarJSON(COLECOES_KEY, colecoes);
   recarregarItens();
   fecharDialogo(document.getElementById('modal'));
   render();
-  toast(`“${i.t}” removido.`);
+  toast(`“${i.t}” excluído.`);
 }
 
 /* ---------- notificações ---------- */
