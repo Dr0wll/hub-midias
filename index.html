@@ -377,8 +377,12 @@ textarea.field{min-height:84px;line-height:1.45;border-radius:14px;padding:10px 
   position:absolute;left:8px;top:8px;z-index:1;
   font-size:.64rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);
 }
+.cover-bl{
+  position:absolute;left:7px;bottom:7px;z-index:3;
+  display:inline-flex;align-items:center;gap:5px;pointer-events:none;
+}
 .dot-status{
-  position:absolute;left:7px;bottom:7px;z-index:3;width:9px;height:9px;border-radius:50%;
+  position:relative;flex:0 0 auto;width:9px;height:9px;border-radius:50%;
   background:var(--c);
   box-shadow:0 0 0 2px rgba(11,12,15,.88),0 0 8px 1px color-mix(in srgb,var(--c) 60%,transparent);
 }
@@ -414,18 +418,11 @@ textarea.field{min-height:84px;line-height:1.45;border-radius:14px;padding:10px 
   border-color:color-mix(in srgb,var(--col) 70%,transparent);color:var(--col);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 6px 14px -6px rgba(0,0,0,.85);
 }
-.card-deck{position:relative;z-index:1;display:block;height:100%}
-.card-deck > .card{position:relative;z-index:2;height:100%}
-.deck-layer{
-  position:absolute;top:0;height:22px;border-radius:13px 13px 0 0;overflow:hidden;pointer-events:none;
-  background:linear-gradient(180deg,rgba(255,255,255,.16),rgba(16,20,32,.92));
-  border:1px solid rgba(255,255,255,.22);border-bottom:0;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.32);
-  transition:transform var(--dur-med) var(--ease-out),border-color var(--dur-fast) var(--ease-out),opacity var(--dur-med) var(--ease-out);
+.dlc-cards{
+  display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;
+  filter:drop-shadow(0 2px 5px rgba(0,0,0,.88));
 }
-.deck-layer img{width:100%;height:100%;object-fit:cover;object-position:center 22%;display:block;opacity:.72;filter:brightness(.85) saturate(1.15)}
-.deck-l1{left:9px;right:9px;z-index:1;transform:translateY(-5px)}
-.deck-l2{left:18px;right:18px;z-index:0;border-radius:11px 11px 0 0;transform:translateY(-10px);opacity:.72}
+.dlc-cards svg{width:27px;height:21px;display:block;overflow:visible}
 .body{padding:4px 12px 12px}
 .body h3{
   font-size:.92rem;font-weight:600;line-height:1.32;margin:0 0 6px;
@@ -1210,9 +1207,6 @@ dialog#modal.morph-open .sheet,dialog#modal.morph-close .sheet{animation:none!im
   .sug button:hover,.sug button:focus-visible{background:rgba(255,255,255,.09)}
   .card:hover{transform:translateY(-2px);border-color:var(--edge-2);box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 18px 34px -18px rgba(0,0,0,.92)}
   .card:hover .cover .fg{transform:scale(1.025)}
-  .card-deck:hover{z-index:4}
-  .card-deck:hover .deck-l1{transform:translateY(-8px);border-color:rgba(255,255,255,.34)}
-  .card-deck:hover .deck-l2{transform:translateY(-14px);opacity:.9;border-color:rgba(255,255,255,.28)}
   .card-col-btn:hover{background:rgba(24,30,46,.92);border-color:var(--edge-3);color:var(--ink)}
   .card-col-btn.is-in:hover{background:color-mix(in srgb,var(--col) 34%,rgba(10,14,24,.94));border-color:var(--col);color:var(--col)}
   .col-card:hover,.col-card:focus-visible{transform:translateY(-4px);border-color:var(--edge-2);box-shadow:inset 0 1px 0 rgba(255,255,255,.26),0 22px 40px -18px rgba(0,0,0,.92)}
@@ -1303,19 +1297,19 @@ dialog#modal.morph-open .sheet,dialog#modal.morph-close .sheet{animation:none!im
   #limparFiltros,#colListaLimpar{grid-column:1;justify-self:start;align-self:center;min-height:36px;padding:6px 12px;font-size:.8rem}
   #selecionarBtn,#colListaReordBtn{grid-column:2}
   .count{margin:12px 2px 0;font-size:.82rem}
-  .grid{grid-template-columns:repeat(3,minmax(0,1fr));row-gap:12px;column-gap:8px;margin-top:10px}
+  .grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}
   .cover{margin:5px}
   .body{padding:2px 7px 9px}
   .body h3{font-size:.78rem;min-height:2.4em;margin-bottom:4px}
   .card .meta{height:auto;flex-wrap:wrap;gap:4px}
   .meta .badge{font-size:.66rem;padding:2px 6px}
-  .dot-status{width:8px;height:8px;left:5px;bottom:5px}
+  .cover-bl{left:5px;bottom:5px;gap:4px}
+  .dot-status{width:8px;height:8px}
+  .dlc-cards svg{width:22px;height:17px}
   .nota-capa{font-size:.6rem;right:5px;bottom:5px;height:18px;padding:0 5px}
   .nota-capa .est{font-size:.62rem}
   .card-col-btn{top:9px;right:9px;min-width:24px;height:24px;padding:0 5px;font-size:.62rem}
   .card-col-btn svg{width:12px;height:12px}
-  .deck-l1{left:6px;right:6px;transform:translateY(-4px)}
-  .deck-l2{left:12px;right:12px;transform:translateY(-7px)}
   .data-lanc{font-size:.72rem}
   .massa{bottom:calc(10px + env(safe-area-inset-bottom,0px));width:calc(100vw - 20px);max-width:none;padding:10px;border-radius:20px}
   .massa .field,.massa .csel{max-width:none;flex:1 1 130px}
@@ -1703,10 +1697,22 @@ try {
     localStorage.setItem(NOTA_MIG_KEY, '1');
   }
 } catch(e){}
+const PERFIL_KEY = 'hub-midias-perfil-v1';
+let perfil = lerJSON(PERFIL_KEY, {});
+if (typeof perfil.catalogoVazio !== 'boolean') {
+  const temDadosPrevios = !!(
+    novos.length ||
+    Object.keys(edicoes).length ||
+    Object.keys(lerJSON('hub-midias-capas-v1', {})).length ||
+    lerJSON('hub-midias-colecoes-v1', []).length
+  );
+  perfil.catalogoVazio = !temDadosPrevios;
+  gravarJSON(PERFIL_KEY, perfil);
+}
 let ITEMS = [];
 function recarregarItens(){
   const base = [
-    ...RAW.map(r => ({...r, key: r.c + '|' + r.t, novo: false})),
+    ...(perfil.catalogoVazio ? [] : RAW.map(r => ({...r, key: r.c + '|' + r.t, novo: false}))),
     ...novos.map(n => ({...n, novo: true}))
   ];
   ITEMS = base
@@ -2727,9 +2733,12 @@ function card(i){
     : '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21l-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/><line x1="12" y1="7" x2="12" y2="13"/><line x1="9" y1="10" x2="15" y2="10"/></svg>';
   const colBtn = !st.sel ? `<button class="card-col-btn${nCols ? ' is-in' : ''}" type="button" data-card-col="${esc(i.key)}" aria-label="${nCols ? `Em ${nCols} coleção(ões) · Gerenciar` : 'Adicionar a uma coleção'}" title="${nCols ? `Em ${nCols} coleção(ões)` : 'Adicionar a uma coleção'}">${colIcon}${nCols > 1 ? `<span>${nCols}</span>` : ''}</button>` : '';
   const dlcs = (i.c === 'jogo' && !ehDlc(i)) ? dlcsDe(i.key) : [];
-  const cardHtml = `<article class="card${st.selecionados.has(i.key) ? ' selecionado' : ''}" style="--tint:${c.tint}">
+  const dlcBadge = dlcs.length
+    ? `<span class="dlc-cards" title="${dlcs.length} DLC${dlcs.length > 1 ? 's' : ''} vinculada${dlcs.length > 1 ? 's' : ''}" role="img" aria-label="${dlcs.length} DLC${dlcs.length > 1 ? 's' : ''}"><svg viewBox="0 0 32 24" aria-hidden="true"><rect x="10" y="3.5" width="12" height="16.5" rx="2.4" transform="rotate(-18 16 20)" fill="rgba(22,27,42,.92)" stroke="rgba(255,255,255,.58)" stroke-width="1.35"/><rect x="10" y="3.5" width="12" height="16.5" rx="2.4" transform="rotate(18 16 20)" fill="rgba(22,27,42,.92)" stroke="rgba(255,255,255,.58)" stroke-width="1.35"/><rect x="9.5" y="3" width="13" height="17.5" rx="2.5" fill="rgba(14,18,28,.96)" stroke="rgba(255,255,255,.88)" stroke-width="1.45"/><text x="16" y="12" text-anchor="middle" dominant-baseline="central" fill="#f5f7fb" font-size="${dlcs.length > 9 ? 8.5 : 10}" font-weight="700" font-family="inherit">${dlcs.length}</text></svg></span>`
+    : '';
+  return `<article class="card${st.selecionados.has(i.key) ? ' selecionado' : ''}" style="--tint:${c.tint}">
     <button class="open" type="button" data-key="${esc(i.key)}" aria-label="Abrir ${esc(i.t)}">
-      <div class="cover${capa ? ' has-img' : ''}">${capa ? '' : `<span class="cat-pad">${esc(c.label)}</span>`}${capaHTML(capa)}<span class="ini" aria-hidden="true">${esc(i.t.charAt(0).toUpperCase())}</span><span class="dot-status${s2 === 'Platinado' ? ' brilho' : ''}${jaSaiu(i) ? ' saiu' : ''}" style="--c:${jaSaiu(i) ? '#ffc93c' : (STATUS_COR[s2] || '#7b8190')}" title="${jaSaiu(i) ? 'Já saiu: atualize o status' : esc(s2)}" role="img" aria-label="${jaSaiu(i) ? 'Já saiu' : 'Status: ' + esc(s2)}"></span>${i.n != null ? `<span class="nota-capa"><span class="est">★</span>${fmtNota(i.n)}</span>` : ''}</div>
+      <div class="cover${capa ? ' has-img' : ''}">${capa ? '' : `<span class="cat-pad">${esc(c.label)}</span>`}${capaHTML(capa)}<span class="ini" aria-hidden="true">${esc(i.t.charAt(0).toUpperCase())}</span><span class="cover-bl"><span class="dot-status${s2 === 'Platinado' ? ' brilho' : ''}${jaSaiu(i) ? ' saiu' : ''}" style="--c:${jaSaiu(i) ? '#ffc93c' : (STATUS_COR[s2] || '#7b8190')}" title="${jaSaiu(i) ? 'Já saiu: atualize o status' : esc(s2)}" role="img" aria-label="${jaSaiu(i) ? 'Já saiu' : 'Status: ' + esc(s2)}"></span>${dlcBadge}</span>${i.n != null ? `<span class="nota-capa"><span class="est">★</span>${fmtNota(i.n)}</span>` : ''}</div>
       <div class="body">
         <h3>${esc(i.t)}</h3>
         ${meta}
@@ -2737,12 +2746,6 @@ function card(i){
       </div>
     </button>${colBtn}
   </article>`;
-  if (!dlcs.length) return cardHtml;
-  const deckLayers = dlcs.slice(0, 2).map((d, idx) => {
-    const u = capaDe(d);
-    return `<span class="deck-layer deck-l${idx + 1}" aria-hidden="true">${u ? `<img src="${esc(u)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : ''}</span>`;
-  }).join('');
-  return `<div class="card-deck">${deckLayers}${cardHtml}</div>`;
 }
 
 function renderGrid(){
@@ -2777,7 +2780,9 @@ function renderGrid(){
     `${L.length} ${L.length === 1 ? 'item' : 'itens'}${st.cat !== 'todos' ? ' em ' + CATS[st.cat].label : ''}`;
   el.innerHTML = L.length
     ? L.map(card).join('')
-    : `<div class="empty glass"><b>Nada por aqui</b>Ajuste a busca ou troque os filtros.</div>`;
+    : (!ITEMS.length
+        ? `<div class="empty glass"><b>Seu catálogo está vazio</b>Comece adicionando sua primeira mídia ou entre com sua conta Google para sincronizar entre dispositivos.<div class="keys-actions" style="justify-content:center;margin-top:16px"><div class="group"><button class="btn primary" type="button" data-empty-novo>+ Adicionar mídia</button><button class="btn" type="button" data-empty-login>${fbAuth ? 'Entrar com Google' : 'Sincronização'}</button></div></div></div>`
+        : `<div class="empty glass"><b>Nada por aqui</b>Ajuste a busca ou troque os filtros.</div>`);
 }
 
 /* ---------- painéis ---------- */
@@ -3605,7 +3610,7 @@ function abrir(key, origemEl){
     const dst = flipCard.getBoundingClientRect();
     if (src.width > 0 && dst.width > 0 && src.bottom > 0 && src.top < window.innerHeight) {
       const clone = origemEl.cloneNode(true);
-      clone.querySelectorAll('.dot-status, .nota-capa, .cat-pad').forEach(el => el.remove());
+      clone.querySelectorAll('.cover-bl, .dot-status, .dlc-cards, .nota-capa, .cat-pad').forEach(el => el.remove());
       clone.querySelectorAll('img').forEach(img => { img.loading = 'eager'; img.decoding = 'sync'; });
       const ghost = document.createElement('div');
       ghost.className = 'morph-ghost';
@@ -3695,6 +3700,26 @@ document.addEventListener('pointerdown', e => {
   if (!e.target.closest('#grid .card.is-peek')) limparCardPeek();
 });
 gridEl.addEventListener('click', e => {
+  const elEmptyNovo = e.target.closest('[data-empty-novo]');
+  if (elEmptyNovo) { abrirNovo(); return; }
+  const elEmptyLogin = e.target.closest('[data-empty-login]');
+  if (elEmptyLogin) {
+    if (fbAuth) {
+      document.getElementById('fb-entrar')?.click();
+    } else {
+      const cfgDlg = document.getElementById('config');
+      const syncAcc = document.getElementById('fb-status')?.closest('.acc');
+      if (syncAcc) {
+        syncAcc.classList.add('is-open');
+        syncAcc.querySelector('[data-acc-toggle]')?.setAttribute('aria-expanded', 'true');
+      }
+      if (cfgDlg) {
+        abrirDialogo(cfgDlg);
+        setTimeout(() => document.getElementById('fb-cfg')?.focus(), 80);
+      }
+    }
+    return;
+  }
   const cb = e.target.closest('[data-card-col]');
   if (cb) { limparCardPeek(); e.stopPropagation(); abrirMidiaColDlg(cb.dataset.cardCol); return; }
   if (Date.now() < cardPeekSuppressClick) { e.preventDefault(); e.stopPropagation(); return; }
@@ -4489,6 +4514,7 @@ function salvarItem(key, colDestinoId = null, forcarDuplicada = false){
     const nk = 'n' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
     novos.push({key: nk, ...dados, adicionadoEm: Date.now()});
     gravarJSON(NOVOS_KEY, novos);
+    if (perfil.catalogoVazio) gravarJSON(PERFIL_KEY, perfil);
     if (colDestinoId) {
       const col = colecoes.find(x => x.id === colDestinoId);
       if (col && !col.itens.includes(nk)) {
@@ -4581,13 +4607,12 @@ function iniciarNotif(){
 }
 
 /* ---------- sincronização com Firebase ---------- */
-const PERFIL_KEY = 'hub-midias-perfil-v1';
-let perfil = lerJSON(PERFIL_KEY, {});
 const COLECOES_KEY = 'hub-midias-colecoes-v1';
 let colecoes = lerJSON(COLECOES_KEY, []);
 SYNC_KEYS_LIST = [EDICOES_KEY, NOVOS_KEY, CAPAS_KEY, FONTES_KEY, PERFIL_KEY, COLECOES_KEY];
+const FIREBASE_CONFIG_PADRAO = null;
 const FB_CFG_KEY = 'hub-midias-firebase-v1';
-let fbCfg = lerJSON(FB_CFG_KEY, null);
+let fbCfg = lerJSON(FB_CFG_KEY, null) || FIREBASE_CONFIG_PADRAO;
 let fbAuth = null, fbDb = null, fbDocRef = null, fbUnsub = null, fbTimer = null;
 let fbAplicandoRemoto = false, fbPendente = false, fbEmVoo = 0, fbSeq = 0;
 const fbClientId = 'c' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
@@ -4647,7 +4672,12 @@ function aplicarRemoto(d){
     gravarJSON(NOVOS_KEY, novos);
     gravarJSON(CAPAS_KEY, capas);
     gravarFontes();
-    if (d.perfil) { perfil = d.perfil; gravarJSON(PERFIL_KEY, perfil); }
+    const tinhaCatalogoVazio = !!(d.perfil && d.perfil.catalogoVazio);
+    if (d.perfil) perfil = {...d.perfil};
+    if (typeof perfil.catalogoVazio !== 'boolean' || !tinhaCatalogoVazio) {
+      perfil.catalogoVazio = false;
+    }
+    gravarJSON(PERFIL_KEY, perfil);
     if (d.colecoes) { colecoes = d.colecoes; gravarJSON(COLECOES_KEY, colecoes); }
   } finally { fbAplicandoRemoto = false; }
   if (migrou) agendarEnvio();
@@ -4663,7 +4693,13 @@ function ligarSync(uid){
   fbUnsub = fbDocRef.onSnapshot(snap => {
     if (snap.metadata.hasPendingWrites || fbPendente || fbEmVoo > 0) { setSyncEstado('syncing', 'Sincronizando…'); return; }
     if (!snap.exists) {
-      if (!snap.metadata.fromCache) enviarAgora();
+      if (!snap.metadata.fromCache) {
+        if (typeof perfil.catalogoVazio !== 'boolean') {
+          perfil.catalogoVazio = true;
+          gravarJSON(PERFIL_KEY, perfil);
+        }
+        enviarAgora();
+      }
       else setSyncEstado(navigator.onLine ? 'ok' : 'off', navigator.onLine ? 'Sincronizado' : 'Offline (cache local)');
       return;
     }
@@ -4689,6 +4725,11 @@ function desligarSync(){
   fbUnsub = null; fbDocRef = null;
 }
 function iniciarFirebase(){
+  const usaCfgPadrao = !!(FIREBASE_CONFIG_PADRAO && !lerJSON(FB_CFG_KEY, null));
+  const cfgWrap = document.getElementById('fb-cfg')?.closest('label');
+  const cfgBtn = document.getElementById('fb-salvar');
+  if (cfgWrap) cfgWrap.hidden = usaCfgPadrao;
+  if (cfgBtn) cfgBtn.hidden = usaCfgPadrao;
   if (!fbCfg) { setSyncEstado('off', 'Sincronização não configurada'); return setStatusFb('Não configurada. Cole a configuração do Firebase abaixo.'); }
   if (typeof firebase === 'undefined') { setSyncEstado('off', 'Offline (apenas local)'); return setStatusFb('Não foi possível carregar o Firebase. Verifique a conexão e abra pelo endereço publicado.'); }
   if (!firebase.apps.length) firebase.initializeApp(fbCfg);
