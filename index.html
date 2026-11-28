@@ -2781,7 +2781,7 @@ function renderGrid(){
   el.innerHTML = L.length
     ? L.map(card).join('')
     : (!ITEMS.length
-        ? `<div class="empty glass"><b>Seu catálogo está vazio</b>Comece adicionando sua primeira mídia ou entre com sua conta Google para sincronizar entre dispositivos.<div class="keys-actions" style="justify-content:center;margin-top:16px"><div class="group"><button class="btn primary" type="button" data-empty-novo>+ Adicionar mídia</button><button class="btn" type="button" data-empty-login>${fbAuth ? 'Entrar com Google' : 'Sincronização'}</button></div></div></div>`
+        ? `<div class="empty glass"><b>Seu catálogo está vazio</b>Comece adicionando sua primeira mídia ou entre com sua conta Google para sincronizar entre dispositivos.<div class="keys-actions" style="justify-content:center;margin-top:16px"><div class="group"><button class="btn primary" type="button" data-empty-novo>+ Adicionar mídia</button><button class="btn" type="button" data-empty-login>${fbCfg ? 'Entrar com Google' : 'Sincronização'}</button></div></div></div>`
         : `<div class="empty glass"><b>Nada por aqui</b>Ajuste a busca ou troque os filtros.</div>`);
 }
 
@@ -4610,7 +4610,14 @@ function iniciarNotif(){
 const COLECOES_KEY = 'hub-midias-colecoes-v1';
 let colecoes = lerJSON(COLECOES_KEY, []);
 SYNC_KEYS_LIST = [EDICOES_KEY, NOVOS_KEY, CAPAS_KEY, FONTES_KEY, PERFIL_KEY, COLECOES_KEY];
-const FIREBASE_CONFIG_PADRAO = null;
+const FIREBASE_CONFIG_PADRAO = {
+  apiKey: "AIzaSyCra6C1soZ_7LvDBVIeN_z-bAek8i9B-i8",
+  authDomain: "hubmidias00.firebaseapp.com",
+  projectId: "hubmidias00",
+  storageBucket: "hubmidias00.firebasestorage.app",
+  messagingSenderId: "952551334762",
+  appId: "1:952551334762:web:bb8d03ba0e44cd26267b13"
+};
 const FB_CFG_KEY = 'hub-midias-firebase-v1';
 let fbCfg = lerJSON(FB_CFG_KEY, null) || FIREBASE_CONFIG_PADRAO;
 let fbAuth = null, fbDb = null, fbDocRef = null, fbUnsub = null, fbTimer = null;
@@ -4725,7 +4732,7 @@ function desligarSync(){
   fbUnsub = null; fbDocRef = null;
 }
 function iniciarFirebase(){
-  const usaCfgPadrao = !!(FIREBASE_CONFIG_PADRAO && !lerJSON(FB_CFG_KEY, null));
+  const usaCfgPadrao = !!FIREBASE_CONFIG_PADRAO;
   const cfgWrap = document.getElementById('fb-cfg')?.closest('label');
   const cfgBtn = document.getElementById('fb-salvar');
   if (cfgWrap) cfgWrap.hidden = usaCfgPadrao;
