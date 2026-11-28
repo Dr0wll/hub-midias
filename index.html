@@ -414,17 +414,19 @@ textarea.field{min-height:84px;line-height:1.45;border-radius:14px;padding:10px 
   border-color:color-mix(in srgb,var(--col) 70%,transparent);color:var(--col);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 6px 14px -6px rgba(0,0,0,.85);
 }
-.dlc-chip{
-  position:absolute;top:14px;left:14px;z-index:3;
-  display:inline-flex;align-items:center;height:20px;padding:0 7px;border-radius:999px;
-  background:rgba(20,16,36,.82);border:1px solid rgba(161,150,234,.55);
-  backdrop-filter:blur(10px) saturate(160%);-webkit-backdrop-filter:blur(10px) saturate(160%);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 6px 14px -6px rgba(0,0,0,.85);
-  color:#d6cffb;font-size:.62rem;font-weight:700;letter-spacing:.04em;white-space:nowrap;pointer-events:none;
+.card-deck{position:relative;z-index:1;display:block;height:100%}
+.card-deck > .card{position:relative;z-index:2;height:100%}
+.deck-layer{
+  position:absolute;inset:0;border-radius:var(--r);overflow:hidden;pointer-events:none;
+  background:linear-gradient(160deg,rgba(255,255,255,.1),rgba(14,18,28,.9));
+  border:1px solid rgba(255,255,255,.22);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.24),0 14px 26px -16px rgba(0,0,0,.92);
+  transform-origin:50% 88%;
+  transition:transform var(--dur-med) var(--ease-out),border-color var(--dur-fast) var(--ease-out),opacity var(--dur-med) var(--ease-out);
 }
-.dlc-chip.is-base{
-  background:rgba(16,40,34,.82);border-color:rgba(111,208,176,.55);color:#aef2d8;
-}
+.deck-layer img{width:100%;height:100%;object-fit:cover;display:block;opacity:.85;filter:brightness(.88) saturate(1.1)}
+.deck-l1{z-index:1;transform:translate(5px,-5px) rotate(2.6deg)}
+.deck-l2{z-index:0;transform:translate(10px,-9px) rotate(5deg);opacity:.82}
 .body{padding:4px 12px 12px}
 .body h3{
   font-size:.92rem;font-weight:600;line-height:1.32;margin:0 0 6px;
@@ -1014,6 +1016,25 @@ dialog#modal.morph-open .sheet,dialog#modal.morph-close .sheet{animation:none!im
   .hold-button__label > span{transition:opacity 200ms ease;filter:none !important}
 }
 
+.base-pick{position:relative;display:grid;gap:6px;font-size:.83rem;color:var(--ink-2)}
+.base-lbl{font-size:.83rem;color:var(--ink-2)}
+.base-input-wrap{position:relative;display:flex;align-items:center}
+.base-input-wrap .field{width:100%;padding-right:36px}
+.base-clear{
+  position:absolute;right:8px;width:26px;height:26px;border-radius:999px;border:0;
+  background:rgba(255,255,255,.1);color:var(--ink-2);font:inherit;font-size:.78rem;
+  cursor:pointer;display:grid;place-items:center;
+  transition:background-color var(--dur-fast) ease,color var(--dur-fast) ease;
+}
+.base-clear[hidden]{display:none}
+.base-clear:hover{background:rgba(255,255,255,.2);color:var(--ink)}
+.base-sug{z-index:80;max-height:220px}
+.base-sug button.is-on{background:rgba(111,208,176,.14);color:var(--ink)}
+.base-opt-main{display:flex;align-items:center;gap:8px;min-width:0;flex:1}
+.base-opt-main > span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.base-opt-thumb{width:24px;height:32px;border-radius:5px;object-fit:cover;flex:none;background:rgba(255,255,255,.08)}
+.base-opt-ph{display:grid;place-items:center;font-size:.7rem;font-weight:700;color:var(--ink-3)}
+
 @keyframes prPop{
   0%{transform:translateY(-4px) scale(1.26)}
   60%{transform:translateY(1px) scale(.94)}
@@ -1190,6 +1211,9 @@ dialog#modal.morph-open .sheet,dialog#modal.morph-close .sheet{animation:none!im
   .sug button:hover,.sug button:focus-visible{background:rgba(255,255,255,.09)}
   .card:hover{transform:translateY(-2px);border-color:var(--edge-2);box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 18px 34px -18px rgba(0,0,0,.92)}
   .card:hover .cover .fg{transform:scale(1.025)}
+  .card-deck:hover{z-index:4}
+  .card-deck:hover .deck-l1{transform:translate(9px,-8px) rotate(4.2deg);border-color:rgba(255,255,255,.32)}
+  .card-deck:hover .deck-l2{transform:translate(16px,-13px) rotate(7.6deg);opacity:.95;border-color:rgba(255,255,255,.26)}
   .card-col-btn:hover{background:rgba(24,30,46,.92);border-color:var(--edge-3);color:var(--ink)}
   .card-col-btn.is-in:hover{background:color-mix(in srgb,var(--col) 34%,rgba(10,14,24,.94));border-color:var(--col);color:var(--col)}
   .col-card:hover,.col-card:focus-visible{transform:translateY(-4px);border-color:var(--edge-2);box-shadow:inset 0 1px 0 rgba(255,255,255,.26),0 22px 40px -18px rgba(0,0,0,.92)}
@@ -1291,7 +1315,8 @@ dialog#modal.morph-open .sheet,dialog#modal.morph-close .sheet{animation:none!im
   .nota-capa .est{font-size:.62rem}
   .card-col-btn{top:9px;right:9px;min-width:24px;height:24px;padding:0 5px;font-size:.62rem}
   .card-col-btn svg{width:12px;height:12px}
-  .dlc-chip{top:9px;left:9px;height:17px;padding:0 5px;font-size:.55rem}
+  .deck-l1{transform:translate(3px,-3px) rotate(1.7deg)}
+  .deck-l2{transform:translate(6px,-5px) rotate(3.4deg)}
   .data-lanc{font-size:.72rem}
   .massa{bottom:calc(10px + env(safe-area-inset-bottom,0px));width:calc(100vw - 20px);max-width:none;padding:10px;border-radius:20px}
   .massa .field,.massa .csel{max-width:none;flex:1 1 130px}
@@ -2702,13 +2727,10 @@ function card(i){
     ? '<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 3a2 2 0 0 0-2 2v16l8-4 8 4V5a2 2 0 0 0-2-2H6z"/></svg>'
     : '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21l-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/><line x1="12" y1="7" x2="12" y2="13"/><line x1="9" y1="10" x2="15" y2="10"/></svg>';
   const colBtn = !st.sel ? `<button class="card-col-btn${nCols ? ' is-in' : ''}" type="button" data-card-col="${esc(i.key)}" aria-label="${nCols ? `Em ${nCols} coleção(ões) · Gerenciar` : 'Adicionar a uma coleção'}" title="${nCols ? `Em ${nCols} coleção(ões)` : 'Adicionar a uma coleção'}">${colIcon}${nCols > 1 ? `<span>${nCols}</span>` : ''}</button>` : '';
-  const nDlcs = (i.c === 'jogo' && !ehDlc(i)) ? dlcsDe(i.key).length : 0;
-  const dlcChip = ehDlc(i)
-    ? '<span class="dlc-chip">DLC</span>'
-    : (nDlcs ? `<span class="dlc-chip is-base">+${nDlcs} DLC${nDlcs > 1 ? 's' : ''}</span>` : '');
-  return `<article class="card${st.selecionados.has(i.key) ? ' selecionado' : ''}" style="--tint:${c.tint}">
+  const dlcs = (i.c === 'jogo' && !ehDlc(i)) ? dlcsDe(i.key) : [];
+  const cardHtml = `<article class="card${st.selecionados.has(i.key) ? ' selecionado' : ''}" style="--tint:${c.tint}">
     <button class="open" type="button" data-key="${esc(i.key)}" aria-label="Abrir ${esc(i.t)}">
-      <div class="cover${capa ? ' has-img' : ''}">${capa ? '' : `<span class="cat-pad">${esc(c.label)}</span>`}${capaHTML(capa)}<span class="ini" aria-hidden="true">${esc(i.t.charAt(0).toUpperCase())}</span>${dlcChip}<span class="dot-status${s2 === 'Platinado' ? ' brilho' : ''}${jaSaiu(i) ? ' saiu' : ''}" style="--c:${jaSaiu(i) ? '#ffc93c' : (STATUS_COR[s2] || '#7b8190')}" title="${jaSaiu(i) ? 'Já saiu: atualize o status' : esc(s2)}" role="img" aria-label="${jaSaiu(i) ? 'Já saiu' : 'Status: ' + esc(s2)}"></span>${i.n != null ? `<span class="nota-capa"><span class="est">★</span>${fmtNota(i.n)}</span>` : ''}</div>
+      <div class="cover${capa ? ' has-img' : ''}">${capa ? '' : `<span class="cat-pad">${esc(c.label)}</span>`}${capaHTML(capa)}<span class="ini" aria-hidden="true">${esc(i.t.charAt(0).toUpperCase())}</span><span class="dot-status${s2 === 'Platinado' ? ' brilho' : ''}${jaSaiu(i) ? ' saiu' : ''}" style="--c:${jaSaiu(i) ? '#ffc93c' : (STATUS_COR[s2] || '#7b8190')}" title="${jaSaiu(i) ? 'Já saiu: atualize o status' : esc(s2)}" role="img" aria-label="${jaSaiu(i) ? 'Já saiu' : 'Status: ' + esc(s2)}"></span>${i.n != null ? `<span class="nota-capa"><span class="est">★</span>${fmtNota(i.n)}</span>` : ''}</div>
       <div class="body">
         <h3>${esc(i.t)}</h3>
         ${meta}
@@ -2716,6 +2738,12 @@ function card(i){
       </div>
     </button>${colBtn}
   </article>`;
+  if (!dlcs.length) return cardHtml;
+  const deckLayers = dlcs.slice(0, 2).map((d, idx) => {
+    const u = capaDe(d);
+    return `<span class="deck-layer deck-l${idx + 1}" aria-hidden="true">${u ? `<img src="${esc(u)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : ''}</span>`;
+  }).join('');
+  return `<div class="card-deck">${deckLayers}${cardHtml}</div>`;
 }
 
 function renderGrid(){
@@ -4200,7 +4228,15 @@ function abrirForm(key){
         <label>Lançamento<input id="n-l" class="field" type="date" value="${esc(i && i.l ? i.l : '')}"></label>
         <label>Conclusão<input id="n-k" class="field" type="date" value="${esc(i && i.k ? i.k : '')}"></label>
         <label id="lbl-g" class="full">ID da IGDB (jogos, para buscar a capa)<input id="n-g" class="field" type="number" min="1" value="${i && i.g != null ? i.g : ''}"></label>
-        <label id="lbl-base" class="full" style="display:none">Jogo base (opcional, vincula esta DLC)<select id="n-base" class="field"></select></label>
+        <div id="lbl-base" class="full base-pick" style="display:none">
+          <span class="base-lbl">Jogo base (opcional, vincula esta DLC)</span>
+          <input type="hidden" id="n-base" value="">
+          <div class="base-input-wrap">
+            <input id="n-base-q" class="field" type="text" placeholder="Digite o nome do jogo principal…" autocomplete="off">
+            <button type="button" class="base-clear" id="n-base-clear" aria-label="Remover vínculo" title="Remover vínculo" hidden>✕</button>
+          </div>
+          <div id="n-base-sug" class="sug base-sug" hidden></div>
+        </div>
         <label class="full">Link da capa (opcional, sobrescreve a busca automática)<input id="n-capa" class="field" type="url" placeholder="https://…" value="${esc(i && i.capa ? i.capa : '')}"></label>
         <label>Onde (plataforma ou serviço)<input id="n-onde" class="field" type="text" placeholder="ex.: PC, Netflix" value="${esc(i && i.onde ? i.onde : '')}"></label>
         <label class="full">Link de gameplay ou vídeo (YouTube, Twitch…)<input id="n-video" class="field" type="url" placeholder="https://…" value="${esc(i && i.video ? i.video : '')}"></label>
@@ -4262,7 +4298,90 @@ function abrirForm(key){
     atualizarDuplicada();
   });
   document.getElementById('n-salvar').addEventListener('click', () => salvarItem(key, colAlvo ? colAlvo.id : null));
+  const renderBaseSug = () => {
+    const box = document.getElementById('n-base-sug');
+    const qInp = document.getElementById('n-base-q');
+    const baseHid = document.getElementById('n-base');
+    if (!box || !qInp) return;
+    const termo = qInp.value.trim();
+    const qNorm = normBusca(termo);
+    const tDlcNorm = normBusca(document.getElementById('n-t')?.value || '');
+    const escolhida = baseHid ? baseHid.value : '';
+    let lista = ITEMS.filter(x => x.c === 'jogo' && !ehDlc(x) && x.key !== key && (!termo || casaTexto(x.t, termo)));
+    lista.sort((a, b) => {
+      if (!qNorm && tDlcNorm) {
+        const ap = tDlcNorm.startsWith(normBusca(a.t)) ? 0 : 1;
+        const bp = tDlcNorm.startsWith(normBusca(b.t)) ? 0 : 1;
+        if (ap !== bp) return ap - bp;
+      }
+      if (qNorm) {
+        const as = normBusca(a.t).startsWith(qNorm) ? 0 : 1;
+        const bs = normBusca(b.t).startsWith(qNorm) ? 0 : 1;
+        if (as !== bs) return as - bs;
+      }
+      return a.t.localeCompare(b.t, 'pt-BR');
+    });
+    lista = lista.slice(0, 30);
+    box.innerHTML = lista.length
+      ? lista.map(x => {
+          const u = capaDe(x), sel = x.key === escolhida;
+          return `<button type="button" role="option" class="${sel ? 'is-on' : ''}" data-base-key="${esc(x.key)}"><span class="base-opt-main">${u ? `<img class="base-opt-thumb" src="${esc(u)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : `<span class="base-opt-thumb base-opt-ph">${esc(x.t.charAt(0).toUpperCase())}</span>`}<span>${esc(x.t)}</span></span>${x.l ? `<small>${esc(x.l.slice(0, 4))}</small>` : ''}</button>`;
+        }).join('')
+      : '<p class="vazio">Nenhum jogo base encontrado.</p>';
+    box.hidden = false;
+  };
+  const baseQ = document.getElementById('n-base-q');
+  const baseSug = document.getElementById('n-base-sug');
+  const baseClear = document.getElementById('n-base-clear');
+  if (baseQ && baseSug && baseClear) {
+    baseQ.addEventListener('focus', renderBaseSug);
+    baseQ.addEventListener('input', () => {
+      const hid = document.getElementById('n-base');
+      const val = baseQ.value.trim();
+      const atualItem = hid.value ? ITEMS.find(x => x.key === hid.value) : null;
+      if (atualItem && normBusca(atualItem.t) !== normBusca(val)) hid.value = '';
+      baseClear.hidden = !(hid.value || val);
+      renderBaseSug();
+    });
+    baseQ.addEventListener('keydown', e => {
+      if (e.key === 'Escape') baseSug.hidden = true;
+    });
+    baseQ.addEventListener('blur', () => {
+      setTimeout(() => {
+        const hid = document.getElementById('n-base');
+        const val = baseQ.value.trim();
+        if (hid && !hid.value && val) {
+          const exato = ITEMS.find(x => x.c === 'jogo' && !ehDlc(x) && x.key !== key && normBusca(x.t) === normBusca(val));
+          if (exato) {
+            hid.value = exato.key;
+            baseQ.value = exato.t;
+            baseClear.hidden = false;
+          }
+        }
+        baseSug.hidden = true;
+      }, 140);
+    });
+    baseSug.addEventListener('pointerdown', e => e.preventDefault());
+    baseSug.addEventListener('click', e => {
+      const b = e.target.closest('[data-base-key]');
+      if (!b) return;
+      const it = ITEMS.find(x => x.key === b.dataset.baseKey);
+      if (!it) return;
+      document.getElementById('n-base').value = it.key;
+      baseQ.value = it.t;
+      baseClear.hidden = false;
+      baseSug.hidden = true;
+    });
+    baseClear.addEventListener('click', () => {
+      document.getElementById('n-base').value = '';
+      baseQ.value = '';
+      baseClear.hidden = true;
+      baseSug.hidden = true;
+      baseQ.focus();
+    });
+  }
   atualizarCamposForm(i, key);
+  atualizarCampoBase(i, key, true);
   criarPeekRating(document.getElementById('n-rating'), i && i.n != null ? i.n : null, v => {
     document.getElementById('n-n').value = v == null ? '' : String(v);
   });
@@ -4290,23 +4409,28 @@ function buscarSugestoes(){
     if (falhas.length) box.innerHTML += `<p class="hint">Sem resposta: ${esc(falhas.join('; '))}</p>`;
   }, 500);
 }
-function atualizarCampoBase(i, key){
+function atualizarCampoBase(i, key, inicial = false){
   const c = document.getElementById('n-c').value;
   const tipo = document.getElementById('n-tipo').value;
   const lbl = document.getElementById('lbl-base');
-  const sel = document.getElementById('n-base');
-  if (!lbl || !sel) return;
+  const hid = document.getElementById('n-base');
+  const inp = document.getElementById('n-base-q');
+  const clr = document.getElementById('n-base-clear');
+  const box = document.getElementById('n-base-sug');
+  if (!lbl || !hid || !inp) return;
   const mostrar = c === 'jogo' && tipo === 'DLC';
   lbl.style.display = mostrar ? '' : 'none';
-  if (mostrar) {
-    const baseAtual = (i && i.base) || '';
-    const jogosBase = ITEMS.filter(x => x.c === 'jogo' && !ehDlc(x) && x.key !== key)
-      .sort((a, b) => a.t.localeCompare(b.t, 'pt-BR'));
-    sel.innerHTML = '<option value="">Nenhum (DLC avulsa)</option>' +
-      jogosBase.map(x => `<option value="${esc(x.key)}"${x.key === baseAtual ? ' selected' : ''}>${esc(x.t)}</option>`).join('');
-    sel.value = baseAtual && jogosBase.some(x => x.key === baseAtual) ? baseAtual : '';
+  if (!mostrar) {
+    if (box) box.hidden = true;
+    return;
   }
-  melhorarSelects(document.getElementById('novo'));
+  if (inicial) {
+    const baseAtual = (i && i.base) || '';
+    const baseItem = baseAtual ? ITEMS.find(x => x.key === baseAtual && x.c === 'jogo' && !ehDlc(x) && x.key !== key) : null;
+    hid.value = baseItem ? baseItem.key : '';
+    inp.value = baseItem ? baseItem.t : '';
+    if (clr) clr.hidden = !baseItem;
+  }
 }
 function atualizarCamposForm(i, key){
   const c = document.getElementById('n-c').value;
@@ -4321,6 +4445,7 @@ function atualizarCamposForm(i, key){
   document.getElementById('n-s').innerHTML = sOpts.map(o => `<option${o === sAtual ? ' selected' : ''}>${esc(o)}</option>`).join('');
   document.getElementById('lbl-g').style.display = c === 'jogo' ? '' : 'none';
   atualizarCampoBase(i, key);
+  melhorarSelects(document.getElementById('novo'));
 }
 
 function salvarItem(key, colDestinoId = null, forcarDuplicada = false){
